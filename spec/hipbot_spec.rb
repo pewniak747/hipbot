@@ -1,0 +1,68 @@
+require 'spec_helper'
+
+describe Hipbot do
+  context "#on" do
+    it "should reply to no arguments" do
+      subject.on /^hello there$/ do
+        reply('hi!')
+      end
+      subject.expects(:reply).with('hi!')
+      subject.tell('hello there')
+    end
+
+    it "should reply with one argument" do
+      subject.on /^you are (.*), robot$/ do |adj|
+        reply("i know i'm #{adj}!")
+      end
+      subject.expects(:reply).with("i know i'm cool!")
+      subject.tell('you are cool, robot')
+    end
+
+    it "should reply with multipla arguments" do
+      subject.on /^send "(.*)" to (.*@.*)$/ do |message, recipient|
+        reply("sent \"#{message}\" to #{recipient}")
+      end
+      subject.expects(:reply).with('sent "hello!" to robot@robots.org')
+      subject.tell('send "hello!" to robot@robots.org')
+    end
+
+    it "should say when does not understand" do
+      subject.on /^hello there$/ do
+        reply('hi!')
+      end
+      subject.expects(:reply).with('I don\'t understand "hello robot!"')
+      subject.tell('hello robot!')
+    end
+
+    it "should say when multiple options match" do
+      subject.on /hello there/ do; end
+      subject.on /hello (.*)/ do; end
+      subject.expects(:reply).with('I\'m not sure what to do...')
+      subject.tell('hello there')
+    end
+  end
+end
+
+describe "Custom Hipbot" do
+  before :all do
+    class MyHipbot < Hipbot
+      on /^hello hipbot!$/ do
+        reply("hello!")
+      end
+      on /you're (.*), robot/ do |adj|
+        reply("I know I'm #{adj}")
+      end
+    end
+  end
+  subject { MyHipbot.new }
+
+  it "should reply to hello" do
+    subject.expects(:reply).with('hello!')
+    subject.tell('hello hipbot!')
+  end
+
+  it "should reply with argument" do
+    subject.expects(:reply).with("I know I'm cool")
+    subject.tell("you're cool, robot")
+  end
+end
