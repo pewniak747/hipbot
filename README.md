@@ -1,10 +1,10 @@
-= Hipbot
+# Hipbot
 
 Hipbot is a bot for HipChat, written in ruby & eventmachine.
 
 This is a work in progress.
 
-== Usage
+## Usage
 
 Subclass Hipbot::Bot and customize robot responses.
 
