@@ -12,8 +12,10 @@ Subclass Hipbot::Bot and customize robot responses.
 require 'hipbot'
 
 class MyCompanyBot < Hipbot::Bot
-  hipchat_token 'secret'
-  name 'robot'
+  configure do |c|
+    c.hipchat_token = 'secret'
+    c.name = 'robot'
+  end
 
   # simple reply to '@robot hello!'
   on /^hello.*/ do

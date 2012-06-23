@@ -6,7 +6,8 @@ class Bot
     self.class.reactions.each do |opts|
       on(opts[0], opts[1], &opts[-1])
     end
-    self.name = 'robot'
+    self.class.configuration.call(self) if self.class.configuration
+    self.name ||= 'robot'
   end
 
   def on regexp, options={}, &block
@@ -39,8 +40,16 @@ class Bot
     @reactions << [regexp, options, block]
   end
 
+  def configure &block
+    @configuration = block
+  end
+
   def reactions
     @reactions || []
+  end
+
+  def configuration
+    @configuration
   end
   end
 

@@ -89,4 +89,13 @@ describe "Custom Hipbot" do
     subject.expects(:reply).with("hello!")
     subject.tell("hi everyone!")
   end
+
+  it "should set robot name" do
+    class MyHipbot
+      configure do |config|
+        config.name = 'robbot'
+      end
+    end
+    subject.name.should == 'robbot'
+  end
 end
