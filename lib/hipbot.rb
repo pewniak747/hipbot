@@ -1,15 +1,20 @@
+require 'active_support/all'
+
+require 'hipbot/configuration'
 require 'hipbot/reaction'
 
 module Hipbot
 class Bot
-  attr_accessor :reactions, :name, :hipchat_token
+  attr_accessor :reactions, :configuration
+  CONFIGURABLE_OPTIONS = [:name, :hipchat_token]
+  delegate *CONFIGURABLE_OPTIONS, to: :configuration
+
   def initialize
+    self.configuration = Configuration.new.tap(&self.class.configuration)
     self.reactions = []
     self.class.reactions.each do |opts|
       on(opts[0], opts[1], &opts[-1])
     end
-    self.class.configuration.call(self) if self.class.configuration
-    self.name ||= 'robot'
   end
 
   def on regexp, options={}, &block
@@ -51,7 +56,7 @@ class Bot
   end
 
   def configuration
-    @configuration
+    @configuration || Proc.new{}
   end
   end
 

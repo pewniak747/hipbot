@@ -57,4 +57,14 @@ describe Hipbot::Bot do
       subject.tell('you are cool')
     end
   end
+
+  describe "configurable options" do
+    Hipbot::Bot::CONFIGURABLE_OPTIONS.each do |option|
+      it "should delegate #{option} to configuration" do
+        value = stub
+        subject.configuration.expects(option).returns(value)
+        subject.send(option)
+      end
+    end
+  end
 end
