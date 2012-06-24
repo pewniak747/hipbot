@@ -2,6 +2,7 @@ require 'active_support/all'
 
 require 'hipbot/configuration'
 require 'hipbot/reaction'
+require 'hipbot/response'
 
 module Hipbot
 class Bot
@@ -21,24 +22,17 @@ class Bot
     self.reactions << Reaction.new(self, regexp, options, block)
   end
 
-  def tell message
-    matches = matching_reactions(message)
-    if matches.size == 1
-      match = matches.first
-      arguments = match.arguments_for(message)
-      instance_exec(*arguments, &match.block)
-    elsif matches.size > 1
-      reply("I'm not sure what to do...")
-    elsif to_me?(message)
-      reply("I don't understand \"#{message.gsub(/^@#{name}\s*/, '')}\"")
+  def tell sender, room, message
+    matches = matching_reactions(sender, room, message)
+    response = if matches.size <= 2 && matches.size > 0
+      Response.new(self, matches.first, sender, room, message)
+    elsif matches.size > 2
+      NotSureResponse.new(self, nil, sender, room, message)
     end
+    response.invoke if response
   end
 
-  def reply message
-  end
-
-  def to_me? message
-    message =~ /^@#{name}/
+  def reply room, message
   end
 
   class << self
@@ -62,8 +56,15 @@ class Bot
 
   private
 
-  def matching_reactions message
-    reactions.select { |r| r.match?(message) }
+  def matching_reactions sender, room, message
+    all_reactions = reactions + [default_reaction]
+    all_reactions.select { |r| r.match?(sender, room, message) }
+  end
+
+  def default_reaction
+    @default_reaction ||= Reaction.new(self, /.*/, {}, Proc.new {
+      reply("I don't understand \"#{processed_message}\"")
+    })
   end
 end
 end

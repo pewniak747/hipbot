@@ -29,19 +29,23 @@ describe MyHipbot do
   end
 
   describe "replying" do
+    # TODO: replace with actual objects
+    let(:room) { stub_everything }
+    let(:sender) { stub_everything }
+
     it "should reply to hello" do
-      subject.expects(:reply).with('hello!')
-      subject.tell('@robbot hello hipbot!')
+      subject.expects(:reply).with(room, 'hello!')
+      subject.tell(sender, room, '@robbot hello hipbot!')
     end
 
     it "should reply with argument" do
-      subject.expects(:reply).with("I know I'm cool")
-      subject.tell("@robbot you're cool, robot")
+      subject.expects(:reply).with(room, "I know I'm cool")
+      subject.tell(sender, room, "@robbot you're cool, robot")
     end
 
     it "should reply to global message" do
-      subject.expects(:reply).with("hello!")
-      subject.tell("hi everyone!")
+      subject.expects(:reply).with(room, "hello!")
+      subject.tell(sender, room, "hi everyone!")
     end
   end
 end
