@@ -1,7 +1,7 @@
 module Hipbot
   class Reaction < Struct.new(:robot, :regexp, :options, :block)
     def match? sender, room, message
-      matches?(message) && (global? || to_robot?(message))
+      matches?(message) && matches_scope?(message) && matches_sender?(sender)
     end
 
     def arguments_for message
@@ -10,6 +10,10 @@ module Hipbot
 
     def global?
       options[:global]
+    end
+
+    def from_all?
+      !options[:from]
     end
 
     def processed_message message
@@ -24,6 +28,17 @@ module Hipbot
 
     def matches? message
       regexp =~ processed_message(message)
+    end
+
+    def matches_scope?(message)
+      global? || to_robot?(message)
+    end
+
+    def matches_sender?(sender)
+      from = options[:from]
+      from_all? ||
+      from == sender ||
+      (from.is_a?(Array) && from.select{|f| f == sender}.size > 0)
     end
 
     def to_robot? message

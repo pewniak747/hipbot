@@ -44,20 +44,53 @@ describe Hipbot::Bot do
       subject.tell(sender, room, '@robot hello there')
     end
 
-    it "should reply if callback is global" do
-      subject.on /^you are (.*)$/, global: true do |adj|
-        reply("i know i'm #{adj}!")
+    context "global messages" do
+      it "should reply if callback is global" do
+        subject.on /^you are (.*)$/, global: true do |adj|
+          reply("i know i'm #{adj}!")
+        end
+        subject.expects(:reply).with(room, "i know i'm cool!")
+        subject.tell(sender, room, 'you are cool')
       end
-      subject.expects(:reply).with(room, "i know i'm cool!")
-      subject.tell(sender, room, 'you are cool')
+
+      it "should not reply if callback not global" do
+        subject.on /^you are (.*)$/ do |adj|
+          reply("i know i'm #{adj}!")
+        end
+        subject.expects(:reply).never
+        subject.tell(sender, room, 'you are cool')
+      end
     end
 
-    it "should not reply if callback not global" do
-      subject.on /^you are (.*)$/ do |adj|
-        reply("i know i'm #{adj}!")
+    context "messages from particular sender" do
+      it "should reply" do
+        subject.on /wazzup\?/, from: sender do
+          reply('Wazzup, Tom?')
+        end
+        subject.expects(:reply).with(room, 'Wazzup, Tom?')
+        subject.tell(sender, room, '@robot wazzup?')
       end
-      subject.expects(:reply).never
-      subject.tell(sender, room, 'you are cool')
+      it "should reply if sender acceptable" do
+        subject.on /wazzup\?/, from: [stub, sender] do
+          reply('wazzup, tom?')
+        end
+        subject.expects(:reply).with(room, 'wazzup, tom?')
+        subject.tell(sender, room, '@robot wazzup?')
+      end
+      it "should not reply if sender unacceptable" do
+        subject.on /wazzup\?/, from: sender do
+          reply('wazzup, tom?')
+        end
+        subject.expects(:reply).with(room, "I don't understand \"wazzup?\"")
+        subject.tell(stub, room, '@robot wazzup?')
+      end
+      it "should not reply if sender does not match" do
+        subject.on /wazzup\?/, from: [sender] do
+          reply('wazzup, tom?')
+        end
+        subject.expects(:reply).with(room, "I don't understand \"wazzup?\"")
+        subject.tell(stub, room, '@robot wazzup?')
+      end
     end
   end
 
