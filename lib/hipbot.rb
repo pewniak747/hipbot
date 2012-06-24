@@ -1,6 +1,6 @@
 module Hipbot
 class Bot
-  attr_accessor :reactions, :name
+  attr_accessor :reactions, :name, :hipchat_token
   def initialize
     self.reactions = []
     self.class.reactions.each do |opts|
