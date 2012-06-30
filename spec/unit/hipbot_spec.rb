@@ -37,10 +37,10 @@ describe Hipbot::Bot do
       subject.tell(sender, room, '@robot hello robot!')
     end
 
-    it "should say when multiple options match" do
-      subject.on /hello there/ do; end
-      subject.on /hello (.*)/ do; end
-      subject.expects(:reply).with(room, 'I\'m not sure what to do...')
+    it "should choose first option when multiple options match" do
+      subject.on /hello there/ do reply('hello there') end
+      subject.on /hello (.*)/ do reply('hello') end
+      subject.expects(:reply).with(room, 'hello there')
       subject.tell(sender, room, '@robot hello there')
     end
 

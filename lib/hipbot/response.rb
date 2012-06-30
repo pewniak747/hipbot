@@ -18,10 +18,4 @@ class Response < Struct.new(:bot, :reaction, :sender, :room, :message)
     reaction.processed_message(message)
   end
 end
-
-class NotSureResponse < Response
-  def invoke
-    reply("I'm not sure what to do...")
-  end
-end
 end

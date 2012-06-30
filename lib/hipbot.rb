@@ -24,12 +24,9 @@ class Bot
 
   def tell sender, room, message
     matches = matching_reactions(sender, room, message)
-    response = if matches.size <= 2 && matches.size > 0
-      Response.new(self, matches.first, sender, room, message)
-    elsif matches.size > 2
-      NotSureResponse.new(self, nil, sender, room, message)
+    if matches.size > 0
+      Response.new(self, matches.first, sender, room, message).invoke
     end
-    response.invoke if response
   end
 
   def reply room, message
