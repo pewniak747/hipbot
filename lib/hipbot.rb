@@ -10,6 +10,7 @@ class Bot
   attr_accessor :reactions, :configuration
   CONFIGURABLE_OPTIONS = [:name, :hipchat_token]
   delegate *CONFIGURABLE_OPTIONS, to: :configuration
+  alias_method :to_s, :name
 
   def initialize
     self.configuration = Configuration.new.tap(&self.class.configuration)
