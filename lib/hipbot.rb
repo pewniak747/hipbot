@@ -25,7 +25,7 @@ class Bot
   def tell sender, room, message
     matches = matching_reactions(sender, room, message)
     if matches.size > 0
-      Response.new(self, matches.first, sender, room, message).invoke
+      matches[0].invoke(sender, room, message)
     end
   end
 
@@ -60,7 +60,7 @@ class Bot
 
   def default_reaction
     @default_reaction ||= Reaction.new(self, /.*/, {}, Proc.new {
-      reply("I don't understand \"#{processed_message}\"")
+      reply("I don't understand \"#{message}\"")
     })
   end
 end

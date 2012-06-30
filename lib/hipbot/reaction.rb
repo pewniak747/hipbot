@@ -1,11 +1,17 @@
 module Hipbot
   class Reaction < Struct.new(:robot, :regexp, :options, :block)
+    def invoke sender, room, message
+      message = processed_message(message)
+      arguments = arguments_for(message)
+      Response.new(robot, self, sender, room, message).invoke(arguments)
+    end
+
     def match? sender, room, message
       matches?(message) && matches_scope?(message) && matches_sender?(sender)
     end
 
     def arguments_for message
-      processed_message(message).match(regexp)[1..-1]
+      message.match(regexp)[1..-1]
     end
 
     def global?
