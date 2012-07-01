@@ -13,5 +13,13 @@ class Response < Struct.new(:bot, :reaction, :room, :message_object)
   def message
     message_object.body
   end
+
+  def sender
+    message_object.sender
+  end
+
+  def recipients
+    message_object.recipients
+  end
 end
 end

@@ -92,6 +92,32 @@ describe Hipbot::Bot do
         subject.tell(stub, room, '@robot wazzup?')
       end
     end
+
+    context "default variables" do
+      it "message" do
+        subject.on /.*/ do
+          reply("you said: #{message}")
+        end
+        subject.expects(:reply).with(room, "you said: hello")
+        subject.tell(stub, room, "@robot hello")
+      end
+
+      it "sender" do
+        subject.on /.*/ do
+          reply("you are: #{sender}")
+        end
+        subject.expects(:reply).with(room, "you are: tom")
+        subject.tell('tom', room, "@robot hello")
+      end
+
+      it "recipients" do
+        subject.on /.*/ do
+          reply("recipients: #{recipients.join(', ')}")
+        end
+        subject.expects(:reply).with(room, "recipients: robot, dave")
+        subject.tell('tom', room, "@robot tell @dave hello from me")
+      end
+    end
   end
 
   describe "configurable options" do
