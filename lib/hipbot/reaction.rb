@@ -30,10 +30,7 @@ module Hipbot
     end
 
     def matches_sender?(message)
-      from = options[:from]
-      from_all? ||
-      from == message.sender ||
-      (from.is_a?(Array) && from.select{|f| f == message.sender}.size > 0)
+      from_all? || Array(options[:from]).include?(message.sender)
     end
 
     def global?
