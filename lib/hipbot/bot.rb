@@ -1,9 +1,11 @@
 module Hipbot
 class Bot
-  attr_accessor :reactions, :configuration
+  attr_accessor :reactions, :configuration, :connection
   CONFIGURABLE_OPTIONS = [:name, :hipchat_token]
   delegate *CONFIGURABLE_OPTIONS, to: :configuration
   alias_method :to_s, :name
+
+  include ::Hipbot::Adapters::Telnet
 
   def initialize
     self.configuration = Configuration.new.tap(&self.class.configuration)
@@ -22,9 +24,6 @@ class Bot
     if matches.size > 0
       matches[0].invoke(sender, room, message)
     end
-  end
-
-  def reply room, message
   end
 
   class << self

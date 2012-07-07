@@ -34,6 +34,5 @@ class MyCompanyBot < Hipbot::Bot
   end
 end
 
-robot = MyCompanyBot.new
-robot.start!
+MyCompanyBot.start!
 ```
