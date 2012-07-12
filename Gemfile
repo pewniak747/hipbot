@@ -1,5 +1,6 @@
 source :rubygems
 
+gem 'rake'
 gem 'active_support'
 gem 'eventmachine'
 gem 'httparty'
