@@ -17,7 +17,7 @@ class MyBot < Hipbot::Bot
   end
 
   on /deploy to (.*) pls/ do |stage|
-    reply("deploying to #{stage}!")
+    reply("deploying #{room} to #{stage}!")
     sleep(3)
     reply("deployed!")
   end
@@ -30,13 +30,6 @@ class MyBot < Hipbot::Bot
     reply("sleeping...")
     sleep(10)
     reply("woke up")
-  end
-
-  on /get/, global: true do
-    reply("getting...")
-    p HTTParty
-    r = HTTParty.get('http://google.com').body
-    reply("got: #{r}")
   end
 end
 
