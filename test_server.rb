@@ -8,11 +8,13 @@ class ChatServer < EM::Connection
   end
 
   def receive_data data
-    sender, room, message = *data.strip.split(':')
-    $connections.reject{|c| c==self}.each do |connection|
-      connection.send_data data
+    messages = data.split("\n").map{ |m| "#{m}\n" }.each do |msg|
+      sender, room, message = *msg.strip.split(':')
+      $connections.reject{|c| c==self}.each do |connection|
+        connection.send_data msg
+      end
+      puts "#{sender}@#{room} > #{message}"
     end
-    puts "#{sender}@#{room} > #{message}"
   end
 end
 
