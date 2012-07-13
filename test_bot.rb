@@ -6,6 +6,12 @@ class MyBot < Hipbot::Bot
     c.name = 'robot'
   end
 
+  on /weather\s(.*)/ do |city|
+    reply("checking weather")
+    # http request here
+    reply("weather in #{city} - sunny")
+  end
+
   on /^hello.*/ do
     reply('hello!')
   end
