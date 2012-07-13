@@ -14,9 +14,7 @@ module Hipbot
 
         def receive_data(data)
           sender, room, message = *data.strip.split(':')
-          EM::defer do
-            @bot.tell(sender, room, message)
-          end
+          @bot.tell(sender, room, message)
         end
       end
 

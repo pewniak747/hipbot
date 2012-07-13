@@ -7,9 +7,9 @@ class MyBot < Hipbot::Bot
   end
 
   on /weather\s(.*)/ do |city|
-    reply("checking weather")
-    # http request here
-    reply("weather in #{city} - sunny")
+    reply("checking weather for #{city}")
+    conditions = ::GoogleWeather.new(city).forecast_conditions.first
+    reply("weather in #{city} - #{conditions.condition}, max #{conditions.high}F")
   end
 
   on /^hello.*/ do

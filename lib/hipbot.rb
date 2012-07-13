@@ -1,4 +1,5 @@
 require 'eventmachine'
+require 'google_weather'
 require 'active_support/all'
 
 require 'hipbot/adapters/telnet'
