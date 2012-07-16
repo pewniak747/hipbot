@@ -11,6 +11,7 @@ module Hipbot
           initialize_bot(bot)
           initialize_rooms
           initialize_jabber
+          join_rooms
 
           ::EM::add_periodic_timer(1) do
             puts "tick"
@@ -37,6 +38,17 @@ module Hipbot
           @jabber = ::Jabber::Client.new(@bot.jid)
           @jabber.connect
           @jabber.auth(@bot.password)
+        end
+
+        def join_rooms
+          callback = Proc.new do |time, sender, message|
+            @bot.tell(room.name, sender, message)
+          end
+          @rooms.each do |room|
+            room.connection = ::Jabber::MUC::SimpleMUCClient.new(@jabber)
+            room.connection.on_message(&callback)
+            room.connection.join("#{room.xmpp_jid}/#{@bot.name}")
+          end
         end
 
         def hipchat
