@@ -1,11 +1,9 @@
 module Hipbot
 class Bot
   attr_accessor :reactions, :configuration, :connection
-  CONFIGURABLE_OPTIONS = [:name, :hipchat_token, :jid, :password]
+  CONFIGURABLE_OPTIONS = [:name, :hipchat_token, :jid, :password, :adapter]
   delegate *CONFIGURABLE_OPTIONS, to: :configuration
   alias_method :to_s, :name
-
-  include ::Hipbot::Adapters::Hipchat
 
   def initialize
     self.configuration = Configuration.new.tap(&self.class.configuration)
@@ -13,6 +11,7 @@ class Bot
     self.class.reactions.each do |opts|
       on(opts[0], opts[1], &opts[-1])
     end
+    extend(self.adapter || ::Hipbot::Adapters::Hipchat)
   end
 
   def on regexp, options={}, &block
