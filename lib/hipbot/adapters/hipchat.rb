@@ -3,7 +3,7 @@ module Hipbot
     module Hipchat
       extend ActiveSupport::Concern
       def reply room, message
-        connection.deliver("friend@example.com", "message")
+        connection.deliver(room, message)
       end
 
       class Connection
@@ -19,7 +19,13 @@ module Hipbot
         end
 
         def deliver room, message
-          puts("replied - #{message}")
+          room = rooms.find { |r| r.name == room }
+          if room.present?
+            send_message(room, message)
+            puts("Replied to #{room} - #{message}")
+          else
+            puts("Not connected to #{room}")
+          end
         end
 
         private
@@ -44,15 +50,23 @@ module Hipbot
           callback = Proc.new do |time, sender, message|
             @bot.tell(room.name, sender, message)
           end
-          @rooms.each do |room|
+          rooms.each do |room|
             room.connection = ::Jabber::MUC::SimpleMUCClient.new(@jabber)
             room.connection.on_message(&callback)
             room.connection.join("#{room.xmpp_jid}/#{@bot.name}")
           end
         end
 
+        def send_message room, message
+          room.connection.say(message)
+        end
+
         def hipchat
           @hipchat ||= ::HipChat::Client.new(@bot.hipchat_token)
+        end
+
+        def rooms
+          @rooms || []
         end
       end
 
@@ -66,4 +80,3 @@ module Hipbot
     end
   end
 end
-
