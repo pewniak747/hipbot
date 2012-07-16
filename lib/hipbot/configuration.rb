@@ -1,6 +1,6 @@
 module Hipbot
 class Configuration
-  attr_accessor :name, :hipchat_token, :jid, :password
+  attr_accessor *Bot::CONFIGURABLE_OPTIONS
 
   def initialize
     self.name = 'robot'
