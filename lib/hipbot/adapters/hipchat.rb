@@ -8,20 +8,32 @@ module Hipbot
 
       class Connection
         def initialize bot
-          @bot = bot
-          @bot.connection = self
+          initialize_bot(bot)
+          initialize_rooms
 
-          @jabber = Jabber::Simple.new(bot.jid, bot.password)
           ::EM::add_periodic_timer(1) do
-            @jabber.received_messages.each do |message|
-              @bot.tell('someone', 'somewhere', message.body)
-            end
             puts "tick"
           end
         end
 
         def deliver room, message
           puts("replied - #{message}")
+        end
+
+        private
+
+        def initialize_rooms
+          @rooms ||= []
+          @rooms = hipchat.rooms
+        end
+
+        def initialize_bot bot
+          @bot = bot
+          @bot.connection = self
+        end
+
+        def hipchat
+          @hipchat ||= ::HipChat::Client.new(@bot.hipchat_token)
         end
       end
 

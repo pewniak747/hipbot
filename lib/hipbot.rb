@@ -1,6 +1,7 @@
+require 'active_support/all'
 require 'eventmachine'
 require 'google_weather'
-require 'active_support/all'
+require 'hipchat'
 require 'xmpp4r'
 require 'xmpp4r/muc'
 
