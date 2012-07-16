@@ -2,13 +2,7 @@ module Hipbot
   module Adapters
     module Hipchat
       extend ActiveSupport::Concern
-      def reply room, message
-        connection.reply(room, message)
-      end
-
-      def error room, message, options={}
-        connection.error(room, message, options)
-      end
+      delegate :reply, :error, to: :connection
 
       class Connection
         def initialize bot
