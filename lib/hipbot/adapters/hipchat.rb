@@ -6,6 +6,10 @@ module Hipbot
         connection.deliver(room, message)
       end
 
+      def error room, message, options={}
+        connection.error(room, message, options)
+      end
+
       class Connection
         def initialize bot
           initialize_bot(bot)
@@ -22,6 +26,12 @@ module Hipbot
           for_foom room do
             puts("Replied to #{room} - #{message}")
             send_message(room, message)
+          end
+        end
+
+        def error room, message, options={}
+          for_foom room do
+            room.send(@bot.name, message, { color: 'red' }.merge(options))
           end
         end
 

@@ -10,6 +10,10 @@ class Response < Struct.new(:bot, :reaction, :room, :message_object)
     bot.reply(room, string)
   end
 
+  def error string, options={}
+    bot.error(room, string, options)
+  end
+
   def message
     message_object.body
   end
