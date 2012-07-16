@@ -10,6 +10,7 @@ module Hipbot
         def initialize bot
           initialize_bot(bot)
           initialize_rooms
+          initialize_jabber
 
           ::EM::add_periodic_timer(1) do
             puts "tick"
@@ -30,6 +31,12 @@ module Hipbot
         def initialize_bot bot
           @bot = bot
           @bot.connection = self
+        end
+
+        def initialize_jabber
+          @jabber = ::Jabber::Client.new(@bot.jid)
+          @jabber.connect
+          @jabber.auth(@bot.password)
         end
 
         def hipchat
