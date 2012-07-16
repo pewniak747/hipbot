@@ -19,12 +19,9 @@ module Hipbot
         end
 
         def deliver room, message
-          room = rooms.find { |r| r.name == room }
-          if room.present?
-            send_message(room, message)
+          for_foom room do
             puts("Replied to #{room} - #{message}")
-          else
-            puts("Not connected to #{room}")
+            send_message(room, message)
           end
         end
 
@@ -54,6 +51,13 @@ module Hipbot
             room.connection = ::Jabber::MUC::SimpleMUCClient.new(@jabber)
             room.connection.on_message(&callback)
             room.connection.join("#{room.xmpp_jid}/#{@bot.name}")
+          end
+        end
+
+        def for_room room_name
+          room = rooms.find { |r| r.name == room_name }
+          if room.present?
+            yield(room) if block_given?
           end
         end
 
