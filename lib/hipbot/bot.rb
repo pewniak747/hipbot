@@ -5,7 +5,7 @@ class Bot
   delegate *CONFIGURABLE_OPTIONS, to: :configuration
   alias_method :to_s, :name
 
-  include ::Hipbot::Adapters::Telnet
+  include ::Hipbot::Adapters::Hipchat
 
   def initialize
     self.configuration = Configuration.new.tap(&self.class.configuration)
