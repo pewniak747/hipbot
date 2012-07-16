@@ -3,7 +3,7 @@ module Hipbot
     module Hipchat
       extend ActiveSupport::Concern
       def reply room, message
-        connection.deliver(room, message)
+        connection.reply(room, message)
       end
 
       def error room, message, options={}
@@ -22,7 +22,7 @@ module Hipbot
           end
         end
 
-        def deliver room, message
+        def reply room, message
           for_foom room do
             puts("Replied to #{room} - #{message}")
             send_message(room, message)
