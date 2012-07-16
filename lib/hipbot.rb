@@ -1,7 +1,8 @@
 require 'eventmachine'
 require 'google_weather'
 require 'active_support/all'
-require 'xmpp4r-simple'
+require 'xmpp4r'
+require 'xmpp4r/muc'
 
 require 'hipbot/adapters/hipchat'
 require 'hipbot/adapters/telnet'
