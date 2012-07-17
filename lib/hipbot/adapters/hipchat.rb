@@ -25,7 +25,7 @@ module Hipbot
 
         def error room, message, options={}
           for_foom room do
-            room.send(@bot.name, message, { color: 'red' }.merge(options))
+            room.send(@bot.name, message, options.reverse_merge({ color: 'red' }))
           end
         end
 
