@@ -1,7 +1,7 @@
 module Hipbot
   module Adapters
     module Hipchat
-      delegate :reply, :error, to: :connection
+      delegate :reply, to: :connection
 
       class Connection
         def initialize bot
@@ -15,12 +15,6 @@ module Hipbot
           for_room room do |room|
             puts("Replied to #{room.name} - #{message}")
             send_message(room, message)
-          end
-        end
-
-        def error room, message, options={}
-          for_room room do |room|
-            room.send(@bot.name, message, options.reverse_merge({ color: 'red' }))
           end
         end
 
