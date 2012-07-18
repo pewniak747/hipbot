@@ -48,7 +48,7 @@ module Hipbot
             room.connection = ::Jabber::MUC::SimpleMUCClient.new(@jabber)
             room.connection.on_message do |time, sender, message|
               puts "#{time}: #{sender} - #{message}"
-              @bot.tell(room.name, sender, message)
+              @bot.tell(sender, room.name, message)
             end
             room.connection.join("#{room.xmpp_jid}/#{@bot.name}")
           end
