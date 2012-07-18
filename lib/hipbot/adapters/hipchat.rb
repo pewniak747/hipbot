@@ -6,8 +6,8 @@ module Hipbot
       class Connection
         def initialize bot
           initialize_bot(bot)
-          initialize_rooms
           initialize_jabber
+          initialize_rooms
           join_rooms
         end
 
@@ -22,7 +22,10 @@ module Hipbot
 
         def initialize_rooms
           @rooms ||= []
-          @rooms = hipchat.rooms
+          @muc_browser = Jabber::MUC::MUCBrowser.new(@jabber)
+          @rooms = @muc_browser.muc_rooms('conf.hipchat.com').map { |jid, name|
+            ::Hipbot::Room.new(jid, name)
+          }
         end
 
         def initialize_bot bot
@@ -44,7 +47,7 @@ module Hipbot
               puts "#{time}: #{sender} - #{message}"
               @bot.tell(sender, room.name, message)
             end
-            room.connection.join("#{room.xmpp_jid}/#{@bot.name}", nil, :history => false)
+            room.connection.join("#{room.jid}/#{@bot.name}", nil, :history => false)
           end
         end
 
