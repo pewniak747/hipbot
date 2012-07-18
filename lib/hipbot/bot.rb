@@ -42,6 +42,10 @@ class Bot
   def configuration
     @configuration || Proc.new{}
   end
+
+  def start!
+    new.start!
+  end
   end
 
   private
