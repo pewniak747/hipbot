@@ -1,7 +1,6 @@
 module Hipbot
   module Adapters
     module Telnet
-      extend ActiveSupport::Concern
       def reply room, message
         connection.send_data("#{self}:#{room}:#{message}\n")
       end
@@ -18,11 +17,9 @@ module Hipbot
         end
       end
 
-      module ClassMethods
-        def start!
-          ::EM::run do
-            ::EM::connect('0.0.0.0', 3001, Connection, self.new)
-          end
+      def start!
+        ::EM::run do
+          ::EM::connect('0.0.0.0', 3001, Connection, self)
         end
       end
     end

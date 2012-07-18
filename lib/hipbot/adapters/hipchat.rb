@@ -1,7 +1,6 @@
 module Hipbot
   module Adapters
     module Hipchat
-      extend ActiveSupport::Concern
       delegate :reply, :error, to: :connection
 
       class Connection
@@ -78,11 +77,9 @@ module Hipbot
         end
       end
 
-      module ClassMethods
-        def start!
-          ::EM::run do
-            Connection.new(self.new)
-          end
+      def start!
+        ::EM::run do
+          Connection.new(self)
         end
       end
     end

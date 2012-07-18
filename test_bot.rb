@@ -35,4 +35,4 @@ class MyBot < Hipbot::Bot
   end
 end
 
-MyBot.start!
+MyBot.new.start!
