@@ -1,5 +1,6 @@
 require 'active_support/all'
 require 'eventmachine'
+require 'em-http-request'
 require 'google_weather'
 require 'xmpp4r'
 require 'xmpp4r/muc'

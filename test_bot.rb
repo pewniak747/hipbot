@@ -7,6 +7,12 @@ class MyBot < Hipbot::Bot
     c.name = ENV['HIPBOT_NAME']
   end
 
+  on /get (.*)/ do |url|
+    get(url) do |http|
+      reply("Server responded with code: #{http.response_header.status}")
+    end
+  end
+
   on /weather\s(.*)/ do |city|
     reply("checking weather for #{city}")
     conditions = ::GoogleWeather.new(city).forecast_conditions.first
@@ -33,5 +39,7 @@ class MyBot < Hipbot::Bot
     reply("woke up")
   end
 end
+
+Jabber::debug = true
 
 MyBot.start!

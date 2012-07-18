@@ -28,7 +28,9 @@ class MyCompanyBot < Hipbot::Bot
   # tasks with arguments: '@robot deploy to production pls'
   on /deploy to (.*) pls/ do |stage|
     reply('deploying to #{stage}!')
-    # deploy instructions
+    post("http://#{stage}.example.com") do |http|
+      reply("deploy server responded with #{http.response_header.status}")
+    end
   end
 
   # global messages
@@ -42,7 +44,6 @@ MyCompanyBot.start!
 
 ## TODO:
 
-* asynchronous handling of responses waiting for network IO
 * add support for custom response helpers
 * error handling, reconnecting
 * release gem version
