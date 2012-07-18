@@ -38,3 +38,11 @@ end
 
 MyCompanyBot.start!
 ```
+
+## TODO:
+
+* fetching rooms from XMPP api instead of HTTP api
+* asynchronous handling of responses waiting for network IO
+* add support for custom response helpers
+* error handling, reconnecting
+* release gem version
