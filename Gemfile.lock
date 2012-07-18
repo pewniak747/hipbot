@@ -1,3 +1,9 @@
+GIT
+  remote: git@github.com:ln/xmpp4r.git
+  revision: 2dc321a924fa981b0d47180e1a01bc3301c1738c
+  specs:
+    xmpp4r (0.5)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -26,7 +32,6 @@ GEM
     rspec-expectations (2.10.0)
       diff-lcs (~> 1.1.3)
     rspec-mocks (2.10.1)
-    xmpp4r (0.5)
 
 PLATFORMS
   ruby
@@ -41,4 +46,4 @@ DEPENDENCIES
   mocha
   rake
   rspec
-  xmpp4r
+  xmpp4r!

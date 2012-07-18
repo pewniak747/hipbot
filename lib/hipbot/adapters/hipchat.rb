@@ -13,7 +13,7 @@ module Hipbot
 
         def reply room, message
           for_room room do |room|
-            puts("Replied to #{room} - #{message}")
+            puts("Replied to #{room.name} - #{message}")
             send_message(room, message)
           end
         end
@@ -50,7 +50,7 @@ module Hipbot
               puts "#{time}: #{sender} - #{message}"
               @bot.tell(sender, room.name, message)
             end
-            room.connection.join("#{room.xmpp_jid}/#{@bot.name}")
+            room.connection.join("#{room.xmpp_jid}/#{@bot.name}", nil, :history => false)
           end
         end
 
