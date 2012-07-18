@@ -12,14 +12,14 @@ module Hipbot
         end
 
         def reply room, message
-          for_room room do
+          for_room room do |room|
             puts("Replied to #{room} - #{message}")
             send_message(room, message)
           end
         end
 
         def error room, message, options={}
-          for_room room do
+          for_room room do |room|
             room.send(@bot.name, message, options.reverse_merge({ color: 'red' }))
           end
         end
