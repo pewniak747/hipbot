@@ -62,10 +62,6 @@ module Hipbot
           room.connection.say(message)
         end
 
-        def hipchat
-          @hipchat ||= ::HipChat::Client.new(@bot.hipchat_token)
-        end
-
         def rooms
           @rooms || []
         end

@@ -5,7 +5,6 @@ class MyBot < Hipbot::Bot
     c.jid = ENV['HIPBOT_JID']
     c.password = ENV['HIPBOT_PASSWORD']
     c.name = ENV['HIPBOT_NAME']
-    c.hipchat_token = ENV['HIPBOT_TOKEN']
   end
 
   on /weather\s(.*)/ do |city|

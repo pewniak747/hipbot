@@ -3,7 +3,7 @@ require 'spec_helper'
 class MyHipbot < Hipbot::Bot
   configure do |config|
     config.name = 'robbot'
-    config.hipchat_token = 'my-hipchat-token'
+    config.jid = 'robbot@chat.hipchat.com'
   end
 
   on /^hello hipbot!$/ do
@@ -24,7 +24,7 @@ describe MyHipbot do
     end
 
     it "should set hipchat token" do
-      subject.hipchat_token.should == 'my-hipchat-token'
+      subject.jid.should == 'robbot@chat.hipchat.com'
     end
   end
 

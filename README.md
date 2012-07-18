@@ -15,8 +15,9 @@ require 'hipbot'
 
 class MyCompanyBot < Hipbot::Bot
   configure do |c|
-    c.hipchat_token = 'secret'
     c.name = 'robot'
+    c.jid = 'changeme@chat.hipchat.com'
+    c.password = 'secret'
   end
 
   # simple reply to '@robot hello!'
