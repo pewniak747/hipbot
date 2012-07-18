@@ -9,21 +9,17 @@ module Hipbot
           initialize_rooms
           initialize_jabber
           join_rooms
-
-          ::EM::add_periodic_timer(1) do
-            puts "tick"
-          end
         end
 
         def reply room, message
-          for_foom room do
+          for_room room do
             puts("Replied to #{room} - #{message}")
             send_message(room, message)
           end
         end
 
         def error room, message, options={}
-          for_foom room do
+          for_room room do
             room.send(@bot.name, message, options.reverse_merge({ color: 'red' }))
           end
         end
@@ -47,12 +43,13 @@ module Hipbot
         end
 
         def join_rooms
-          callback = Proc.new do |time, sender, message|
-            @bot.tell(room.name, sender, message)
-          end
           rooms.each do |room|
+            puts "joining #{room.name}"
             room.connection = ::Jabber::MUC::SimpleMUCClient.new(@jabber)
-            room.connection.on_message(&callback)
+            room.connection.on_message do |time, sender, message|
+              puts "#{time}: #{sender} - #{message}"
+              @bot.tell(room.name, sender, message)
+            end
             room.connection.join("#{room.xmpp_jid}/#{@bot.name}")
           end
         end
