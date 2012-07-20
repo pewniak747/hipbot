@@ -3,7 +3,7 @@ source :rubygems
 gem 'rake'
 gem 'eventmachine'
 gem 'em-http-request'
-gem 'xmpp4r', :git => 'git@github.com:ln/xmpp4r.git'
+gem 'xmpp4r'
 gem 'httparty'
 gem 'active_support'
 gem 'i18n'
