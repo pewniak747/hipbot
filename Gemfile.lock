@@ -1,12 +1,4 @@
 GIT
-  remote: git@github.com:CodeMonkeySteve/ruby-mplayer.git
-  revision: c71b36adb456237454759f81e94eb1c0e2f899e7
-  specs:
-    mplayer (1.0.0)
-      em-synchrony
-      eventmachine
-
-GIT
   remote: git@github.com:ln/xmpp4r.git
   revision: 2dc321a924fa981b0d47180e1a01bc3301c1738c
   specs:
@@ -25,8 +17,6 @@ GEM
     em-http-request (0.3.0)
       addressable (>= 2.0.0)
       escape_utils
-      eventmachine (>= 0.12.9)
-    em-synchrony (0.2.0)
       eventmachine (>= 0.12.9)
     escape_utils (0.2.4)
     eventmachine (0.12.10)
@@ -60,7 +50,6 @@ DEPENDENCIES
   httparty
   i18n
   mocha
-  mplayer!
   rake
   rspec
   xmpp4r!

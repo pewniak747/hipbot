@@ -16,4 +16,3 @@ require 'hipbot/version'
 
 # Plugins
 require 'google_weather'
-require 'mplayer'

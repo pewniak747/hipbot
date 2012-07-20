@@ -14,4 +14,3 @@ gem 'mocha'
 
 # Plugins
 gem 'google-weather'
-gem 'mplayer', :git => 'git@github.com:CodeMonkeySteve/ruby-mplayer.git'

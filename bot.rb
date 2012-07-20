@@ -87,15 +87,6 @@ class MyBot < Hipbot::Bot
   on /^debug/, global: true do
     reply "Debug " + (Jabber::debug = !Jabber::debug ? 'on' : 'off')
   end
-
-  # Might not work at all
-  # Usage: play http://upload.wikimedia.org/wikipedia/commons/a/a9/Tromboon-sample.ogg
-  # Todo: Async
-  on /^play (.+)/, global: true do |url|
-    @player = MPlayer::Player.new("-vo null -prefer-ipv4 #{url}")
-    @player.play(url)
-  end
-
 end
 
 MyBot.start!
