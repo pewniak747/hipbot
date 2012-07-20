@@ -1,4 +1,4 @@
-require 'hipbot'
+require_relative './lib/hipbot'
 
 class MyBot < Hipbot::Bot
   configure do |c|
