@@ -8,7 +8,13 @@ This is a work in progress.
 
 ## Usage
 
-Subclass Hipbot::Bot and customize robot responses.
+Install via RubyGems
+
+```
+gem install hipbot
+```
+
+In bot.rb file, subclass Hipbot::Bot and customize robot responses.
 
 ``` ruby
 require 'hipbot'
@@ -42,8 +48,15 @@ end
 MyCompanyBot.start!
 ```
 
+Run hipbot as daemon by saying:
+
+```
+hipbot start
+```
+
+Run `hipbot` to see all available commands.
+
 ## TODO:
 
 * add support for custom response helpers
 * error handling, reconnecting
-* release gem version
