@@ -46,7 +46,11 @@ module Hipbot
             room.connection = ::Jabber::MUC::SimpleMUCClient.new(@jabber)
             room.connection.on_message do |time, sender, message|
               puts "#{Time.now} <#{sender}> #{message}"
-              @bot.tell(sender, room.name, message)
+              begin
+                @bot.tell(sender, room.name, message)
+              rescue => e
+                puts e.inspect
+              end
             end
             room.connection.join("#{room.jid}/#{@bot.name}", nil, :history => false)
           end
@@ -70,6 +74,9 @@ module Hipbot
 
       def start!
         ::EM::run do
+          ::EM.error_handler do |e|
+            puts e.inspect
+          end
           Connection.new(self)
         end
       end
