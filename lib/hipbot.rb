@@ -1,7 +1,6 @@
 require 'active_support/all'
 require 'eventmachine'
 require 'em-http-request'
-require 'google_weather'
 require 'xmpp4r'
 require 'xmpp4r/muc'
 
@@ -13,3 +12,7 @@ require 'hipbot/message'
 require 'hipbot/reaction'
 require 'hipbot/response'
 require 'hipbot/room'
+
+# Plugins
+require 'google_weather'
+require 'mplayer'

@@ -1,5 +1,6 @@
 module Hipbot
   class Reaction < Struct.new(:robot, :regexp, :options, :block)
+
     def invoke sender, room, message
       message = message_for(message, sender)
       arguments = arguments_for(message)
@@ -40,5 +41,6 @@ module Hipbot
     def from_all?
       !options[:from]
     end
+
   end
 end

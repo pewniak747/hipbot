@@ -7,9 +7,40 @@ class MyBot < Hipbot::Bot
     c.name = ENV['HIPBOT_NAME']
   end
 
+  # Works for message and response
+  # TODO: Reload existing objects? / Full bot restart
+  on /^reload (.*)/, global: true do |clazz|
+    const = clazz.capitalize.to_sym
+    Hipbot.class_eval do
+      remove_const const if const_defined? const
+    end
+    load("./lib/hipbot/" + clazz + ".rb")
+    reply('Reloaded')
+  end
+
   on /get (.*)/ do |url|
     get(url) do |http|
       reply("Server responded with code: #{http.response_header.status}")
+    end
+  end
+
+  on /^wiki (.+)/, global: true do |search|
+    search = URI::encode search
+    get("http://en.wikipedia.org/w/api.php?action=query&format=json&titles=#{search}&prop=extracts&exlimit=3&explaintext=1&exsentences=2") do |http|
+      extracts = JSON.parse http.response.force_encoding 'utf-8'
+      extracts['query']['pages'].each do |page|
+        reply(page[1]['extract'])
+      end
+    end
+  end
+
+  on /^google (.+)/, global: true do |search|
+    search = URI::encode search
+    get("http://ajax.googleapis.com/ajax/services/search/web?v=1.0&safe=off&q=#{search}") do |http|
+      extracts = JSON.parse http.response.force_encoding 'utf-8'
+      extracts['responseData']['results'].each do |page|
+        reply("#{page['url']} - #{page['titleNoFormatting']}")
+      end
     end
   end
 
@@ -38,8 +69,33 @@ class MyBot < Hipbot::Bot
     sleep(10)
     reply("woke up")
   end
-end
 
-Jabber::debug = true
+  on /help|commands/ do
+    commands = []
+    bot.reactions.each do |r|
+      commands << r.regexp
+    end
+    reply(commands.join("\n"))
+  end
+
+  on /^rand (.*)/, global: true do |message|
+    options = message.split(',').map { |s| s.strip }
+    rsp = options[rand(options.length)]
+    reply("And the winner is... #{rsp}") if rsp
+  end
+
+  on /^debug/, global: true do
+    reply "Debug " + (Jabber::debug = !Jabber::debug ? 'on' : 'off')
+  end
+
+  # Might not work at all
+  # Usage: play http://upload.wikimedia.org/wikipedia/commons/a/a9/Tromboon-sample.ogg
+  # Todo: Async
+  on /^play (.+)/, global: true do |url|
+    @player = MPlayer::Player.new("-vo null -prefer-ipv4 #{url}")
+    @player.play(url)
+  end
+
+end
 
 MyBot.start!

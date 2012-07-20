@@ -4,6 +4,7 @@ module Hipbot
       delegate :reply, to: :connection
 
       class Connection
+
         def initialize bot
           initialize_bot(bot)
           initialize_jabber
@@ -44,7 +45,7 @@ module Hipbot
             puts "joining #{room.name}"
             room.connection = ::Jabber::MUC::SimpleMUCClient.new(@jabber)
             room.connection.on_message do |time, sender, message|
-              puts "#{time}: #{sender} - #{message}"
+              puts "#{Time.now} <#{sender}> #{message}"
               @bot.tell(sender, room.name, message)
             end
             room.connection.join("#{room.jid}/#{@bot.name}", nil, :history => false)
@@ -72,6 +73,7 @@ module Hipbot
           Connection.new(self)
         end
       end
+
     end
   end
 end
