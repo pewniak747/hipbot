@@ -58,5 +58,11 @@ Run `hipbot` to see all available commands.
 
 ## TODO:
 
-* add support for custom response helpers
-* error handling, reconnecting
+* add support for custom helpers
+  * mentions - returns list of @mentions in message
+  * sender_name - returns sender's first name
+  * allow injecting custom module to response object, adding arbitrary methods
+* handle reconnecting after disconnect/failure
+* add support for multiple regexps for one response
+* add support for responses in particular room (`on //, :room => ['public'] do ...`)
+* add extended logging
