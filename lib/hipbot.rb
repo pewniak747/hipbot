@@ -16,6 +16,3 @@ require 'hipbot/reaction'
 require 'hipbot/response'
 require 'hipbot/room'
 require 'hipbot/version'
-
-# Plugins
-require 'google_weather'

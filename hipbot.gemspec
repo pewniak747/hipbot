@@ -20,5 +20,4 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "eventmachine", ["~> 0.12.10"]
   gem.add_runtime_dependency "em-http-request", ["~> 0.3.0"]
   gem.add_runtime_dependency "xmpp4r", ["~> 0.5"]
-  gem.add_runtime_dependency "google-weather", ["~> 0.3.0"]
 end

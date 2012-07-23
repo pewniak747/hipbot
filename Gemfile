@@ -11,6 +11,3 @@ gem 'daemons'
 
 gem 'rspec'
 gem 'mocha'
-
-# Plugins
-gem 'google-weather'
