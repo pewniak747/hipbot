@@ -14,4 +14,10 @@ Gem::Specification.new do |gem|
   gem.name          = "hipbot"
   gem.require_paths = ["lib"]
   gem.version       = Hipbot::VERSION
+  gem.add_runtime_dependency "daemons", ["~> 1.1.8"]
+  gem.add_runtime_dependency "active_support", ["~> 3.0.0"]
+  gem.add_runtime_dependency "eventmachine", ["~> 0.12.10"]
+  gem.add_runtime_dependency "em-http-request", ["~> 0.3.0"]
+  gem.add_runtime_dependency "xmpp4r", ["~> 0.5"]
+  gem.add_runtime_dependency "google-weather", ["~> 0.3.0"]
 end
