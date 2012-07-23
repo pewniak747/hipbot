@@ -3,8 +3,9 @@ require 'eventmachine'
 require 'em-http-request'
 require 'xmpp4r'
 require 'xmpp4r/muc'
-require 'hipbot/mucclient'
-require 'hipbot/encoding'
+
+require 'hipbot/patches/mucclient'
+require 'hipbot/patches/encoding'
 
 require 'hipbot/adapters/hipchat'
 require 'hipbot/adapters/telnet'
