@@ -35,7 +35,7 @@ module Hipbot
         end
 
         def initialize_jabber
-          @jabber = ::Jabber::Client.new(@bot.jid)
+          @jabber ||= ::Jabber::Client.new(@bot.jid)
           @jabber.connect
           @jabber.auth(@bot.password)
         end
@@ -77,7 +77,15 @@ module Hipbot
           ::EM.error_handler do |e|
             puts e.inspect
           end
+
           Connection.new(self)
+
+          ::EM::add_periodic_timer(10) {
+            unless @jabber.is_connected?
+              initialize_jabber
+              join_rooms
+            end
+          }
         end
       end
 
