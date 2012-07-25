@@ -13,7 +13,7 @@ module Hipbot
     [:get, :post, :put, :delete].each do |http_verb|
       define_method http_verb do |url, query={}, &block|
         http = ::EM::HttpRequest.new(url).send(http_verb, :query => query)
-        http.callback { block.call(http) if block }
+        http.callback { block.call(::Hipbot::HttpResponse.new(http)) if block }
       end
     end
 
