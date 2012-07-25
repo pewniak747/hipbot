@@ -9,7 +9,7 @@ module Hipbot
 
     def match? sender, room, message
       message = message_for(message, sender)
-      matches?(message) && matches_scope?(message) && matches_sender?(message)
+      matches_regexp(message) && matches_scope?(message) && matches_sender?(message) && matches_room?(room)
     end
 
     private
@@ -22,8 +22,12 @@ module Hipbot
       message.body.match(regexp)[1..-1]
     end
 
-    def matches?(message)
+    def matches_regexp(message)
       regexp =~ message.body
+    end
+
+    def matches_room?(room)
+      !options[:room] || options[:room] == room
     end
 
     def matches_scope?(message)

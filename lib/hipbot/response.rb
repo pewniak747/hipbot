@@ -6,7 +6,7 @@ module Hipbot
     end
 
     private
-    def reply string
+    def reply string, room = self.room
       bot.reply(room, string)
     end
 
@@ -26,7 +26,7 @@ module Hipbot
     end
 
     def mentions
-      message_object.body.scan(/(@[\w]+)/).flatten
+      message_object.body.scan(/(@[\w]+)/).flatten.uniq.delete('@' + bot.name)
     end
 
     def sender
