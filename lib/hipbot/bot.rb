@@ -21,8 +21,8 @@ module Hipbot
     def tell sender, room, message
       return if sender == name
       matches = matching_reactions(sender, room, message)
-      if matches.size > 0
-        matches[0].invoke(sender, room, message)
+      matches.each do |match|
+        match.invoke(sender, room, message)
       end
     end
 

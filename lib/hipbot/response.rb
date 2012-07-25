@@ -18,11 +18,15 @@ module Hipbot
     end
 
     def first_name
-      message_object.sender.split(' ').first
+      message_object.sender.split.first
     end
 
     def message
       message_object.body
+    end
+
+    def mentions
+      message_object.body.scan(/(@[\w]+)/).flatten
     end
 
     def sender
