@@ -62,6 +62,6 @@ Run `hipbot` to see all available commands.
   * allow injecting custom module to response object, adding arbitrary methods
 * handle reconnecting after disconnect/failure - done?
 * handle auto joining on room invite
-* add support for multiple regexps for one response - done?
+* add support for multiple regexps for one response
 * add support for responses in particular room (`on //, :room => ['public'] do ...`)
 * add extended logging
