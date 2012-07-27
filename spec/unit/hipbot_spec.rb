@@ -93,6 +93,38 @@ describe Hipbot::Bot do
       end
     end
 
+    context "messages in particular room" do
+      let(:other_room) { stub }
+      it "should reply" do
+        subject.on /wazzup\?/, room: room do
+          reply('Wazzup, Tom?')
+        end
+        subject.expects(:reply).with(room, 'Wazzup, Tom?')
+        subject.tell(sender, room, '@robot wazzup?')
+      end
+      it "should reply if room acceptable" do
+        subject.on /wazzup\?/, room: [other_room, room] do
+          reply('wazzup, tom?')
+        end
+        subject.expects(:reply).with(room, 'wazzup, tom?')
+        subject.tell(sender, room, '@robot wazzup?')
+      end
+      it "should not reply if room unacceptable" do
+        subject.on /wazzup\?/, room: room do
+          reply('wazzup, tom?')
+        end
+        subject.expects(:reply).with(other_room, "I don't understand \"wazzup?\"")
+        subject.tell(sender, other_room, '@robot wazzup?')
+      end
+      it "should not reply if room does not match" do
+        subject.on /wazzup\?/, room: [other_room] do
+          reply('wazzup, tom?')
+        end
+        subject.expects(:reply).with(room, "I don't understand \"wazzup?\"")
+        subject.tell(sender, room, '@robot wazzup?')
+      end
+    end
+
     context "default variables" do
       it "message" do
         subject.on /.*/ do

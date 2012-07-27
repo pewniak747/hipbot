@@ -23,6 +23,7 @@ module Hipbot
       matches = matching_reactions(sender, room, message)
       if matches.size > 0
         matches[0].invoke(sender, room, message)
+      end
     end
 
     def reactions_list
