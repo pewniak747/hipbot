@@ -26,7 +26,7 @@ module Hipbot
     end
 
     def mentions
-      message_object.body.scan(/(@[\w]+)/).flatten.uniq.delete('@' + bot.name)
+      message_object.recipients.uniq.delete_if { |m| m == bot.name.split.join }
     end
 
     def sender
