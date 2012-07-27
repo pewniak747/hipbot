@@ -9,13 +9,14 @@ module Hipbot
       self.configuration = Configuration.new.tap(&self.class.configuration)
       self.reactions = []
       self.class.reactions.each do |opts|
-        on(opts[0], opts[1], &opts[-1])
+        on(*opts[0], &opts[-1])
       end
       extend(self.adapter || ::Hipbot::Adapters::Hipchat)
     end
 
-    def on regexp, options={}, &block
-      self.reactions << Reaction.new(self, regexp, options, block)
+    def on *regexps, &block
+      options = regexps[-1].kind_of?(Hash) ? regexps.pop : {}
+      self.reactions << Reaction.new(self, regexps, options, block)
     end
 
     def tell sender, room, message
@@ -32,9 +33,9 @@ module Hipbot
 
     class << self
 
-      def on regexp, options={}, &block
+      def on *regexps, &block
         @reactions ||= []
-        @reactions << [regexp, options, block]
+        @reactions << [regexps, block]
       end
 
       def configure &block
@@ -63,7 +64,7 @@ module Hipbot
     end
 
     def default_reaction
-      @default_reaction ||= Reaction.new(self, /.*/, {}, Proc.new {
+      @default_reaction ||= Reaction.new(self, [/.*/], {}, Proc.new {
         reply("I don't understand \"#{message}\"")
       })
     end
