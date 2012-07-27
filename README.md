@@ -63,5 +63,5 @@ Run `hipbot` to see all available commands.
 * handle reconnecting after disconnect/failure - done?
 * handle auto joining on room invite
 * add support for multiple regexps for one response
-* add support for responses in particular room (`on //, :room => ['public'] do ...`)
+* ~~add support for responses in particular room (`on //, :room => ['public'] do ...`)~~
 * add extended logging
