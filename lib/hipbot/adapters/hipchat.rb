@@ -81,7 +81,7 @@ module Hipbot
           Connection.new(self)
 
           ::EM::add_periodic_timer(10) {
-            unless @jabber.is_connected?
+            if !@jabber.nil? && @jabber.is_disconnected?
               initialize_jabber
               join_rooms
             end
