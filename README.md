@@ -6,7 +6,7 @@ Hipbot is a bot for HipChat, written in ruby & eventmachine.
 
 ## Usage
 
-### Installing
+### Install
 
 ```
 gem install hipbot
