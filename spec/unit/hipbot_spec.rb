@@ -44,6 +44,29 @@ describe Hipbot::Bot do
       subject.tell(sender, room, '@robot hello there')
     end
 
+    context "multiple regexps" do
+      before do
+        subject.on /hello (.*)/, /good morning (.*)/, /guten tag (.*)/ do |name|
+          reply("hello #{name}")
+        end
+      end
+
+      it "should understand simple english" do |msg|
+        subject.expects(:reply).with(room, 'hello tom')
+        subject.tell(sender, room, '@robot hello tom')
+      end
+
+      it "should understand english" do |msg|
+        subject.expects(:reply).with(room, 'hello tom')
+        subject.tell(sender, room, '@robot good morning tom')
+      end
+
+      it "should understand german" do |msg|
+        subject.expects(:reply).with(room, 'hello tom')
+        subject.tell(sender, room, '@robot guten tag tom')
+      end
+    end
+
     context "global messages" do
       it "should reply if callback is global" do
         subject.on /^you are (.*)$/, global: true do |adj|

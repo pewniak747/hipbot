@@ -1,5 +1,5 @@
 module Hipbot
-  class Reaction < Struct.new(:robot, :regexp, :options, :block)
+  class Reaction < Struct.new(:robot, :regexps, :options, :block)
 
     def invoke sender, room, message
       message = message_for(message, sender)
@@ -19,11 +19,11 @@ module Hipbot
     end
 
     def arguments_for message
-      message.body.match(regexp)[1..-1]
+      message.body.match(matching_regexp(message))[1..-1]
     end
 
     def matches_regexp?(message)
-      regexp =~ message.body
+      matching_regexp(message).present?
     end
 
     def matches_room?(room)
@@ -38,6 +38,10 @@ module Hipbot
       from_all? || Array(options[:from]).include?(message.sender)
     end
 
+    def matching_regexp(message)
+      regexps.find { |regexp| regexp =~ message.body }
+    end
+
     def global?
       options[:global]
     end
@@ -45,6 +49,5 @@ module Hipbot
     def from_all?
       !options[:from]
     end
-
   end
 end
