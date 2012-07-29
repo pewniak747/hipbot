@@ -27,7 +27,7 @@ module Hipbot
     end
 
     def matches_room?(room)
-      !options[:room] || Array(options[:room]).include?(room)
+      !options[:room] || Array(options[:room]).include?(room.name)
     end
 
     def matches_scope?(message)

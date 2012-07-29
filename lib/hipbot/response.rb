@@ -1,13 +1,15 @@
 module Hipbot
-  class Response < Struct.new(:bot, :reaction, :room, :message_object)
+  class Response < Struct.new(:bot, :reaction, :room, :message)
+    delegate :sender, :recipients, :body, :to => :message
 
     def invoke arguments
       instance_exec(*arguments, &reaction.block)
     end
 
     private
+
     def reply string, room = self.room
-      bot.reply(room, string)
+      bot.reply(room.name, string)
     end
 
     [:get, :post, :put, :delete].each do |http_verb|
@@ -17,24 +19,5 @@ module Hipbot
       end
     end
 
-    def first_name
-      message_object.sender.split.first
-    end
-
-    def message
-      message_object.body
-    end
-
-    def mentions
-      message_object.recipients.uniq.delete_if { |m| m == bot.name.split.join }
-    end
-
-    def sender
-      message_object.sender
-    end
-
-    def recipients
-      message_object.recipients
-    end
   end
 end

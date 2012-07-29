@@ -19,5 +19,13 @@ module Hipbot
     def strip_recipient body
       body.gsub(/^@\w+\W*/, '')
     end
+
+    def first_name
+      sender.split.first
+    end
+
+    def mentions
+      recipients.uniq[1..-1]
+    end
   end
 end

@@ -14,7 +14,6 @@ module Hipbot
 
         def reply room, message
           for_room room do |room|
-            puts("Replied to #{room.name} - #{message}")
             send_message(room, message)
           end
         end
@@ -42,15 +41,22 @@ module Hipbot
 
         def join_rooms
           rooms.each do |room|
-            puts "joining #{room.name}"
+            puts "Joining #{room.name}"
             room.connection = ::Jabber::MUC::SimpleMUCClient.new(@jabber)
             room.connection.on_message do |time, sender, message|
-              puts "#{Time.now} <#{sender}> #{message}"
+              puts "#{room.name} > #{Time.now} <#{sender}> #{message}"
               begin
-                @bot.tell(sender, room.name, message)
+                @bot.tell(sender, room, message)
               rescue => e
                 puts e.inspect
               end
+            end
+            room.users = []
+            room.connection.on_join do |time,nick|
+              room.users << nick
+            end
+            room.connection.on_leave do |time,nick|
+              room.users.delete(nick)
             end
             room.connection.join("#{room.jid}/#{@bot.name}", nil, :history => false)
           end

@@ -23,7 +23,7 @@ module Hipbot
       return if sender == name
       matches = matching_reactions(sender, room, message)
       if matches.size > 0
-        matches[0].invoke(sender, room, message)
+        matches.first.invoke(sender, room, message)
       end
     end
 
@@ -65,7 +65,7 @@ module Hipbot
 
     def default_reaction
       @default_reaction ||= Reaction.new(self, [/.*/], {}, Proc.new {
-        reply("I don't understand \"#{message}\"")
+        reply("I don't understand \"#{message.body}\"")
       })
     end
 
