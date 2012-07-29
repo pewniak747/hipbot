@@ -3,13 +3,13 @@ require 'spec_helper'
 describe Hipbot::Bot do
   context "#on" do
     let(:sender) { stub_everything }
-    let(:room) { stub_everything }
+    let(:room) { stub_everything(:name => 'room') }
 
     it "should reply to no arguments" do
       subject.on /^hello there$/ do
         reply('hi!')
       end
-      subject.expects(:reply).with(room, 'hi!')
+      subject.expects(:reply).with(room.name, 'hi!')
       subject.tell(sender, room, '@robot hello there')
     end
 
@@ -17,7 +17,7 @@ describe Hipbot::Bot do
       subject.on /^you are (.*), robot$/ do |adj|
         reply("i know i'm #{adj}!")
       end
-      subject.expects(:reply).with(room, "i know i'm cool!")
+      subject.expects(:reply).with(room.name, "i know i'm cool!")
       subject.tell(sender, room, '@robot you are cool, robot')
     end
 
@@ -25,7 +25,7 @@ describe Hipbot::Bot do
       subject.on /^send "(.*)" to (.*@.*)$/ do |message, recipient|
         reply("sent \"#{message}\" to #{recipient}")
       end
-      subject.expects(:reply).with(room, 'sent "hello!" to robot@robots.org')
+      subject.expects(:reply).with(room.name, 'sent "hello!" to robot@robots.org')
       subject.tell(sender, room, '@robot send "hello!" to robot@robots.org')
     end
 
@@ -33,14 +33,14 @@ describe Hipbot::Bot do
       subject.on /^hello there$/ do
         reply('hi!')
       end
-      subject.expects(:reply).with(room, 'I don\'t understand "hello robot!"')
+      subject.expects(:reply).with(room.name, 'I don\'t understand "hello robot!"')
       subject.tell(sender, room, '@robot hello robot!')
     end
 
     it "should choose first option when multiple options match" do
       subject.on /hello there/ do reply('hello there') end
       subject.on /hello (.*)/ do reply('hello') end
-      subject.expects(:reply).with(room, 'hello there')
+      subject.expects(:reply).with(room.name, 'hello there')
       subject.tell(sender, room, '@robot hello there')
     end
 
@@ -52,17 +52,17 @@ describe Hipbot::Bot do
       end
 
       it "should understand simple english" do |msg|
-        subject.expects(:reply).with(room, 'hello tom')
+        subject.expects(:reply).with(room.name, 'hello tom')
         subject.tell(sender, room, '@robot hello tom')
       end
 
       it "should understand english" do |msg|
-        subject.expects(:reply).with(room, 'hello tom')
+        subject.expects(:reply).with(room.name, 'hello tom')
         subject.tell(sender, room, '@robot good morning tom')
       end
 
       it "should understand german" do |msg|
-        subject.expects(:reply).with(room, 'hello tom')
+        subject.expects(:reply).with(room.name, 'hello tom')
         subject.tell(sender, room, '@robot guten tag tom')
       end
     end
@@ -72,7 +72,7 @@ describe Hipbot::Bot do
         subject.on /^you are (.*)$/, global: true do |adj|
           reply("i know i'm #{adj}!")
         end
-        subject.expects(:reply).with(room, "i know i'm cool!")
+        subject.expects(:reply).with(room.name, "i know i'm cool!")
         subject.tell(sender, room, 'you are cool')
       end
 
@@ -90,60 +90,60 @@ describe Hipbot::Bot do
         subject.on /wazzup\?/, from: sender do
           reply('Wazzup, Tom?')
         end
-        subject.expects(:reply).with(room, 'Wazzup, Tom?')
+        subject.expects(:reply).with(room.name, 'Wazzup, Tom?')
         subject.tell(sender, room, '@robot wazzup?')
       end
       it "should reply if sender acceptable" do
         subject.on /wazzup\?/, from: [stub, sender] do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(room, 'wazzup, tom?')
+        subject.expects(:reply).with(room.name, 'wazzup, tom?')
         subject.tell(sender, room, '@robot wazzup?')
       end
       it "should not reply if sender unacceptable" do
         subject.on /wazzup\?/, from: sender do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(room, "I don't understand \"wazzup?\"")
+        subject.expects(:reply).with(room.name, "I don't understand \"wazzup?\"")
         subject.tell(stub, room, '@robot wazzup?')
       end
       it "should not reply if sender does not match" do
         subject.on /wazzup\?/, from: [sender] do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(room, "I don't understand \"wazzup?\"")
+        subject.expects(:reply).with(room.name, "I don't understand \"wazzup?\"")
         subject.tell(stub, room, '@robot wazzup?')
       end
     end
 
     context "messages in particular room" do
-      let(:other_room) { stub }
+      let(:other_room) { stub_everything(:name => 'other_room') }
       it "should reply" do
-        subject.on /wazzup\?/, room: room do
+        subject.on /wazzup\?/, room: room.name do
           reply('Wazzup, Tom?')
         end
-        subject.expects(:reply).with(room, 'Wazzup, Tom?')
+        subject.expects(:reply).with(room.name, 'Wazzup, Tom?')
         subject.tell(sender, room, '@robot wazzup?')
       end
       it "should reply if room acceptable" do
-        subject.on /wazzup\?/, room: [other_room, room] do
+        subject.on /wazzup\?/, room: [other_room.name, room.name] do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(room, 'wazzup, tom?')
+        subject.expects(:reply).with(room.name, 'wazzup, tom?')
         subject.tell(sender, room, '@robot wazzup?')
       end
       it "should not reply if room unacceptable" do
-        subject.on /wazzup\?/, room: room do
+        subject.on /wazzup\?/, room: room.name do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(other_room, "I don't understand \"wazzup?\"")
+        subject.expects(:reply).with(other_room.name, "I don't understand \"wazzup?\"")
         subject.tell(sender, other_room, '@robot wazzup?')
       end
       it "should not reply if room does not match" do
-        subject.on /wazzup\?/, room: [other_room] do
+        subject.on /wazzup\?/, room: ['other_room'] do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(room, "I don't understand \"wazzup?\"")
+        subject.expects(:reply).with(room.name, "I don't understand \"wazzup?\"")
         subject.tell(sender, room, '@robot wazzup?')
       end
     end
@@ -151,9 +151,9 @@ describe Hipbot::Bot do
     context "response helper" do
       it "message" do
         subject.on /.*/ do
-          reply("you said: #{message}")
+          reply("you said: #{message.body}")
         end
-        subject.expects(:reply).with(room, "you said: hello")
+        subject.expects(:reply).with(room.name, "you said: hello")
         subject.tell(stub, room, "@robot hello")
       end
 
@@ -161,31 +161,31 @@ describe Hipbot::Bot do
         subject.on /.*/ do
           reply("you are: #{sender}")
         end
-        subject.expects(:reply).with(room, "you are: tom")
+        subject.expects(:reply).with(room.name, "you are: tom")
         subject.tell('tom', room, "@robot hello")
       end
 
       it "recipients" do
         subject.on /.*/ do
-          reply("recipients: #{recipients.join(', ')}")
+          reply("recipients: #{message.recipients.join(', ')}")
         end
-        subject.expects(:reply).with(room, "recipients: robot, dave")
+        subject.expects(:reply).with(room.name, "recipients: robot, dave")
         subject.tell('tom', room, "@robot tell @dave hello from me")
       end
 
       it "first name" do
         subject.on /.*/ do
-          reply(first_name)
+          reply(message.first_name)
         end
-        subject.expects(:reply).with(room, 'Tom')
+        subject.expects(:reply).with(room.name, 'Tom')
         subject.tell('Tom Smith', room, '@robot What\'s my name?')
       end
 
       it "mentions" do
         subject.on /.*/ do
-          reply(mentions.join(' '))
+          reply(message.mentions.join(' '))
         end
-        subject.expects(:reply).with(room, 'dave rachel')
+        subject.expects(:reply).with(room.name, 'dave rachel')
         subject.tell('Tom Smith', room, '@robot do you know @dave? @dave is @rachel father')
       end
     end

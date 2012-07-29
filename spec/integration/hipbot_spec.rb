@@ -34,17 +34,17 @@ describe MyHipbot do
     let(:sender) { stub_everything }
 
     it "should reply to hello" do
-      subject.expects(:reply).with(room, 'hello!')
+      subject.expects(:reply).with(room.name, 'hello!')
       subject.tell(sender, room, '@robbot hello hipbot!')
     end
 
     it "should reply with argument" do
-      subject.expects(:reply).with(room, "I know I'm cool")
+      subject.expects(:reply).with(room.name, "I know I'm cool")
       subject.tell(sender, room, "@robbot you're cool, robot")
     end
 
     it "should reply to global message" do
-      subject.expects(:reply).with(room, "hello!")
+      subject.expects(:reply).with(room.name, "hello!")
       subject.tell(sender, room, "hi everyone!")
     end
   end
