@@ -125,7 +125,7 @@ describe Hipbot::Bot do
       end
     end
 
-    context "default variables" do
+    context "response helper" do
       it "message" do
         subject.on /.*/ do
           reply("you said: #{message}")
@@ -148,6 +148,22 @@ describe Hipbot::Bot do
         end
         subject.expects(:reply).with(room, "recipients: robot, dave")
         subject.tell('tom', room, "@robot tell @dave hello from me")
+      end
+
+      it "first name" do
+        subject.on /.*/ do
+          reply(first_name)
+        end
+        subject.expects(:reply).with(room, 'Tom')
+        subject.tell('Tom Smith', room, '@robot What\'s my name?')
+      end
+
+      it "mentions" do
+        subject.on /.*/ do
+          reply(mentions.join(' '))
+        end
+        subject.expects(:reply).with(room, 'dave rachel')
+        subject.tell('Tom Smith', room, '@robot do you know @dave? @dave is @rachel father')
       end
     end
   end
