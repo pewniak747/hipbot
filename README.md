@@ -130,3 +130,6 @@ Run `hipbot` to see all available commands.
 * ~~add support for multiple regexps for one response~~
 * ~~add support for responses in particular room (`on //, :room => ['public'] do ...`)~~
 * add extended logging
+* add database storage with postgresql adapter
+* handle private messages callbacks in the same way
+* rewrite SimpleMUCClient
