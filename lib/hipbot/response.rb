@@ -9,7 +9,7 @@ module Hipbot
     private
 
     def reply string, room = self.room
-      bot.reply(room.name, string)
+      bot.reply(room, string)
     end
 
     [:get, :post, :put, :delete].each do |http_verb|
