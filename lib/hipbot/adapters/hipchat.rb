@@ -13,9 +13,7 @@ module Hipbot
         end
 
         def reply room, message
-          for_room room do |room|
-            send_message(room, message)
-          end
+          send_message(room, message)
         end
 
         private
@@ -86,13 +84,6 @@ module Hipbot
             ## We can trigger normal message callback but 'reply' won't work since hipchat PM uses
             ## different jid (user_room@chat.hipchat.com/client_name)
             # rooms.first.connection.message_block.call(time, sender, message)
-          end
-        end
-
-        def for_room room
-          room = rooms.find { |r| r.name == room.name }
-          if room.present?
-            yield(room) if block_given?
           end
         end
 
