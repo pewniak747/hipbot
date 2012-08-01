@@ -20,7 +20,7 @@ module Hipbot
       body.gsub(/^@\w+\W*/, '')
     end
 
-    def first_name
+    def sender_name
       sender.split.first
     end
 

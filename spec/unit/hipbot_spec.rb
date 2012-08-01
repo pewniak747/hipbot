@@ -174,9 +174,9 @@ describe Hipbot::Bot do
         subject.tell('tom', room, "@robot tell @dave hello from me")
       end
 
-      it "first name" do
+      it "sender name" do
         subject.on /.*/ do
-          reply(message.first_name)
+          reply(message.sender_name)
         end
         subject.expects(:reply).with(room, 'Tom')
         subject.tell('Tom Smith', room, '@robot What\'s my name?')
