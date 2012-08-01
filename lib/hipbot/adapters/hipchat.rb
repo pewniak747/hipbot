@@ -89,8 +89,8 @@ module Hipbot
           end
         end
 
-        def for_room room_name
-          room = rooms.find { |r| r.name == room_name }
+        def for_room room
+          room = rooms.find { |r| r.name == room.name }
           if room.present?
             yield(room) if block_given?
           end
