@@ -9,7 +9,7 @@ module Hipbot
 
     def recipients
       results = raw_body.scan(/@(\w+)/) + raw_body.scan(/@"(.*)"/)
-      results.flatten
+      results.flatten.uniq
     end
 
     def for? recipient
@@ -25,7 +25,7 @@ module Hipbot
     end
 
     def mentions
-      recipients.uniq[1..-1]
+      recipients[1..-1]
     end
   end
 end

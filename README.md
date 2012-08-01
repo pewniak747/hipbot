@@ -104,9 +104,10 @@ end
 
 Inside response you have access to following variables:
 
-* `message` - sent message
-* `sender` - user who sent message
-* `mentions` - array of @mentions inside message, without bot
+* `message.body` - sent message
+* `message.sender` - user who sent message
+* `message.mentions` - array of @mentions inside message, without bot
+* `room.name` - name of the current room
 
 ### Run
 
