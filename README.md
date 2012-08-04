@@ -119,6 +119,21 @@ hipbot start
 
 Run `hipbot` to see all available commands.
 
+## Deploying to Heroku
+
+Create a Procfile & add it to your repo:
+
+```
+worker: bundle exec hipbot run
+```
+
+```
+heroku create
+git push heroku master
+heroku ps:scale web=0
+heroku ps:scale worker=1
+```
+
 ## TODO:
 
 * add support for custom helpers
