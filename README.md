@@ -84,6 +84,8 @@ end
 
 (Use with caution!)
 
+#### Response helpers
+
 Use http helpers (`get`, `post`, `put`, `delete`) to preform a http request:
 
 ``` ruby
@@ -111,7 +113,7 @@ Inside response you have access to following variables:
 
 You can define your own helpers and use them inside responses like this:
 
-```
+``` ruby
 module HipbotHelpers
   def project_name
     "#{room.name}-project"
