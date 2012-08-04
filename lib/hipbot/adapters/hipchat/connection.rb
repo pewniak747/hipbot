@@ -1,15 +1,13 @@
 module Hipbot
   module Adapters
     module Hipchat
-      delegate :reply, to: :connection
-
       class Connection
-
         def initialize bot
           initialize_bot(bot)
           initialize_jabber
           initialize_rooms
           join_rooms
+          setup_timers
         end
 
         def reply room, message
@@ -87,6 +85,15 @@ module Hipbot
           end
         end
 
+        def setup_timers
+          ::EM::add_periodic_timer(10) {
+            if !@jabber.nil? && @jabber.is_disconnected?
+              initialize_jabber
+              join_rooms
+            end
+          }
+        end
+
         def send_message room, message, jid = nil
           room.connection.say(message, jid)
         end
@@ -95,24 +102,6 @@ module Hipbot
           @rooms || []
         end
       end
-
-      def start!
-        ::EM::run do
-          ::EM.error_handler do |e|
-            puts e.inspect
-          end
-
-          Connection.new(self)
-
-          ::EM::add_periodic_timer(10) {
-            if !@jabber.nil? && @jabber.is_disconnected?
-              initialize_jabber
-              join_rooms
-            end
-          }
-        end
-      end
-
     end
   end
 end
