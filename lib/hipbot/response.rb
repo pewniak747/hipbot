@@ -2,6 +2,11 @@ module Hipbot
   class Response < Struct.new(:bot, :reaction, :room, :message)
     delegate :sender, :recipients, :body, :to => :message
 
+    def initialize bot, reaction, room, message
+      super
+      extend(bot.helpers)
+    end
+
     def invoke arguments
       instance_exec(*arguments, &reaction.block)
     end

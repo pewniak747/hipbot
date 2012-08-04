@@ -109,6 +109,27 @@ Inside response you have access to following variables:
 * `message.mentions` - array of @mentions inside message, without bot
 * `room.name` - name of the current room
 
+You can define your own helpers and use them inside responses like this:
+
+```
+module HipbotHelpers
+  def project_name
+    "#{room.name}-project"
+  end
+end
+
+class Bot < Hipbot::Bot
+  configure do |c|
+    c.helpers = HipbotHelpers
+    # rest of configuration
+  end
+
+  on /what's the project called\?/ do
+    reply(project_name)
+  end
+end
+```
+
 ### Run
 
 Run hipbot as daemon by saying:
@@ -136,10 +157,10 @@ heroku ps:scale worker=1
 
 ## TODO:
 
-* add support for custom helpers
+* ~~add support for custom helpers~~
   * ~~mentions - returns list of @mentions in message~~
   * ~~sender_name - returns sender's first name~~
-  * allow injecting custom module to response object, adding arbitrary methods
+  * ~~allow injecting custom module to response object, adding arbitrary methods~~
 * ~~handle reconnecting after disconnect/failure~~
 * handle auto joining on room invite
 * ~~add support for multiple regexps for one response~~
