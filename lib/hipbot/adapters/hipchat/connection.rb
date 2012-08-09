@@ -14,6 +14,12 @@ module Hipbot
           send_message(room, message)
         end
 
+        def restart!
+          leave_rooms
+          initialize_rooms
+          join_rooms
+        end
+
         private
 
         def initialize_rooms
@@ -83,6 +89,13 @@ module Hipbot
             ## different jid (user_room@chat.hipchat.com/client_name)
             # rooms.first.connection.message_block.call(time, sender, message)
           end
+        end
+
+        def leave_rooms
+          rooms.each do |room|
+            room.connection.exit
+          end
+          @rooms = []
         end
 
         def setup_timers
