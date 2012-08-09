@@ -60,6 +60,9 @@ module Hipbot
                 @bot.tell(sender, room, message)
               rescue => e
                 puts e.inspect
+                e.backtrace.each do |line|
+                  puts line
+                end
               end
             end
 

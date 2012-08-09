@@ -7,6 +7,9 @@ module Hipbot
         ::EM::run do
           ::EM.error_handler do |e|
             puts e.inspect
+            e.backtrace.each do |line|
+              puts line
+            end
           end
 
           Connection.new(self)
