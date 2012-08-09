@@ -16,6 +16,7 @@ module Hipbot
 
         def restart!
           leave_rooms
+          initialize_jabber
           initialize_rooms
           join_rooms
         end
