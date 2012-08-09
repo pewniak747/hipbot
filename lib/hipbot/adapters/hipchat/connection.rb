@@ -23,7 +23,6 @@ module Hipbot
         private
 
         def initialize_rooms
-          @rooms ||= []
           @muc_browser = Jabber::MUC::MUCBrowser.new(@jabber)
           @rooms = @muc_browser.muc_rooms('conf.hipchat.com').map { |jid, name|
             ::Hipbot::Room.new(jid, name)
@@ -96,9 +95,9 @@ module Hipbot
 
         def leave_rooms
           rooms.each do |room|
+            puts "Leaving #{room.name}"
             room.connection.exit
           end
-          @rooms = []
         end
 
         def setup_timers
