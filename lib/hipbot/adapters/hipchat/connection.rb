@@ -77,8 +77,8 @@ module Hipbot
           # TODO handle sending private messages with 'reply'.
           # Simplest way is to add room object for each private chat with param
           # to distinguish whether to use conf or chat domain
-          rooms.first.connection.on_private_message do |time, jid, message|
-            send_message rooms.first, 'hello!', jid
+          # rooms.first.connection.on_private_message do |time, jid, message|
+            # send_message rooms.first, 'hello!', jid
 
             ## Alternative sending:
             # msg = ::Jabber::Message.new(jid, 'hello!')
@@ -88,7 +88,7 @@ module Hipbot
             ## We can trigger normal message callback but 'reply' won't work since hipchat PM uses
             ## different jid (user_room@chat.hipchat.com/client_name)
             # rooms.first.connection.message_block.call(time, sender, message)
-          end
+          # end
         end
 
         def leave_rooms
