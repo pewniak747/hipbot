@@ -1,6 +1,7 @@
 module Hipbot
   class Message
-    attr_accessor :body, :sender, :raw_body
+    attr_reader :body, :sender, :raw_body
+
     def initialize body, sender
       self.raw_body = body
       self.body = strip_recipient(body)
@@ -25,7 +26,8 @@ module Hipbot
     end
 
     def mentions
-      recipients[1..-1]
+      recipients[1..-1] # TODO: Fix global message case
     end
+
   end
 end

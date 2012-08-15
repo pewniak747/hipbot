@@ -14,7 +14,6 @@ module Hipbot
 
     private
 
-    # TODO: this is pointless since we can get actual message object from xmpp4r
     def message_for message, sender
       Message.new(message, sender)
     end

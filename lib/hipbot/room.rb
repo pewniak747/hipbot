@@ -1,6 +1,5 @@
 module Hipbot
-  class Room < Struct.new(:jid, :name)
-    attr_accessor :connection, :users
+  class Room < Struct.new(:name, :users)
     alias_method :to_s, :name
 
   end

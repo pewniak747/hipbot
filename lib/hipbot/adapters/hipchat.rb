@@ -1,31 +1,38 @@
 module Hipbot
   module Adapters
     module Hipchat
-      delegate :reply, to: :connection
+      delegate :reply, :users, :rooms, to: :connection
 
       class Connection
+        attr_reader :users, :rooms
 
         def initialize bot
+          @rooms = {}
+          @users = {}
           initialize_bot(bot)
-          initialize_jabber
+          initialize_client
           initialize_rooms
-          join_rooms
+          initialize_users
+          initialize_callbacks
         end
 
-        def reply room, message
-          for_room room do |room|
-            send_message(room, message)
-          end
+        def reply room_name, message
+          @client.send_to_room room_name, message
         end
 
         private
 
         def initialize_rooms
-          @rooms ||= []
-          @muc_browser = Jabber::MUC::MUCBrowser.new(@jabber)
-          @rooms = @muc_browser.muc_rooms('conf.hipchat.com').map { |jid, name|
-            ::Hipbot::Room.new(jid, name)
-          }
+          @client.join_all_rooms
+          @client.rooms.each do |k, v|
+            @rooms[k] = Room.new(v[:name], v[:user])
+          end
+        end
+
+        def initialize_users
+          @client.users.each do |k, v|
+            @users[k] = User.new(v[:name], v[:email], v[:mention], v[:title], v[:photo])
+          end
         end
 
         def initialize_bot bot
@@ -33,75 +40,43 @@ module Hipbot
           @bot.connection = self
         end
 
-        def initialize_jabber
-          @jabber ||= ::Jabber::Client.new(@bot.jid)
-          @jabber.connect
-          @jabber.auth(@bot.password)
-          @jabber.send(::Jabber::Presence.new.set_type(:available))
+        def initialize_client
+          @client = ::Jabber::MUC::HipchatClient.new(@bot.jid + '/' + @bot.name, @bot.password)
         end
 
-        def join_rooms
-          rooms.each do |room|
-            puts "Joining #{room.name}"
+        def initialize_callbacks
 
-            # TODO rewrite (Simple)MUCClient to handle many rooms from one object
-            # as there is no need to create distinct objects and callback for each
-            # room since all of them have to process same data from @jabber stream.
-            # We probably should be able to do something like this:
-            # @jabber.set_presence([room1, room2], :available)
-            # @jabber.on_event do |time, jid, message| # JID includes sender and room/chat
-            # @jabber.send(jid, message)
-            room.connection = ::Jabber::MUC::SimpleMUCClient.new(@jabber)
-            room.connection.on_message do |time, sender, message|
-              puts "#{room.name} > #{time} <#{sender}> #{message}"
-              begin
-                @bot.tell(sender, room, message)
-              rescue => e
-                puts e.inspect
-              end
+          @client.on_message do |room, user, message|
+            puts "#{room} > #{time} <#{user}> #{message}"
+            begin
+              @bot.tell(user, room, message)
+            rescue => e
+              puts e.inspect
             end
-
-            # TODO Get and store all user data from HipChat API
-            room.users = []
-            room.connection.on_join do |time, nick|
-              room.users << nick
-            end
-            room.connection.on_leave do |time, nick|
-              room.users.delete(nick)
-            end
-            room.connection.join("#{room.jid}/#{@bot.name}", nil, :history => false)
           end
 
-          # TODO handle sending private messages with 'reply'.
-          # Simplest way is to add room object for each private chat with param
-          # to distinguish whether to use conf or chat domain
-          rooms.first.connection.on_private_message do |time, jid, message|
-            send_message rooms.first, 'hello!', jid
+          # @client.on_private_message do |user, message|
+          #   @client.send_to_user user, 'hello!'
+          # end
 
-            ## Alternative sending:
-            # msg = ::Jabber::Message.new(jid, 'hello!')
-            # msg.type = :chat
-            # @jabber.send(msg)
+          # @client.on_invite do |room|
+          #   @client.join(room)
+          # end
 
-            ## We can trigger normal message callback but 'reply' won't work since hipchat PM uses
-            ## different jid (user_room@chat.hipchat.com/client_name)
-            # rooms.first.connection.message_block.call(time, sender, message)
-          end
-        end
+          # @client.on_join do |room, user, pres|
+          #   @client.send_to_room room, "Hello, #{user}!"
+          # end
 
-        def for_room room_name
-          room = rooms.find { |r| r.name == room_name }
-          if room.present?
-            yield(room) if block_given?
-          end
-        end
+          # @client.on_leave do |room, user, pres|
+          #   @client.send_to_room room, "Bye bye, #{user}!"
+          # end
 
-        def send_message room, message, jid = nil
-          room.connection.say(message, jid)
-        end
+          # @client.on_presence do |room, user, pres|
+          #   if room && pres == 'available'
+          #     @client.send_to_room room, "Welcome back, #{user}!"
+          #   end
+          # end
 
-        def rooms
-          @rooms || []
         end
       end
 
@@ -114,9 +89,8 @@ module Hipbot
           Connection.new(self)
 
           ::EM::add_periodic_timer(10) {
-            if !@jabber.nil? && @jabber.is_disconnected?
-              initialize_jabber
-              join_rooms
+            if @client.present?
+              @client.keep_alive(@bot.password)
             end
           }
         end
