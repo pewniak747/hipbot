@@ -1,4 +1,3 @@
-require 'pry'
 require 'active_support/all'
 require 'eventmachine'
 require 'em-http-request'

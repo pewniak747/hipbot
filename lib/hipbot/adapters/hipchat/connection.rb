@@ -1,7 +1,7 @@
 module Hipbot
   module Adapters
     module Hipchat
-      delegate :reply, :users, :rooms, to: :connection
+      delegate :reply, :users, :rooms, :send_to_room, :send_to_user, to: :connection
 
       class Connection
         attr_reader :users, :rooms
@@ -17,6 +17,7 @@ module Hipbot
         end
 
         def reply room_name, message
+          # TODO: use send_to_room / send_to_user instead
           @client.send_to_room room_name, message
         end
 
@@ -100,10 +101,6 @@ module Hipbot
               @client.keep_alive(@bot.password)
             end
           }
-        end
-
-        def send_message room, message, jid = nil
-          room.connection.say(message, jid)
         end
 
       end
