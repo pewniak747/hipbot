@@ -1,6 +1,6 @@
 module Hipbot
   class Message
-    attr_reader :body, :sender, :raw_body
+    attr_accessor :body, :sender, :raw_body
 
     def initialize body, sender
       self.raw_body = body

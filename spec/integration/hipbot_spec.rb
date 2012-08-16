@@ -36,7 +36,7 @@ end
 
 describe MyHipbot do
   # TODO: replace with actual objects
-  let(:room) { Hipbot::Room.new('123', 'private') }
+  let(:room) { Hipbot::Room.new('private') }
   let(:sender) { 'John Doe' }
 
   describe "configuration" do

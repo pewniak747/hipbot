@@ -12,7 +12,6 @@ module Jabber
       attr_reader :rooms, :users
 
       def initialize(my_jid, password)
-
         @my_jid  = (my_jid.kind_of?(JID) ? my_jid : JID.new(my_jid))
 
         @stream = Client.new(@my_jid.strip) # TODO: Error Handling
@@ -33,8 +32,7 @@ module Jabber
         @private_message_cbs = CallbackList.new
         @invite_cbs = CallbackList.new
 
-        if connect(password) && get_users
-          get_rooms
+        if connect(password) && get_users && get_rooms
           activate_callbacks
         end
       end
@@ -46,6 +44,12 @@ module Jabber
         end
         @rooms.each do |room_name, room|
           join(room_name, nil, opts)
+        end
+      end
+
+      def exit_all_rooms
+        @rooms.each do |room_name, room|
+          exit(room_name)
         end
       end
 
@@ -62,22 +66,15 @@ module Jabber
         end
 
         room_jid.resource = name
-        send_presence(:available, room_jid, nil, xmuc) # TODO: Handle all join responses
+        set_presence(:available, room_jid, nil, xmuc) # TODO: Handle all join responses
       end
 
       def exit(room_name, reason = nil)
         room_jid = get_room(room_name)
-        return false if @rooms.delete(room_jid).empty?
+        return false unless room_jid
 
-        send_presence(:unavailable, room_jid, reason) { |r|
-          Jabber::debuglog "Exit: #{room_name}"
-          if r.kind_of?(Presence) and r.type == :unavailable and r.from == room_jid
-            @leave_cbs.process(r)
-            true
-          else
-            false
-          end
-        }
+        Jabber::debuglog "Exit: #{room_name}"
+        set_presence(:unavailable, room_jid, reason)
       end
 
       def keep_alive password
@@ -144,6 +141,15 @@ module Jabber
         end
       end
 
+      def set_presence(type, to = nil, reason = nil, xmuc = nil, &block)
+        pres = Presence.new(:chat, reason)
+        pres.type = type
+        pres.to = to if to
+        pres.from = @my_jid
+        pres.add(xmuc) if xmuc
+        @stream.send(pres) { |r| block.call(r) }
+      end
+
       private
 
       def send_message(type, to, text)
@@ -151,16 +157,6 @@ module Jabber
         message.type = type
         message.from = @my_jid
         @stream.send(message)
-      end
-
-      def send_presence(type, to = nil, reason = nil, xmuc = nil, &block)
-        pres = Presence.new(:chat, :chat)
-        pres.type = type
-        pres.to = to if to
-        pres.from = @my_jid
-        pres.status = reason if reason
-        pres.add(xmuc) if xmuc
-        @stream.send(pres) { |r| block.call(r) }
       end
 
       def handle_presence(pres, call_join_cbs = true)
@@ -230,7 +226,6 @@ module Jabber
         Jabber::debuglog "Connected to stream"
         @stream.auth(password) # TODO: Error handling
         Jabber::debuglog "Authenticated"
-        send_presence(:available)
       end
 
       def activate_callbacks
