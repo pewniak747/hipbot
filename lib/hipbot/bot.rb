@@ -1,7 +1,7 @@
 module Hipbot
   class Bot
     attr_accessor :reactions, :configuration, :connection
-    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter]
+    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
     alias_method :to_s, :name
 

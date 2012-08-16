@@ -3,6 +3,11 @@ module Hipbot
     delegate :sender, :recipients, :body, :to => :message
     delegate :rooms, :users, :to => :bot
 
+    def initialize bot, reaction, room, message
+      super
+      extend(bot.helpers)
+    end
+
     def invoke arguments
       instance_exec(*arguments, &reaction.block)
     end

@@ -7,29 +7,40 @@ module Hipbot
         attr_reader :users, :rooms
 
         def initialize bot
-          @rooms = {}
-          @users = {}
           initialize_bot(bot)
           initialize_client
+          @client.join_all_rooms
           initialize_rooms
           initialize_users
           initialize_callbacks
+          setup_timers
         end
 
         def reply room_name, message
           @client.send_to_room room_name, message
         end
 
+        def restart!
+          @client.exit_all_rooms
+          # TODO: Nice quit
+          initialize_client
+          @client.join_all_rooms
+          initialize_rooms
+          initialize_users
+          initialize_callbacks
+        end
+
         private
 
         def initialize_rooms
-          @client.join_all_rooms
+          @rooms = {}
           @client.rooms.each do |k, v|
             @rooms[k] = Room.new(v[:name], v[:user])
           end
         end
 
         def initialize_users
+          @users = {}
           @client.users.each do |k, v|
             @users[k] = User.new(v[:name], v[:email], v[:mention], v[:title], v[:photo])
           end
@@ -41,17 +52,21 @@ module Hipbot
         end
 
         def initialize_client
+          ::Jabber.debug = true
           @client = ::Jabber::MUC::HipchatClient.new(@bot.jid + '/' + @bot.name, @bot.password)
+          @client.set_presence(:available, nil, 'hello humans!')
         end
 
         def initialize_callbacks
-
           @client.on_message do |room, user, message|
-            puts "#{room} > #{time} <#{user}> #{message}"
+            puts "#{room} > #{Time.now} <#{user}> #{message}"
             begin
               @bot.tell(user, room, message)
             rescue => e
               puts e.inspect
+              e.backtrace.each do |line|
+                puts line
+              end
             end
           end
 
@@ -78,24 +93,20 @@ module Hipbot
           # end
 
         end
-      end
 
-      def start!
-        ::EM::run do
-          ::EM.error_handler do |e|
-            puts e.inspect
-          end
-
-          Connection.new(self)
-
+        def setup_timers
           ::EM::add_periodic_timer(10) {
             if @client.present?
               @client.keep_alive(@bot.password)
             end
           }
         end
-      end
 
+        def send_message room, message, jid = nil
+          room.connection.say(message, jid)
+        end
+
+      end
     end
   end
 end

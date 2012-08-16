@@ -84,6 +84,8 @@ end
 
 (Use with caution!)
 
+#### Response helpers
+
 Use http helpers (`get`, `post`, `put`, `delete`) to preform a http request:
 
 ``` ruby
@@ -109,6 +111,27 @@ Inside response you have access to following variables:
 * `message.mentions` - array of @mentions inside message, without bot
 * `room.name` - name of the current room
 
+You can define your own helpers and use them inside responses like this:
+
+``` ruby
+module HipbotHelpers
+  def project_name
+    "#{room.name}-project"
+  end
+end
+
+class Bot < Hipbot::Bot
+  configure do |c|
+    c.helpers = HipbotHelpers
+    # rest of configuration
+  end
+
+  on /what's the project called\?/ do
+    reply(project_name)
+  end
+end
+```
+
 ### Run
 
 Run hipbot as daemon by saying:
@@ -119,17 +142,35 @@ hipbot start
 
 Run `hipbot` to see all available commands.
 
+## Deploying to Heroku
+
+Create a Procfile & add it to your repo:
+
+```
+worker: bundle exec hipbot run
+```
+
+```
+heroku create
+git push heroku master
+heroku ps:scale web=0
+heroku ps:scale worker=1
+```
+
 ## TODO:
 
-* add support for custom helpers
+* handle auto joining on room invite
+* add database storage with postgresql adapter
+* rewrite SimpleMUCClient
+* add extended logging
+* handle private messages callbacks in the same way
+
+### Done:
+
+* ~~add support for custom helpers~~
   * ~~mentions - returns list of @mentions in message~~
   * ~~sender_name - returns sender's first name~~
-  * allow injecting custom module to response object, adding arbitrary methods
+  * ~~allow injecting custom module to response object, adding arbitrary methods~~
 * ~~handle reconnecting after disconnect/failure~~
-* handle auto joining on room invite
 * ~~add support for multiple regexps for one response~~
 * ~~add support for responses in particular room (`on //, :room => ['public'] do ...`)~~
-* add extended logging
-* add database storage with postgresql adapter
-* handle private messages callbacks in the same way
-* rewrite SimpleMUCClient
