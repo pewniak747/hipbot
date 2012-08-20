@@ -98,7 +98,7 @@ module Hipbot
         end
 
         def with_room room_name
-          room = @rooms.find { |r| r.name == room_name }
+          room = @rooms[room_name]
           yield(room) if room && block_given?
         end
 
