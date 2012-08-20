@@ -59,10 +59,12 @@ module Hipbot
         end
 
         def initialize_callbacks
-          @client.on_message do |room, user, message|
-            puts "#{room} > #{Time.now} <#{user}> #{message}"
+          @client.on_message do |room_name, user, message|
+            puts "#{room_name} > #{Time.now} <#{user}> #{message}"
             begin
-              @bot.tell(user, room, message)
+              with_room(room_name) do |room|
+                @bot.tell(user, room, message)
+              end
             rescue => e
               puts e.inspect
               e.backtrace.each do |line|
@@ -93,6 +95,11 @@ module Hipbot
           #   end
           # end
 
+        end
+
+        def with_room room_name
+          room = @rooms.find { |r| r[:name] == room_name }
+          yield(room) if room && block_given?
         end
 
         def setup_timers
