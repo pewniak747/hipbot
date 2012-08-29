@@ -16,9 +16,9 @@ module Hipbot
           setup_timers
         end
 
-        def reply room_name, message
+        def reply room, message
           # TODO: use send_to_room / send_to_user instead
-          @client.send_to_room room_name, message
+          @client.send_to_room room, message
         end
 
         def restart!

@@ -87,8 +87,8 @@ module Jabber
         @my_jid.resource
       end
 
-      def send_to_room(room_name, text)
-        room_jid = get_room(room_name)
+      def send_to_room(room, text)
+        room_jid = get_room(room.name)
         return false unless room_jid
         send_message(:groupchat, room_jid, text)
       end
