@@ -208,7 +208,7 @@ module Jabber
             @private_message_cbs.process(user[:name], message.body)
           end
         elsif message.type == :groupchat
-          user = @users[message.from.resource]
+          user = @users[message.from.resource] || {:name => message.from.resource}
           room = find_by_jid(@rooms, message.from.strip)
           return false unless user && room
           @message_cbs.process(room[:name], user[:name], message.body)
