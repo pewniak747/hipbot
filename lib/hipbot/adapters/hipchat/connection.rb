@@ -87,7 +87,7 @@ module Hipbot
           end
 
           @client.on_leave do |room, user, pres|
-            @rooms[room].users.delete(user)
+            @rooms[room].users.delete(user) unless @rooms[room].users.nil?
           end
 
           # @client.on_presence do |room, user, pres|
