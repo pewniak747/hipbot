@@ -81,13 +81,14 @@ module Hipbot
           #   @client.join(room)
           # end
 
-          # @client.on_join do |room, user, pres|
-          #   @client.send_to_room room, "Hello, #{user}!"
-          # end
+          @client.on_join do |room, user, pres|
+            @rooms[room].users ||= []
+            @rooms[room].users << user
+          end
 
-          # @client.on_leave do |room, user, pres|
-          #   @client.send_to_room room, "Bye bye, #{user}!"
-          # end
+          @client.on_leave do |room, user, pres|
+            @rooms[room].users.delete(user)
+          end
 
           # @client.on_presence do |room, user, pres|
           #   if room && pres == 'available'
