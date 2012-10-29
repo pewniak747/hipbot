@@ -193,6 +193,7 @@ module Jabber
             return false unless room
             @invite_cbs.process(room[:name])
           }
+        elsif is_subject?(message)
         elsif message.type == :chat
           user = find_by_jid(@users, message.from.strip)
           return false unless user
@@ -219,6 +220,10 @@ module Jabber
 
       def is_invite?(message)
         !message.x.nil? && message.x.kind_of?(XMUCUser) && message.x.first.kind_of?(XMUCUserInvite)
+      end
+
+      def is_subject?(message)
+        message.type == :groupchat && message.children.first.name == "subject"
       end
 
       def connect password
