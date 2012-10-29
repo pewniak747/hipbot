@@ -156,7 +156,11 @@ module Jabber
         message = Message.new(to, text)
         message.type = type
         message.from = @my_jid
-        @stream.send(message)
+        @send_thread.join if @send_thread.present? && @send_thread.alive?
+        @send_thread = Thread.new {
+          @stream.send(message)
+          sleep(0.2)
+        }
       end
 
       def handle_presence(pres, call_join_cbs = true)
