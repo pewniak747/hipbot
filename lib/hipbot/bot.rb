@@ -1,6 +1,8 @@
 module Hipbot
   class Bot
     attr_accessor :reactions, :configuration, :connection
+    cattr_accessor :default_reaction
+
     CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
     alias_method :to_s, :name
@@ -11,6 +13,7 @@ module Hipbot
       self.class.reactions.each do |opts|
         on(*opts[0], &opts[-1])
       end
+      self.reactions << default_reaction if default_reaction
       extend(self.adapter || ::Hipbot::Adapters::Hipchat)
     end
 
@@ -27,15 +30,14 @@ module Hipbot
       end
     end
 
-    def reactions_list
-      self.reactions.regexp
-    end
-
     class << self
-
       def on *regexps, &block
         @reactions ||= []
         @reactions << [regexps, block]
+      end
+
+      def default &block
+        @@default_reaction = Reaction.new(self, [/.*/], {}, &block)
       end
 
       def configure &block
@@ -53,20 +55,12 @@ module Hipbot
       def start!
         new.start!
       end
-
     end
 
     private
 
     def matching_reactions sender, room, message
-      all_reactions = reactions + [default_reaction]
-      all_reactions.select { |r| r.match?(sender, room, message) }
-    end
-
-    def default_reaction
-      @default_reaction ||= Reaction.new(self, [/.*/], {}, Proc.new {
-        reply("I don't understand \"#{message.body}\"")
-      })
+      self.reactions.select { |r| r.match?(sender, room, message) }
     end
 
   end
