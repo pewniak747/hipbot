@@ -13,7 +13,7 @@ module Hipbot
       self.class.reactions.each do |opts|
         on(*opts[0], &opts[-1])
       end
-      self.reactions << default_reaction if default_reaction
+      on(*default_reaction[0], &default_reaction[-1]) if default_reaction.present?
       extend(self.adapter || ::Hipbot::Adapters::Hipchat)
     end
 
@@ -37,7 +37,7 @@ module Hipbot
       end
 
       def default &block
-        @@default_reaction = Reaction.new(self, [/.*/], {}, &block)
+        @@default_reaction = [[/.*/], block]
       end
 
       def configure &block

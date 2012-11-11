@@ -30,11 +30,12 @@ describe Hipbot::Bot do
     end
 
     it "should say when does not understand" do
-      subject.on /^hello there$/ do
-        reply('hi!')
+      Hipbot::Bot.default do |message|
+        reply("I don't understand \"#{message}\"")
       end
-      subject.expects(:reply).with(room, 'I don\'t understand "hello robot!"')
+      subject.expects(:reply)
       subject.tell(sender, room, '@robot hello robot!')
+      Hipbot::Bot.class_variable_set :@@default_reaction, nil
     end
 
     it "should choose first option when multiple options match" do
@@ -104,14 +105,14 @@ describe Hipbot::Bot do
         subject.on /wazzup\?/, from: sender do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(room, "I don't understand \"wazzup?\"")
+        subject.expects(:reply).never
         subject.tell(stub, room, '@robot wazzup?')
       end
       it "should not reply if sender does not match" do
         subject.on /wazzup\?/, from: [sender] do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(room, "I don't understand \"wazzup?\"")
+        subject.expects(:reply).never
         subject.tell(stub, room, '@robot wazzup?')
       end
     end
@@ -137,14 +138,14 @@ describe Hipbot::Bot do
         subject.on /wazzup\?/, room: 'room' do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(other_room, "I don't understand \"wazzup?\"")
+        subject.expects(:reply).never
         subject.tell(sender, other_room, '@robot wazzup?')
       end
       it "should not reply if room does not match" do
         subject.on /wazzup\?/, room: ['other_room'] do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(room, "I don't understand \"wazzup?\"")
+        subject.expects(:reply).never
         subject.tell(sender, room, '@robot wazzup?')
       end
     end
