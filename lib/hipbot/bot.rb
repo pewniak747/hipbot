@@ -37,7 +37,7 @@ module Hipbot
       end
 
       def default &block
-        @@default_reaction = [[/.*/], block]
+        @@default_reaction = [[/(.*)/], block]
       end
 
       def configure &block

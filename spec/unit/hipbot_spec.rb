@@ -33,7 +33,7 @@ describe Hipbot::Bot do
       Hipbot::Bot.default do |message|
         reply("I don't understand \"#{message}\"")
       end
-      subject.expects(:reply)
+      subject.expects(:reply).with(room, 'I don\'t understand "hello robot!"')
       subject.tell(sender, room, '@robot hello robot!')
       Hipbot::Bot.class_variable_set :@@default_reaction, nil
     end
