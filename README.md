@@ -84,6 +84,8 @@ end
 
 (Use with caution!)
 
+For more examples, check out (https://github.com/pewniak747/hipbot/tree/master/examples)
+
 #### Response helpers
 
 Use http helpers (`get`, `post`, `put`, `delete`) to preform a http request:
