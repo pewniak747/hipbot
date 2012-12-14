@@ -13,7 +13,6 @@ class SampleBot < Hipbot::Bot
   end
 
   on /^image (.*)/i do |img_str|
-        require 'google_image_api'
         max = 8
         # TODO: Wrap it up in a try/catch
         if img_str != ""
