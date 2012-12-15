@@ -12,20 +12,24 @@ class SampleBot < Hipbot::Bot
     c.name = ENV['HIPBOT_NAME']
   end
 
-  on /^image (.*)/i do |img_str|
-        max = 8
-        # TODO: Wrap it up in a try/catch
-        if img_str != ""
-            results = GoogleImageApi.find(img_str, :rsz => max)
-            if results.raw_data["responseStatus"] == 200
-                rand_max = (max > results.images.size) ? results.images.size : max
-                rand_loc = rand(rand_max)
-                reply(results.images[rand_loc]['unescapedUrl'])
-            else
-                reply('An error occurred, try again please')
-            end
-        end
+  on /\Aimage (.+)/i do |img_str|
+    max = 8 # max number of results you want to pull a random
+    puts img_str
+    begin
+      results = GoogleImageApi.find(img_str, :rsz => max)
+      if results.raw_data["responseStatus"] == 200 and results.images.size > 0
+        reply(results.images.take(max).sample['unescapedUrl'])
+      elsif results.raw_data["responseStatus"] == 200 and results.images.size == 0
+        reply("I'm sorry I couldn't find an image for #{img_str}")
+      else
+        reply("I'm sorry, an error occurred. Try again please") # Most likely a 403
+      end
+    rescue => e
+      reply("I'm sorry, an error occurred trying to find that image")
+      p e.message
+      p e.backtrace
     end
+  end
 end
 
 SampleBot.start!
