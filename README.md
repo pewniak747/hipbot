@@ -161,14 +161,14 @@ heroku ps:scale worker=1
 
 ## TODO:
 
-* handle auto joining on room invite
-* add database storage with postgresql adapter
-* rewrite SimpleMUCClient
+* add plugins support
 * add extended logging
-* handle private messages callbacks in the same way
 
 ### Done:
 
+* ~~rewrite SimpleMUCClient~~
+* ~~handle private messages callbacks~~
+* ~~handle auto joining on room invite~~
 * ~~add support for custom helpers~~
   * ~~mentions - returns list of @mentions in message~~
   * ~~sender_name - returns sender's first name~~
