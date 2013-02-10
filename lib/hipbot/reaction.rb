@@ -19,7 +19,7 @@ module Hipbot
     end
 
     def arguments_for message
-      message.body.match(matching_regexp(message))[1..-1]
+      (global? ? message.raw_body : message.body).match(matching_regexp(message))[1..-1]
     end
 
     def matches_regexp?(message)
@@ -39,15 +39,15 @@ module Hipbot
     end
 
     def matching_regexp(message)
-      regexps.find { |regexp| regexp =~ message.body }
+      @matching_regexp ||= regexps.find{ |regexp| regexp =~ (global? ? message.raw_body : message.body) }
     end
 
     def global?
-      options[:global]
+      !!options[:global]
     end
 
     def from_all?
-      !options[:from]
+      options[:from].blank?
     end
   end
 end
