@@ -1,11 +1,11 @@
 module Hipbot
   class Message
-    attr_accessor :body, :sender, :raw_body
+    attr_reader :body, :sender, :raw_body
 
     def initialize body, sender
-      self.raw_body = body
-      self.body = strip_recipient(body)
-      self.sender = sender
+      @raw_body = body
+      @body = strip_recipient(body)
+      @sender = sender
     end
 
     def recipients
