@@ -1,7 +1,7 @@
 module Hipbot
   module Adapters
     module Telnet
-      def reply room, message
+      def send_to_room room, message
         connection.send_data("#{self}:#{room}:#{message}\n")
       end
 
