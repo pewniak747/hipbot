@@ -175,8 +175,7 @@ module Jabber
         roster.items.map do |jid, item|
           {
             :item => item,
-            # :vcard => vcard.get(jid)
-            :vcard => {}
+            :vcard => vcard.get(jid)
           }
         end.compact
       end
