@@ -22,8 +22,7 @@ module Hipbot
       self.reactions << Reaction.new(self, regexps, options, block)
     end
 
-    def tell sender, room, message
-      return if sender == name
+    def react sender, room, message
       matches = matching_reactions(sender, room, message)
       if matches.size > 0
         matches.first.invoke(sender, room, message)

@@ -9,7 +9,7 @@ module Hipbot
 
         def receive_data(data)
           sender, room, message = *data.strip.split(':')
-          @bot.tell(sender, room, message)
+          @bot.react(sender, room, message)
         end
       end
     end
