@@ -9,40 +9,40 @@ describe Hipbot::Bot do
       subject.on /^hello there$/ do
         reply('hi!')
       end
-      subject.expects(:reply).with(room, 'hi!')
-      subject.tell(sender, room, '@robot hello there')
+      subject.expects(:send_to_room).with(room, 'hi!')
+      subject.react(sender, room, '@robot hello there')
     end
 
     it "should reply with one argument" do
       subject.on /^you are (.*), robot$/ do |adj|
         reply("i know i'm #{adj}!")
       end
-      subject.expects(:reply).with(room, "i know i'm cool!")
-      subject.tell(sender, room, '@robot you are cool, robot')
+      subject.expects(:send_to_room).with(room, "i know i'm cool!")
+      subject.react(sender, room, '@robot you are cool, robot')
     end
 
     it "should reply with multiple arguments" do
       subject.on /^send "(.*)" to (.*@.*)$/ do |message, recipient|
         reply("sent \"#{message}\" to #{recipient}")
       end
-      subject.expects(:reply).with(room, 'sent "hello!" to robot@robots.org')
-      subject.tell(sender, room, '@robot send "hello!" to robot@robots.org')
+      subject.expects(:send_to_room).with(room, 'sent "hello!" to robot@robots.org')
+      subject.react(sender, room, '@robot send "hello!" to robot@robots.org')
     end
 
     it "should say when does not understand" do
       Hipbot::Bot.default do |message|
         reply("I don't understand \"#{message}\"")
       end
-      subject.expects(:reply).with(room, 'I don\'t understand "hello robot!"')
-      subject.tell(sender, room, '@robot hello robot!')
+      subject.expects(:send_to_room).with(room, 'I don\'t understand "hello robot!"')
+      subject.react(sender, room, '@robot hello robot!')
       Hipbot::Bot.class_variable_set :@@default_reaction, nil
     end
 
     it "should choose first option when multiple options match" do
       subject.on /hello there/ do reply('hello there') end
       subject.on /hello (.*)/ do reply('hello') end
-      subject.expects(:reply).with(room, 'hello there')
-      subject.tell(sender, room, '@robot hello there')
+      subject.expects(:send_to_room).with(room, 'hello there')
+      subject.react(sender, room, '@robot hello there')
     end
 
     context "multiple regexps" do
@@ -53,18 +53,18 @@ describe Hipbot::Bot do
       end
 
       it "should understand simple english" do |msg|
-        subject.expects(:reply).with(room, 'hello tom')
-        subject.tell(sender, room, '@robot hello tom')
+        subject.expects(:send_to_room).with(room, 'hello tom')
+        subject.react(sender, room, '@robot hello tom')
       end
 
       it "should understand english" do |msg|
-        subject.expects(:reply).with(room, 'hello tom')
-        subject.tell(sender, room, '@robot good morning tom')
+        subject.expects(:send_to_room).with(room, 'hello tom')
+        subject.react(sender, room, '@robot good morning tom')
       end
 
       it "should understand german" do |msg|
-        subject.expects(:reply).with(room, 'hello tom')
-        subject.tell(sender, room, '@robot guten tag tom')
+        subject.expects(:send_to_room).with(room, 'hello tom')
+        subject.react(sender, room, '@robot guten tag tom')
       end
     end
 
@@ -73,16 +73,16 @@ describe Hipbot::Bot do
         subject.on /^you are (.*)$/, global: true do |adj|
           reply("i know i'm #{adj}!")
         end
-        subject.expects(:reply).with(room, "i know i'm cool!")
-        subject.tell(sender, room, 'you are cool')
+        subject.expects(:send_to_room).with(room, "i know i'm cool!")
+        subject.react(sender, room, 'you are cool')
       end
 
       it "should not reply if callback not global" do
         subject.on /^you are (.*)$/ do |adj|
           reply("i know i'm #{adj}!")
         end
-        subject.expects(:reply).never
-        subject.tell(sender, room, 'you are cool')
+        subject.expects(:send_to_room).never
+        subject.react(sender, room, 'you are cool')
       end
     end
 
@@ -91,29 +91,29 @@ describe Hipbot::Bot do
         subject.on /wazzup\?/, from: sender do
           reply('Wazzup, Tom?')
         end
-        subject.expects(:reply).with(room, 'Wazzup, Tom?')
-        subject.tell(sender, room, '@robot wazzup?')
+        subject.expects(:send_to_room).with(room, 'Wazzup, Tom?')
+        subject.react(sender, room, '@robot wazzup?')
       end
       it "should reply if sender acceptable" do
         subject.on /wazzup\?/, from: [stub, sender] do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(room, 'wazzup, tom?')
-        subject.tell(sender, room, '@robot wazzup?')
+        subject.expects(:send_to_room).with(room, 'wazzup, tom?')
+        subject.react(sender, room, '@robot wazzup?')
       end
       it "should not reply if sender unacceptable" do
         subject.on /wazzup\?/, from: sender do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).never
-        subject.tell(stub, room, '@robot wazzup?')
+        subject.expects(:send_to_room).never
+        subject.react(stub, room, '@robot wazzup?')
       end
       it "should not reply if sender does not match" do
         subject.on /wazzup\?/, from: [sender] do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).never
-        subject.tell(stub, room, '@robot wazzup?')
+        subject.expects(:send_to_room).never
+        subject.react(stub, room, '@robot wazzup?')
       end
     end
 
@@ -124,29 +124,29 @@ describe Hipbot::Bot do
         subject.on /wazzup\?/, room: 'room' do
           reply('Wazzup, Tom?')
         end
-        subject.expects(:reply).with(room, 'Wazzup, Tom?')
-        subject.tell(sender, room, '@robot wazzup?')
+        subject.expects(:send_to_room).with(room, 'Wazzup, Tom?')
+        subject.react(sender, room, '@robot wazzup?')
       end
       it "should reply if room acceptable" do
         subject.on /wazzup\?/, room: ['other_room', 'room'] do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).with(room, 'wazzup, tom?')
-        subject.tell(sender, room, '@robot wazzup?')
+        subject.expects(:send_to_room).with(room, 'wazzup, tom?')
+        subject.react(sender, room, '@robot wazzup?')
       end
       it "should not reply if room unacceptable" do
         subject.on /wazzup\?/, room: 'room' do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).never
-        subject.tell(sender, other_room, '@robot wazzup?')
+        subject.expects(:send_to_room).never
+        subject.react(sender, other_room, '@robot wazzup?')
       end
       it "should not reply if room does not match" do
         subject.on /wazzup\?/, room: ['other_room'] do
           reply('wazzup, tom?')
         end
-        subject.expects(:reply).never
-        subject.tell(sender, room, '@robot wazzup?')
+        subject.expects(:send_to_room).never
+        subject.react(sender, room, '@robot wazzup?')
       end
     end
 
@@ -155,40 +155,40 @@ describe Hipbot::Bot do
         subject.on /.*/ do
           reply("you said: #{message.body}")
         end
-        subject.expects(:reply).with(room, "you said: hello")
-        subject.tell(stub, room, "@robot hello")
+        subject.expects(:send_to_room).with(room, "you said: hello")
+        subject.react(stub, room, "@robot hello")
       end
 
       it "sender" do
         subject.on /.*/ do
           reply("you are: #{sender}")
         end
-        subject.expects(:reply).with(room, "you are: tom")
-        subject.tell('tom', room, "@robot hello")
+        subject.expects(:send_to_room).with(room, "you are: tom")
+        subject.react('tom', room, "@robot hello")
       end
 
       it "recipients" do
         subject.on /.*/ do
           reply("recipients: #{message.recipients.join(', ')}")
         end
-        subject.expects(:reply).with(room, "recipients: robot, dave")
-        subject.tell('tom', room, "@robot tell @dave hello from me")
+        subject.expects(:send_to_room).with(room, "recipients: robot, dave")
+        subject.react('tom', room, "@robot tell @dave hello from me")
       end
 
       it "sender name" do
         subject.on /.*/ do
           reply(message.sender_name)
         end
-        subject.expects(:reply).with(room, 'Tom')
-        subject.tell('Tom Smith', room, '@robot What\'s my name?')
+        subject.expects(:send_to_room).with(room, 'Tom')
+        subject.react('Tom Smith', room, '@robot What\'s my name?')
       end
 
       it "mentions" do
         subject.on /.*/ do
           reply(message.mentions.join(' '))
         end
-        subject.expects(:reply).with(room, 'dave rachel')
-        subject.tell('Tom Smith', room, '@robot do you know @dave? @dave is @rachel father')
+        subject.expects(:send_to_room).with(room, 'dave rachel')
+        subject.react('Tom Smith', room, '@robot do you know @dave? @dave is @rachel father')
       end
     end
   end

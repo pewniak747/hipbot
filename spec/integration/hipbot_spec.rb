@@ -51,30 +51,30 @@ describe MyHipbot do
 
   describe "replying" do
     it "should reply to hello" do
-      subject.expects(:reply).with(room, 'hello!')
-      subject.tell(sender, room, '@robbot hello hipbot!')
+      subject.expects(:send_to_room).with(room, 'hello!')
+      subject.react(sender, room, '@robbot hello hipbot!')
     end
 
     it "should reply with argument" do
-      subject.expects(:reply).with(room, "I know I'm cool")
-      subject.tell(sender, room, "@robbot you're cool, robot")
+      subject.expects(:send_to_room).with(room, "I know I'm cool")
+      subject.react(sender, room, "@robbot you're cool, robot")
     end
 
     it "should reply to global message" do
-      subject.expects(:reply).with(room, "hello!")
-      subject.tell(sender, room, "hi everyone!")
+      subject.expects(:send_to_room).with(room, "hello!")
+      subject.react(sender, room, "hi everyone!")
     end
   end
 
   describe "custom helpers" do
     it "should have access to room variable" do
-      subject.expects(:reply).with(room, 'private project')
-      subject.tell(sender, room, '@robbot tell me the project name')
+      subject.expects(:send_to_room).with(room, 'private project')
+      subject.react(sender, room, '@robbot tell me the project name')
     end
 
     it "should have access to message variable" do
-      subject.expects(:reply).with(room, 'you are John')
-      subject.tell(sender, room, '@robbot tell me my name')
+      subject.expects(:send_to_room).with(room, 'you are John')
+      subject.react(sender, room, '@robbot tell me my name')
     end
   end
 end
