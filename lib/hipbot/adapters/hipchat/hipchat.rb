@@ -1,8 +1,6 @@
 module Hipbot
   module Adapters
     module Hipchat
-      delegate :reply, to: :connection
-
       def start!
         ::EM::run do
           ::EM.error_handler do |e|
@@ -14,6 +12,10 @@ module Hipbot
 
           Connection.new(self)
         end
+      end
+
+      def method_missing(sym, *args, &block)
+        connection.send sym, *args, &block
       end
     end
   end
