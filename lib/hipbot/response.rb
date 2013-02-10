@@ -15,7 +15,8 @@ module Hipbot
     private
 
     def reply string, room = self.room
-      bot.reply(room, string)
+      return bot.send_to_user(sender, string) if room.nil?
+      bot.send_to_room(room, string)
     end
 
     [:get, :post, :put, :delete].each do |http_verb|
