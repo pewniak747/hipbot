@@ -149,25 +149,6 @@ module Jabber
         rooms
       end
 
-      def get_room jid
-        iq = Iq.new(:get, jid)
-        iq.from = @stream.jid
-        iq.add(Discovery::IqQueryDiscoItems.new)
-        binding.pry
-        rooms = []
-        @stream.send_with_id(iq) do |answer|
-          answer.query.each_element('item') do |item|
-            details = {}
-            item.first.children.each{ |c| details[c.name] = c.text }
-            rooms << {
-              :item => item,
-              :details => details
-            }
-          end
-        end
-        rooms
-      end
-
       def get_users
         roster = Roster::Helper.new(@stream) # TODO: Error handling
         vcard = Vcard::Helper.new(@stream) # TODO: Error handling
