@@ -9,59 +9,26 @@ module Jabber
   module MUC
     class HipchatClient
 
-      attr_reader :rooms, :users
-
-      def initialize(my_jid, password)
-        @my_jid  = (my_jid.kind_of?(JID) ? my_jid : JID.new(my_jid))
+      def initialize(jid)
+        @my_jid  = JID.new(jid)
 
         @stream = Client.new(@my_jid.strip) # TODO: Error Handling
         Jabber::debuglog "Stream initialized"
-        @muc_browser = MUCBrowser.new(@stream) # TODO: Error Handling
-        Jabber::debuglog "MUCBrowser initialized"
-
         @chat_domain = @my_jid.domain
 
-        @rooms = {}
-        @rooms_lock = Mutex.new
-        @users = {}
-
-        @join_cbs = CallbackList.new
-        @leave_cbs = CallbackList.new
         @presence_cbs = CallbackList.new
         @message_cbs = CallbackList.new
         @private_message_cbs = CallbackList.new
         @invite_cbs = CallbackList.new
-
-        if connect(password) && get_users && get_rooms
-          activate_callbacks
-        end
       end
 
-      def join_all_rooms opts = {:history => false}
-        if @rooms.empty?
-          Jabber::debuglog "No rooms to join"
-          return false
-        end
-        @rooms.each do |room_name, room|
-          join(room_name, nil, opts)
-        end
-      end
-
-      def exit_all_rooms
-        @rooms.each do |room_name, room|
-          exit(room_name)
-        end
-      end
-
-      def join(room_name, password = nil, opts = {})
-        room_jid = get_room(room_name).clone
-        return false unless room_jid
-
+      def join(jid, password = nil, opts = { :history => false })
+        room_jid = JID.new(jid)
         xmuc = XMUC.new
         xmuc.password = password
 
         if !opts[:history]
-          history = REXML::Element.new('history').tap {|h| h.add_attribute('maxstanzas','0') }
+          history = REXML::Element.new('history').tap{ |h| h.add_attribute('maxstanzas','0') }
           xmuc.add_element history
         end
 
@@ -69,11 +36,9 @@ module Jabber
         set_presence(:available, room_jid, nil, xmuc) # TODO: Handle all join responses
       end
 
-      def exit(room_name, reason = nil)
-        room_jid = get_room(room_name)
-        return false unless room_jid
-
-        Jabber::debuglog "Exit: #{room_name}"
+      def exit(jid, reason = nil)
+        room_jid = JID.new(jid)
+        Jabber::debuglog "Exiting #{jid}"
         set_presence(:unavailable, room_jid, reason)
       end
 
@@ -87,56 +52,30 @@ module Jabber
         @my_jid.resource
       end
 
-      def send_to_room(room, text)
-        room_jid = get_room(room.name)
-        return false unless room_jid
-        send_message(:groupchat, room_jid, text)
-      end
-
-      def send_to_user(user_name, text)
-        user_jid = get_user(user_name)
-        return false unless user_jid
-        send_message(:chat, user_jid, text)
-      end
-
-      def on_join(prio = 0, ref = nil, &block)
-        @join_cbs.add(prio, ref) do |room_name, user_name, pres_type|
-          block.call(room_name, user_name, pres_type)
-          false
-        end
-      end
-
-      def on_leave(prio = 0, ref = nil, &block)
-        @leave_cbs.add(prio, ref) do |room_name, user_name, pres_type|
-          block.call(room_name, user_name, pres_type)
-          false
-        end
-      end
-
       def on_presence(prio = 0, ref = nil, &block)
-        @presence_cbs.add(prio, ref) do |room_name, user_name, pres_type|
-          block.call(room_name, user_name, pres_type)
+        @presence_cbs.add(prio, ref) do |room_jid, user_name, pres_type|
+          block.call(room_jid, user_name, pres_type)
           false
         end
       end
 
       def on_message(prio = 0, ref = nil, &block)
-        @message_cbs.add(prio, ref) do |room_name, user_name, message_body|
-          block.call(room_name, user_name, message_body)
+        @message_cbs.add(prio, ref) do |room_jid, user_name, message|
+          block.call(room_jid, user_name, message)
           false
         end
       end
 
       def on_private_message(prio = 0, ref = nil, &block)
-        @private_message_cbs.add(prio, ref) do |user_name, message_body|
-          block.call(user_name, message_body)
+        @private_message_cbs.add(prio, ref) do |user_jid, message|
+          block.call(user_jid, message)
           false
         end
       end
 
       def on_invite(prio = 0, ref = nil, &block)
-        @invite_cbs.add(prio, ref) do |room_name|
-          block.call(room_name)
+        @invite_cbs.add(prio, ref) do |room_jid, user_name, room_name, topic|
+          block.call(room_jid, user_name, room_name, topic)
           false
         end
       end
@@ -150,12 +89,12 @@ module Jabber
         @stream.send(pres) { |r| block.call(r) }
       end
 
-      private
-
-      def send_message(type, to, text)
-        message = Message.new(to, text)
+      def send_message(type, jid, text, subject = nil)
+        message = Message.new(JID.new(jid), text)
         message.type = type
         message.from = @my_jid
+        message.subject = subject
+
         @send_thread.join if @send_thread.present? && @send_thread.alive?
         @send_thread = Thread.new {
           @stream.send(message)
@@ -163,83 +102,26 @@ module Jabber
         }
       end
 
-      def handle_presence(pres, call_join_cbs = true)
-        user = find_by_jid(@users, pres.from.strip)
-        return @presence_cbs.process(nil, user[:name], pres.type.to_s) if user
-
-        user = @users[pres.from.resource]
-        room = find_by_jid(@rooms, pres.from.strip)
-        return false unless user && room
-
-        if pres.type == :unavailable or pres.type == :error
-          @leave_cbs.process(room[:name], user[:name], pres.type.to_s)
-        else
-          if !room[:users].include? user
-            @rooms_lock.synchronize {
-              room[:users] << user
-            }
-            @join_cbs.process(room[:name], user[:name], pres.type.to_s) if call_join_cbs
-          else
-            @presence_cbs.process(room[:name], user[:name], pres.type.to_s)
-          end
-        end
-      end
-
-      def handle_message(message)
-        if is_invite?(message)
-          t = Thread.new {
-            Thread.current.abort_on_exception = true
-            # TODO: Get new room info only
-            @rooms_lock.synchronize {
-              get_rooms
-            }
-            room = find_by_jid(@rooms, message.from.strip)
-            return false unless room
-            @invite_cbs.process(room[:name])
-          }
-        elsif is_subject?(message)
-        elsif message.type == :chat
-          user = find_by_jid(@users, message.from.strip)
-          return false unless user
-          if message.body.nil?
-            # Chat window states
-            if message.active?
-            elsif message.inactive?
-            elsif message.composing?
-            elsif message.gone?
-            elsif message.paused?
-            end
-          else
-            @private_message_cbs.process(user[:name], message.body)
-          end
-        elsif message.type == :groupchat
-          user = @users[message.from.resource] || {:name => message.from.resource}
-          room = find_by_jid(@rooms, message.from.strip)
-          return false unless user && room
-          @message_cbs.process(room[:name], user[:name], message.body)
-        elsif message.type == :error
+      def connect password
+        begin
+          @stream.connect
+          Jabber::debuglog "Connected to stream"
+          @stream.auth(password)
+          Jabber::debuglog "Authenticated"
+          @muc_browser = MUCBrowser.new(@stream)
+          Jabber::debuglog "MUCBrowser initialized"
+          @conference_domain = @muc_browser.muc_rooms(@chat_domain).keys.first
+          Jabber::debuglog "No conference domain found" if !@conference_domain.present?
+          true
+        rescue => e
+          Jabber::debuglog "Connection failed"
           false
         end
       end
 
-      def is_invite?(message)
-        !message.x.nil? && message.x.kind_of?(XMUCUser) && message.x.first.kind_of?(XMUCUserInvite)
-      end
-
-      def is_subject?(message)
-        message.type == :groupchat && message.children.first.name == "subject"
-      end
-
-      def connect password
-        @stream.connect # TODO: Error handling
-        Jabber::debuglog "Connected to stream"
-        @stream.auth(password) # TODO: Error handling
-        Jabber::debuglog "Authenticated"
-      end
-
       def activate_callbacks
         @stream.add_presence_callback(150, self) { |presence|
-          handle_presence(presence)
+          @presence_cbs.process(presence.from.strip, presence.from.resource, presence.type.to_s)
         }
 
         @stream.add_message_callback(150, self) { |message|
@@ -249,73 +131,80 @@ module Jabber
       end
 
       def get_rooms
-        @conference_domain ||= @muc_browser.muc_rooms(@chat_domain).keys.first
-        if !@conference_domain.present?
-          Jabber::debuglog "No conference domain found"
-          false
+        iq = Iq.new(:get, @conference_domain)
+        iq.from = @stream.jid
+        iq.add(Discovery::IqQueryDiscoItems.new)
+
+        rooms = []
+        @stream.send_with_id(iq) do |answer|
+          answer.query.each_element('item') do |item|
+            details = {}
+            item.first.children.each{ |c| details[c.name] = c.text }
+            rooms << {
+              :item => item,
+              :details => details
+            }
+          end
         end
-        @muc_browser.muc_rooms(@conference_domain).each{ |room_jid, room_name|
-          @rooms[room_name] = {
-            :name => room_name,
-            :jid => room_jid.strip,
-            :users => []
-          }
-        }
-        Jabber::debuglog "Got #{@rooms.count} rooms"
-        true
+        rooms
+      end
+
+      def get_room jid
+        iq = Iq.new(:get, jid)
+        iq.from = @stream.jid
+        iq.add(Discovery::IqQueryDiscoItems.new)
+        binding.pry
+        rooms = []
+        @stream.send_with_id(iq) do |answer|
+          answer.query.each_element('item') do |item|
+            details = {}
+            item.first.children.each{ |c| details[c.name] = c.text }
+            rooms << {
+              :item => item,
+              :details => details
+            }
+          end
+        end
+        rooms
       end
 
       def get_users
         roster = Roster::Helper.new(@stream) # TODO: Error handling
         vcard = Vcard::Helper.new(@stream) # TODO: Error handling
         roster.wait_for_roster
-        roster.items.each do |jid, item|
-          next if jid == @my_jid.strip
-          user = vcard.get(jid)
-          @users[item.iname] = {
-            :name => item.iname,
-            :jid => jid,
-            :mention => item.attributes['mention_name'],
-            :email => user['EMAIL/USERID'],
-            :title => user['TITLE'],
-            :photo => user['PHOTO']
+        roster.items.map do |jid, item|
+          {
+            :item => item,
+            # :vcard => vcard.get(jid)
+            :vcard => {}
           }
-        end
-        Jabber::debuglog "Got #{@users.count} users"
-        true
-      end
-
-      def get_room(name, type = :jid)
-        if @rooms[name].nil?
-          Jabber::debuglog "Unknown room '#{name}'"
-          return false
-        end
-        @rooms[name][type]
-      end
-
-      def get_user(name, type = :jid)
-        if @users[name].nil?
-          Jabber::debuglog "Unknown user '#{name}'"
-          return false
-        end
-        @users[name][type]
-      end
-
-      def find_by_jid elements, jid
-        elem = elements.find { |k, v| v[:jid] == jid }
-        if elem.nil?
-          Jabber::debuglog "Unknown element jid '#{jid}'"
-          return false
-        end
-        elem.last
+        end.compact
       end
 
       def deactivate_callbacks
-        @rooms = {}
-        @users = {}
         @stream.delete_presence_callback(self)
         @stream.delete_message_callback(self)
         Jabber::debuglog "Callbacks deactivated"
+      end
+
+      private
+
+      def handle_message(message)
+        if is_invite?(message)
+          room_name = message.children.last.first_element_text('name')
+          topic = message.children.last.first_element_text('topic')
+          @invite_cbs.process(message.from.strip, message.from.resource, room_name, topic)
+        elsif message.type == :chat
+          @private_message_cbs.process(message.from.strip, message)
+        elsif message.type == :groupchat
+          @message_cbs.process(message.from.strip, message.from.resource, message)
+        elsif message.type == :error
+          false
+        end
+      end
+
+      def is_invite?(message)
+        !message.x.nil? && message.x.kind_of?(XMUCUser) && message.x.first.kind_of?(XMUCUserInvite)
       end
 
     end
