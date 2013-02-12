@@ -39,7 +39,7 @@ module Hipbot
     end
 
     def matching_regexp(message)
-      @matching_regexp ||= regexps.find{ |regexp| regexp =~ (global? ? message.raw_body : message.body) }
+      regexps.find{ |regexp| regexp =~ (global? ? message.raw_body : message.body) }
     end
 
     def global?
