@@ -1,4 +1,5 @@
 require 'active_support/all'
+require 'ostruct'
 require 'eventmachine'
 require 'em-http-request'
 require 'xmpp4r'
