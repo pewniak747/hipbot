@@ -30,14 +30,14 @@ class MyHipbot < Hipbot::Bot
     reply(project_name)
   end
   on /tell me my name/ do
-    reply(sender_first_name)
+    reply("you are #{sender.first_name}")
   end
 end
 
 describe MyHipbot do
   # TODO: replace with actual objects
-  let(:room) { Hipbot::Room.new(self, '1', 'private', 'topic') }
-  let(:sender) { 'John Doe' }
+  let(:room)   { Hipbot::Room.create('1', 'private', topic: 'topic') }
+  let(:sender) { Hipbot::User.create('1', 'John Doe') }
 
   describe "configuration" do
     it "should set robot name" do
