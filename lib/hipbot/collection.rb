@@ -23,8 +23,17 @@ module Hipbot
         @collection ||= {}
       end
 
-      def [] item
+      def [] *items
+        items.first.is_a?(Array) ? find_many(*items) : find_one(items.first)
+      end
+
+      def find_one item
         collection[item] || collection.find{ |_, i| i.name == item }.try(:last)
+      end
+
+      def find_many *items
+        items.flatten!
+        items.map{ |i| find_one(i) }.compact.uniq
       end
 
       protected

@@ -4,8 +4,8 @@ module Hipbot
 
     def initialize body, sender
       @raw_body = body
-      @body = strip_recipient(body)
-      @sender = sender
+      @body     = strip_recipient(body)
+      @sender   = sender
     end
 
     def recipients
