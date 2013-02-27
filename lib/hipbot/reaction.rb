@@ -51,11 +51,11 @@ module Hipbot
     end
 
     def rooms
-      Array(options[:room]).flat_map{ |v| bot.rooms[v].presence || v }
+      Array(options[:room]).flat_map{ |v| bot.rooms[v].presence || [v] }
     end
 
     def users
-      Array(options[:from]).flat_map{ |v| bot.teams[v].presence || v }
+      Array(options[:from]).flat_map{ |v| bot.teams[v].presence || [v] }
     end
   end
 end
