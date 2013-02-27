@@ -1,15 +1,11 @@
 module Hipbot
-  class User < Struct.new(:id, :name, :email, :mention, :title, :photo)
-    alias_method :to_s, :name
-
-    def initialize bot, *args
-      super *args
-      @bot = bot
-    end
-
+  class User < Collection
     def send_message message
-      @bot.send_to_user name, message
+      self.class.bot.send_to_user name, message
     end
 
+    def first_name
+      name.split.first
+    end
   end
 end

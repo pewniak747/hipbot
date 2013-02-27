@@ -1,19 +1,22 @@
 module Hipbot
-  class Room < Struct.new(:id, :name, :topic, :users)
-    alias_method :to_s, :name
+  class Room < Collection
+    attr_accessor :user_ids
 
-    def initialize(bot, *args)
-      super *args, []
-      @bot = bot
+    def initialize *args
+      super
+      self.user_ids = []
     end
 
     def set_topic topic
-      @bot.set_topic(self, topic)
+      self.class.bot.set_topic(self, topic)
     end
 
     def send_message message
-      @bot.send_to_room(self, message)
+      self.class.bot.send_to_room(self, message)
     end
 
+    def users
+      user_ids.map{ |id| User[id] }
+    end
   end
 end
