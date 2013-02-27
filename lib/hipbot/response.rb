@@ -1,7 +1,6 @@
 module Hipbot
   class Response < Struct.new(:bot, :reaction, :room, :message)
     delegate :sender, :recipients, :body, :to => :message
-    delegate :rooms, :users, :to => :bot
 
     def initialize bot, reaction, room, message
       super
@@ -20,11 +19,10 @@ module Hipbot
     end
 
     [:get, :post, :put, :delete].each do |http_verb|
-      define_method http_verb do |url, query={}, &block|
+      define_method http_verb do |url, query = {}, &block|
         http = ::EM::HttpRequest.new(url).send(http_verb, :query => query)
         http.callback { block.call(::Hipbot::HttpResponse.new(http)) if block }
       end
     end
-
   end
 end

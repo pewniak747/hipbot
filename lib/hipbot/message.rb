@@ -21,13 +21,8 @@ module Hipbot
       body.gsub(/^@\w+\W*/, '')
     end
 
-    def sender_name
-      sender.split.first
-    end
-
     def mentions
       recipients[1..-1] # TODO: Fix global message case
     end
-
   end
 end

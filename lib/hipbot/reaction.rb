@@ -35,7 +35,7 @@ module Hipbot
     end
 
     def matches_sender?(message)
-      from_all? || Array(options[:from]).include?(message.sender)
+      from_all? || Array(options[:from]).include?(message.sender.name)
     end
 
     def matching_regexp(message)

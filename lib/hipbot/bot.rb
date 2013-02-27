@@ -24,9 +24,7 @@ module Hipbot
 
     def react sender, room, message
       matches = matching_reactions(sender, room, message)
-      if matches.size > 0
-        matches.first.invoke(sender, room, message)
-      end
+      matches.first.invoke(sender, room, message) if matches.size > 0
     end
 
     class << self

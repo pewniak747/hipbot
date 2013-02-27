@@ -2,8 +2,6 @@ module Hipbot
   module Adapters
     module Hipchat
       class Connection
-        attr_reader :users, :rooms
-
         def initialize bot
           @bot = bot
           @bot.connection = self
@@ -21,8 +19,7 @@ module Hipbot
           @client.send_message(:groupchat, room.id, message)
         end
 
-        def send_to_user(user_name, message)
-          user = @users[user_name]
+        def send_to_user(user, message)
           @client.send_message(:chat, user.id, message)
         end
 
@@ -53,60 +50,54 @@ module Hipbot
         end
 
         def initialize_rooms
-          @rooms ||= {}
+          Room.bot = @bot
           @client.get_rooms.each do |r|
-            @rooms[r[:item].iname] ||= Room.new(
-              @bot,
-              r[:item].jid,
-              r[:item].iname,
-              r[:details]['topic']
-            )
+            Room.create(r[:item].jid, r[:item].iname, topic: r[:details]['topic'])
           end
           true
         end
 
         def initialize_users
-          @users ||= {}
+          User.bot = @bot
           @client.get_users.each do |v|
-            @users[v[:item].iname] ||= User.new(
-              @bot,
-              v[:item].jid,
-              v[:item].iname,
-              v[:vcard]['EMAIL/USERID'],
-              v[:item].attributes['mention_name'],
-              v[:vcard]['TITLE'],
-              v[:vcard]['PHOTO']
-            )
+            params = {
+              email:   v[:vcard]['EMAIL/USERID'],
+              mention: v[:item].attributes['mention_name'],
+              title:   v[:vcard]['TITLE'],
+              photo:   v[:vcard]['PHOTO'],
+            }
+            User.create(v[:item].jid, v[:item].iname, params)
           end
           true
         end
 
         def join_rooms
-          if @rooms.empty?
+          if Room.empty?
             Jabber::debuglog "No rooms to join"
             return false
           end
-          @rooms.each do |_, room|
-            @client.join(room.id)
+          Room.each do |room_jid, _|
+            @client.join(room_jid)
           end
           true
         end
 
         def exit_all_rooms
-          @rooms.each do |_, room|
-            @client.exit(room.id, 'bye bye!')
+          Room.each do |room_jid, _|
+            @client.exit(room_jid, 'bye bye!')
           end
         end
 
         def initialize_callbacks
           @client.on_message do |room_jid, user_name, message|
-            room = find_by_id(@rooms, room_jid)
-            next if room.blank?
-            room.topic = message.subject if message.subject.present?
+            room = Room[room_jid]
+            user = User[user_name]
+            next if room.nil? && user.nil?
+            room.params.topic = message.subject if message.subject.present?
             next if user_name == @bot.name || message.body.blank?
             Jabber::debuglog "[#{Time.now}] <#{room.name}> #{user_name}: #{message.body}"
             begin
-              @bot.react(user_name, room, message.body)
+              @bot.react(user, room, message.body)
             rescue => e
               Jabber::debuglog e.inspect
               e.backtrace.each do |line|
@@ -116,7 +107,7 @@ module Hipbot
           end
 
           @client.on_private_message do |user_jid, message|
-            user = find_by_id(@users, user_jid)
+            user = User[user_jid]
             next if user.blank? || user.name == @bot.name
             if message.body.nil?
               # if message.active?
@@ -126,39 +117,31 @@ module Hipbot
               # elsif message.paused?
               # end
             else
-              @bot.react(user.name, nil, message.body)
+              @bot.react(user, nil, message.body)
             end
           end
 
           @client.on_invite do |room_jid, user_name, room_name, topic|
-            @rooms[room_name] = Room.new(@bot, room_jid, room_name, topic)
+            Room.create(room_jid, room_name, topic: topic)
             @client.join(room_jid)
           end
 
           @client.on_presence do |room_jid, user_name, pres|
-            room = find_by_id(@rooms, room_jid)
+            room = Room[room_jid]
             next if room.blank? || user_name.blank?
+            user = User[user_name]
             if pres == 'unavailable'
               if user_name == @bot.name
-                @rooms.delete(room.name)
-              else
-                room.users.delete(user_name)
+                room.delete
+              elsif user.present?
+                room.user_ids.delete(user.id)
               end
-            elsif pres.blank? && room.users.exclude?(user_name)
-              room.users << user_name
+            elsif pres.blank? && user.present? && room.user_ids.exclude?(user.id)
+              room.user_ids << user.id
             end
           end
 
           @client.activate_callbacks
-        end
-
-        def find_by_id elements, id
-          elem = elements.find{ |k, v| v[:id] == id }
-          if elem.nil?
-            Jabber::debuglog "Unknown element id: '#{id}'"
-            return false
-          end
-          elem.last
         end
 
         def setup_timers
