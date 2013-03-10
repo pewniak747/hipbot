@@ -1,6 +1,7 @@
 # Hipbot
 
 [![Build Status](https://secure.travis-ci.org/pewniak747/hipbot.png?branch=master)](http://travis-ci.org/pewniak747/hipbot)
+[![Code Climate](https://codeclimate.com/github/pewniak747/hipbot.png)](https://codeclimate.com/github/pewniak747/hipbot)
 
 Hipbot is a bot for HipChat, written in ruby & eventmachine.
 
