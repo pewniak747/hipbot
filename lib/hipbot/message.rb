@@ -4,8 +4,8 @@ module Hipbot
 
     def initialize body, sender
       @raw_body = body
-      @body = strip_recipient(body)
-      @sender = sender
+      @body     = strip_recipient(body)
+      @sender   = sender
     end
 
     def recipients
@@ -21,13 +21,8 @@ module Hipbot
       body.gsub(/^@\w+\W*/, '')
     end
 
-    def sender_name
-      sender.split.first
-    end
-
     def mentions
       recipients[1..-1] # TODO: Fix global message case
     end
-
   end
 end

@@ -3,7 +3,7 @@ module Hipbot
     attr_accessor :reactions, :configuration, :connection
     cattr_accessor :default_reaction
 
-    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers]
+    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :teams, :rooms]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
     alias_method :to_s, :name
 
@@ -24,9 +24,7 @@ module Hipbot
 
     def react sender, room, message
       matches = matching_reactions(sender, room, message)
-      if matches.size > 0
-        matches.first.invoke(sender, room, message)
-      end
+      matches.first.invoke(sender, room, message) if matches.size > 0
     end
 
     class << self

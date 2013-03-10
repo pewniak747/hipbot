@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Hipbot::Bot do
   context "#on" do
-    let(:sender) { stub_everything }
-    let(:room) { stub_everything }
+    let(:sender) { stub_everything(name: 'Tom Smith') }
+    let(:room)   { stub_everything }
 
     it "should reply to no arguments" do
       subject.on /^hello there$/ do
@@ -87,38 +87,39 @@ describe Hipbot::Bot do
     end
 
     context "messages from particular sender" do
+      let(:other_user) { stub(name: "John") }
       it "should reply" do
-        subject.on /wazzup\?/, from: sender do
+        subject.on /wazzup\?/, from: sender.name do
           reply('Wazzup, Tom?')
         end
         subject.expects(:send_to_room).with(room, 'Wazzup, Tom?')
         subject.react(sender, room, '@robot wazzup?')
       end
       it "should reply if sender acceptable" do
-        subject.on /wazzup\?/, from: [stub, sender] do
+        subject.on /wazzup\?/, from: [stub, sender.name] do
           reply('wazzup, tom?')
         end
         subject.expects(:send_to_room).with(room, 'wazzup, tom?')
         subject.react(sender, room, '@robot wazzup?')
       end
       it "should not reply if sender unacceptable" do
-        subject.on /wazzup\?/, from: sender do
+        subject.on /wazzup\?/, from: sender.name do
           reply('wazzup, tom?')
         end
         subject.expects(:send_to_room).never
-        subject.react(stub, room, '@robot wazzup?')
+        subject.react(other_user, room, '@robot wazzup?')
       end
       it "should not reply if sender does not match" do
-        subject.on /wazzup\?/, from: [sender] do
+        subject.on /wazzup\?/, from: [sender.name] do
           reply('wazzup, tom?')
         end
         subject.expects(:send_to_room).never
-        subject.react(stub, room, '@robot wazzup?')
+        subject.react(other_user, room, '@robot wazzup?')
       end
     end
 
     context "messages in particular room" do
-      let(:room) { stub(:name => 'room') }
+      let(:room)       { stub(:name => 'room') }
       let(:other_room) { stub(:name => 'other_room') }
       it "should reply" do
         subject.on /wazzup\?/, room: 'room' do
@@ -151,20 +152,22 @@ describe Hipbot::Bot do
     end
 
     context "response helper" do
+      let(:user){ stub(name: 'Tom Smith', first_name: 'Tom') }
+
       it "message" do
         subject.on /.*/ do
           reply("you said: #{message.body}")
         end
         subject.expects(:send_to_room).with(room, "you said: hello")
-        subject.react(stub, room, "@robot hello")
+        subject.react(user, room, "@robot hello")
       end
 
       it "sender" do
         subject.on /.*/ do
-          reply("you are: #{sender}")
+          reply("you are: #{sender.name}")
         end
-        subject.expects(:send_to_room).with(room, "you are: tom")
-        subject.react('tom', room, "@robot hello")
+        subject.expects(:send_to_room).with(room, "you are: Tom Smith")
+        subject.react(user, room, "@robot hello")
       end
 
       it "recipients" do
@@ -172,15 +175,15 @@ describe Hipbot::Bot do
           reply("recipients: #{message.recipients.join(', ')}")
         end
         subject.expects(:send_to_room).with(room, "recipients: robot, dave")
-        subject.react('tom', room, "@robot tell @dave hello from me")
+        subject.react(user, room, "@robot tell @dave hello from me")
       end
 
       it "sender name" do
         subject.on /.*/ do
-          reply(message.sender_name)
+          reply(message.sender.first_name)
         end
         subject.expects(:send_to_room).with(room, 'Tom')
-        subject.react('Tom Smith', room, '@robot What\'s my name?')
+        subject.react(user, room, '@robot What\'s my name?')
       end
 
       it "mentions" do
@@ -188,7 +191,7 @@ describe Hipbot::Bot do
           reply(message.mentions.join(' '))
         end
         subject.expects(:send_to_room).with(room, 'dave rachel')
-        subject.react('Tom Smith', room, '@robot do you know @dave? @dave is @rachel father')
+        subject.react(user, room, '@robot do you know @dave? @dave is @rachel father')
       end
     end
   end

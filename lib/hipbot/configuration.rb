@@ -3,9 +3,11 @@ module Hipbot
     attr_accessor *Bot::CONFIGURABLE_OPTIONS
 
     def initialize
-      self.name = 'robot'
-      self.jid = 'changeme'
+      self.name     = 'robot'
+      self.jid      = 'changeme'
       self.password = 'changeme'
+      self.teams    = {}
+      self.rooms    = {}
     end
 
     def helpers
