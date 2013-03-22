@@ -17,6 +17,9 @@ class MyHipbot < Hipbot::Bot
     config.helpers = HipbotHelpers
   end
 
+  default do
+    reply("I didn't understand you")
+  end
   on /^hello hipbot!$/ do
     reply("hello!")
   end
@@ -63,6 +66,11 @@ describe MyHipbot do
     it "should reply to global message" do
       subject.expects(:send_to_room).with(room, "hello!")
       subject.react(sender, room, "hi everyone!")
+    end
+
+    it "should respond with default message" do
+      subject.expects(:send_to_room).with(room, "I didn't understand you")
+      subject.react(sender, room, "@robbot blahblah")
     end
   end
 

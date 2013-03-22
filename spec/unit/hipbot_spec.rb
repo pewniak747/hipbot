@@ -1,6 +1,9 @@
 require 'spec_helper'
 
-describe Hipbot::Bot do
+describe "a class that inherits", Hipbot::Bot do
+  let(:described_class) { Class.new(Hipbot::Bot) }
+  subject { described_class.new }
+
   context "#on" do
     let(:sender) { stub_everything(name: 'Tom Smith') }
     let(:room)   { stub_everything }
@@ -30,12 +33,11 @@ describe Hipbot::Bot do
     end
 
     it "should say when does not understand" do
-      Hipbot::Bot.default do |message|
+      described_class.default do |message|
         reply("I don't understand \"#{message}\"")
       end
       subject.expects(:send_to_room).with(room, 'I don\'t understand "hello robot!"')
       subject.react(sender, room, '@robot hello robot!')
-      Hipbot::Bot.class_variable_set :@@default_reaction, nil
     end
 
     it "should choose first option when multiple options match" do

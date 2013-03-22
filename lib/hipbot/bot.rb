@@ -1,7 +1,6 @@
 module Hipbot
   class Bot < Reactable
     attr_accessor :configuration, :connection
-    cattr_accessor :default_reaction
 
     CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :teams, :rooms]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
@@ -10,7 +9,9 @@ module Hipbot
     def initialize
       super
       self.configuration = Configuration.new.tap(&self.class.configuration)
-      on(*default_reaction[0], &default_reaction[-1]) if default_reaction.present?
+      self.class.reactions.each do |opts|
+        on(*opts[0], &opts[-1])
+      end
       extend(self.adapter || ::Hipbot::Adapters::Hipchat)
     end
 
@@ -21,11 +22,16 @@ module Hipbot
 
     class << self
       def default &block
-        @@default_reaction = [[/(.*)/], block]
+        @default_reaction = [[/(.*)/], block]
       end
 
       def configure &block
         @configuration = block
+      end
+
+      def reactions
+        r = super || []
+        @default_reaction ? r + [ @default_reaction ] : r
       end
 
       def configuration
