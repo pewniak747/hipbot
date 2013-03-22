@@ -28,7 +28,11 @@ module Hipbot
 
     def to_reaction(regexps, block)
       options = regexps[-1].kind_of?(Hash) ? regexps.pop : {}
-      Reaction.new(self, regexps, options, block)
+      Reaction.new(reaction_target, regexps, options, block)
+    end
+
+    def reaction_target
+      self
     end
   end
 end

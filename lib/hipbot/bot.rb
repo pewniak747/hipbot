@@ -9,9 +9,6 @@ module Hipbot
     def initialize
       super
       self.configuration = Configuration.new.tap(&self.class.configuration)
-      self.class.reactions.each do |opts|
-        on(*opts[0], &opts[-1])
-      end
       extend(self.adapter || ::Hipbot::Adapters::Hipchat)
     end
 
@@ -55,11 +52,7 @@ module Hipbot
     def included_plugins
       @included_plugins ||= begin
         Array(plugins).map do |klass|
-          klass.new.tap do |instance|
-            instance.defined_reactions.each do |reaction|
-              reaction.bot = self
-            end
-          end
+          klass.new(self)
         end
       end
     end
