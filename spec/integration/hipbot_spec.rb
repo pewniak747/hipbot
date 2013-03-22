@@ -10,11 +10,18 @@ module HipbotHelpers
   end
 end
 
+class AwesomePlugin < Hipbot::Plugin
+  on /respond plugin/ do
+    reply("plugin responded")
+  end
+end
+
 class MyHipbot < Hipbot::Bot
   configure do |config|
     config.name = 'robbot'
     config.jid = 'robbot@chat.hipchat.com'
     config.helpers = HipbotHelpers
+    config.plugins = [ AwesomePlugin ]
   end
 
   default do
@@ -34,6 +41,9 @@ class MyHipbot < Hipbot::Bot
   end
   on /tell me my name/ do
     reply("you are #{sender.first_name}")
+  end
+  default do
+    reply("I didn't understand you")
   end
 end
 
@@ -68,9 +78,9 @@ describe MyHipbot do
       subject.react(sender, room, "hi everyone!")
     end
 
-    it "should respond with default message" do
+    it "should respond with default reply" do
       subject.expects(:send_to_room).with(room, "I didn't understand you")
-      subject.react(sender, room, "@robbot blahblah")
+      subject.react(sender, room, "@robbot blahlblah")
     end
   end
 
@@ -83,6 +93,13 @@ describe MyHipbot do
     it "should have access to message variable" do
       subject.expects(:send_to_room).with(room, 'you are John')
       subject.react(sender, room, '@robbot tell me my name')
+    end
+  end
+
+  describe "plugins" do
+    it "should reply to reaction defined in plugin" do
+      subject.expects(:send_to_room).with(room, 'plugin responded')
+      subject.react(sender, room, '@robbot respond plugin')
     end
   end
 end
