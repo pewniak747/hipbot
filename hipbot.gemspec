@@ -21,5 +21,6 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "em-http-request", ["~> 0.3.0"]
   gem.add_runtime_dependency "xmpp4r", ["~> 0.5"]
   gem.add_development_dependency "rspec", ['~> 2.11.0']
+  gem.add_development_dependency "rspec-guard", ['~> 0.5.0']
   gem.add_development_dependency "mocha", ['~> 0.11.4']
 end

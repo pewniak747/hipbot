@@ -10,4 +10,5 @@ gem 'i18n'
 gem 'daemons'
 
 gem 'rspec'
+gem 'guard-rspec'
 gem 'mocha'
