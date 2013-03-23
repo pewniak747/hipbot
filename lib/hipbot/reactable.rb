@@ -12,6 +12,16 @@ module Hipbot
       @defined_reactions + class_reactions
     end
 
+    def default_reactions
+      @default_reactions ||= begin
+        if reaction = self.class.default_reaction
+          [ to_reaction(reaction[0], reaction[-1]) ]
+        else
+          []
+        end
+      end
+    end
+
     class << self
       def on *regexps, &block
         @reactions ||= []
@@ -36,16 +46,6 @@ module Hipbot
     def class_reactions
       @class_reactions ||= self.class.reactions.map do |opts|
         to_reaction(opts[0], opts[-1])
-      end
-    end
-
-    def default_reactions
-      @default_reactions ||= begin
-        if reaction = self.class.default_reaction
-          [ to_reaction(reaction[0], reaction[-1]) ]
-        else
-          []
-        end
       end
     end
 

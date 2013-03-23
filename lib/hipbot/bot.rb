@@ -51,6 +51,10 @@ module Hipbot
       end
     end
 
+    def default_reactions
+      super + included_plugins.map(&:default_reactions).flatten
+    end
+
     def matching_reactions sender, room, message
       reactions.select { |r| r.match?(sender, room, message) }
     end

@@ -196,6 +196,41 @@ describe "a class that inherits", Hipbot::Bot do
         subject.react(user, room, '@robot do you know @dave? @dave is @rachel father')
       end
     end
+
+    context "plugins" do
+      let(:plugin) {
+        Class.new(Hipbot::Plugin) do
+          on /plugin respond/ do
+            reply("plugin ack")
+          end
+          default do
+            reply("plugin default")
+          end
+        end
+      }
+
+      before do
+        subject.configuration.plugins = [ plugin  ]
+      end
+
+      it "should respond to reaction defined in plugin" do
+        subject.expects(:send_to_room).with(room, 'plugin ack')
+        subject.react(sender, room, '@robot plugin respond')
+      end
+
+      it "should respond to default reaction defined in plugin" do
+        subject.expects(:send_to_room).with(room, 'plugin default')
+        subject.react(sender, room, '@robot blahblah')
+      end
+
+      it "should respond to default defined in bot even if plugins define defaults" do
+        described_class.default do
+          reply("bot default")
+        end
+        subject.expects(:send_to_room).with(room, 'bot default')
+        subject.react(sender, room, '@robot blahblah')
+      end
+    end
   end
 
   describe "configurable options" do
