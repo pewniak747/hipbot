@@ -12,6 +12,10 @@ module Hipbot
       matches_regexp?(message) && matches_scope?(room, message) && matches_sender?(message) && matches_room?(room)
     end
 
+    def inspect
+      "#<Hipbot::Reaction bot=#{bot} regexps=#{regexps} options=#{options}>"
+    end
+
     protected
 
     def message_for message, sender

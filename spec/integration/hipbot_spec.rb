@@ -11,8 +11,14 @@ module HipbotHelpers
 end
 
 class AwesomePlugin < Hipbot::Plugin
-  on /respond plugin/ do
-    reply("plugin responded")
+  on /respond awesome/ do
+    reply("awesome responded")
+  end
+end
+
+class CoolPlugin < Hipbot::Plugin
+  on /respond cool/ do
+    reply("cool responded")
   end
 end
 
@@ -21,7 +27,7 @@ class MyHipbot < Hipbot::Bot
     config.name = 'robbot'
     config.jid = 'robbot@chat.hipchat.com'
     config.helpers = HipbotHelpers
-    config.plugins = [ AwesomePlugin ]
+    config.plugins = [ AwesomePlugin, CoolPlugin.new ]
   end
 
   default do
@@ -48,7 +54,6 @@ class MyHipbot < Hipbot::Bot
 end
 
 describe MyHipbot do
-  # TODO: replace with actual objects
   let(:room)   { Hipbot::Room.create('1', 'private', topic: 'topic') }
   let(:sender) { Hipbot::User.create('1', 'John Doe') }
 
@@ -98,8 +103,13 @@ describe MyHipbot do
 
   describe "plugins" do
     it "should reply to reaction defined in plugin" do
-      subject.expects(:send_to_room).with(room, 'plugin responded')
-      subject.react(sender, room, '@robbot respond plugin')
+      subject.expects(:send_to_room).with(room, 'awesome responded')
+      subject.react(sender, room, '@robbot respond awesome')
+    end
+
+    it "should reply to reaction defined in second plugin" do
+      subject.expects(:send_to_room).with(room, 'cool responded')
+      subject.react(sender, room, '@robbot respond cool')
     end
   end
 end

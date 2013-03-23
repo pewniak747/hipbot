@@ -1,16 +1,15 @@
 module Hipbot
   class Reactable
-    attr_accessor :defined_reactions
-
     def initialize
-      self.defined_reactions = []
-      self.class.reactions.each do |opts|
-        on(*opts[0], &opts[-1])
-      end
+      @defined_reactions = []
     end
 
     def on *regexps, &block
-      self.defined_reactions << to_reaction(regexps, block)
+      @defined_reactions << to_reaction(regexps, block)
+    end
+
+    def defined_reactions
+      @defined_reactions + class_reactions
     end
 
     class << self
@@ -34,6 +33,12 @@ module Hipbot
 
     private
 
+    def class_reactions
+      @class_reactions ||= self.class.reactions.map do |opts|
+        to_reaction(opts[0], opts[-1])
+      end
+    end
+
     def default_reactions
       @default_reactions ||= begin
         if reaction = self.class.default_reaction
@@ -45,6 +50,7 @@ module Hipbot
     end
 
     def to_reaction(regexps, block)
+      regexps = regexps.dup
       options = regexps[-1].kind_of?(Hash) ? regexps.pop : {}
       Reaction.new(reaction_target, regexps, options, block)
     end

@@ -43,8 +43,10 @@ module Hipbot
 
     def included_plugins
       @included_plugins ||= begin
-        Array(plugins).map do |klass|
-          klass.new(self)
+        Array(plugins).map do |object|
+          plugin = object.kind_of?(Hipbot::Plugin) ? object : object.new
+          plugin.bot = self
+          plugin
         end
       end
     end
