@@ -22,9 +22,27 @@ module Hipbot
       def reactions
         @reactions || []
       end
+
+      def default &block
+        @default_reaction = [[/(.*)/], block]
+      end
+
+      def default_reaction
+        @default_reaction
+      end
     end
 
     private
+
+    def default_reactions
+      @default_reactions ||= begin
+        if reaction = self.class.default_reaction
+          [ to_reaction(reaction[0], reaction[-1]) ]
+        else
+          []
+        end
+      end
+    end
 
     def to_reaction(regexps, block)
       options = regexps[-1].kind_of?(Hash) ? regexps.pop : {}

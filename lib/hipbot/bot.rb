@@ -22,14 +22,6 @@ module Hipbot
     end
 
     class << self
-      def default &block
-        @default_reaction = [[/(.*)/], block]
-      end
-
-      def default_reaction
-        @default_reaction
-      end
-
       def configure &block
         @configuration = block
       end
@@ -53,16 +45,6 @@ module Hipbot
       @included_plugins ||= begin
         Array(plugins).map do |klass|
           klass.new(self)
-        end
-      end
-    end
-
-    def default_reactions
-      @default_reactions ||= begin
-        if reaction = self.class.default_reaction
-          [ to_reaction(reaction[0], reaction[-1]) ]
-        else
-          []
         end
       end
     end
