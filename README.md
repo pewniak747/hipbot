@@ -22,13 +22,36 @@ require 'hipbot'
 
 class MyCompanyBot < Hipbot::Bot
   configure do |c|
-    c.name = 'robot'
-    c.jid = 'changeme@chat.hipchat.com'
-    c.password = 'secret'
+    c.name      = 'robot'
+    c.jid       = 'changeme@chat.hipchat.com'
+    c.password  = 'secret'
+    c.teams     = { vip: ['John', 'Mike'] }
+    c.rooms     = { project_rooms: ['Project 1', 'Project 2'] }
+    c.plugins   = [PluginClass]
   end
 
-  on /^hello.*/ do
+  on /^hello/ do
     reply('hello!')
+  end
+
+  on /^restart/, from: :vip do
+    # ...
+    reply('restarting...')
+  end
+
+  on /^deploy/, room: :project_rooms do
+    # ...
+    reply('deplying...')
+  end
+
+  default do
+    reply('I don\'t understand you!')
+  end
+end
+
+class PluginClass < Hipbot::Plugin
+  on /^plugin/ do
+    reply('this is from plugin!')
   end
 end
 
@@ -38,7 +61,7 @@ MyCompanyBot.start!
 You can create a response by providing simple regexp:
 
 ``` ruby
-on /^hello.*/ do
+on /^hello/ do
   reply('hello!')
 end
 ```
@@ -59,10 +82,15 @@ on /my name is (.*)/, /I am (.*)/ do |name|
 end
 ```
 
-Use :from to only match messages from certain users
+Use :from to only match messages from certain users or user groups defined in configuration
 
 ``` ruby
-on /status report/, :from => ['tom', 'dave'] do
+configure do |c|
+  # ...
+  c.teams = { vip: ['John', 'Mike'] }
+end
+
+on /status report/, from: ['Tom', 'Dave', :vip] do
   reply('all clear')
 end
 ```
@@ -70,7 +98,12 @@ end
 Use :room to only match messages in certain hipchat rooms
 
 ``` ruby
-on /hello/, :room => ['public'] do
+configure do |c|
+  # ...
+  c.rooms = { project_rooms: ['Project 1', 'Project 2'] }
+end
+
+on /hello/, room: ['Public Room', :project_rooms] do
   reply('hello!')
 end
 ```
@@ -78,7 +111,7 @@ end
 Use :global to react to messages that are not sent directly to @robot
 
 ``` ruby
-on /hey I just met you/, :global => true do
+on /hey I just met you/, global: true do
   reply('and this is crazy...')
 end
 ```
@@ -103,7 +136,7 @@ end
 
 ``` ruby
 on /ping site/ do
-  get 'http://example.com', :ping => "1" # issues http://example.com?ping=1
+  get 'http://example.com', ping: "1" # issues http://example.com?ping=1
 end
 ```
 
@@ -125,8 +158,8 @@ end
 
 class Bot < Hipbot::Bot
   configure do |c|
+    # ...
     c.helpers = HipbotHelpers
-    # rest of configuration
   end
 
   on /what's the project called\?/ do
@@ -162,11 +195,11 @@ heroku ps:scale worker=1
 
 ## TODO:
 
-* add plugins support
 * add extended logging
 
 ### Done:
 
+* ~~add plugins support~~
 * ~~rewrite SimpleMUCClient~~
 * ~~handle private messages callbacks~~
 * ~~handle auto joining on room invite~~
@@ -176,4 +209,4 @@ heroku ps:scale worker=1
   * ~~allow injecting custom module to response object, adding arbitrary methods~~
 * ~~handle reconnecting after disconnect/failure~~
 * ~~add support for multiple regexps for one response~~
-* ~~add support for responses in particular room (`on //, :room => ['public'] do ...`)~~
+* ~~add support for responses in particular room (`on //, room: ['public'] do ...`)~~

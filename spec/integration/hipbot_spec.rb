@@ -30,24 +30,26 @@ class MyHipbot < Hipbot::Bot
     config.plugins = [ AwesomePlugin, CoolPlugin.new ]
   end
 
-  default do
-    reply("I didn't understand you")
-  end
   on /^hello hipbot!$/ do
     reply("hello!")
   end
+
   on /you're (.*), robot/ do |adj|
     reply("I know I'm #{adj}")
   end
+
   on /hi everyone!/, global: true do
     reply('hello!')
   end
+
   on /tell me the project name/ do
     reply(project_name)
   end
+
   on /tell me my name/ do
     reply("you are #{sender.first_name}")
   end
+
   default do
     reply("I didn't understand you")
   end
