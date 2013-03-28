@@ -3,14 +3,7 @@ module Hipbot
     module Hipchat
       def start!
         ::EM::run do
-          ::EM.error_handler do |e|
-            puts e.inspect
-            e.backtrace.each do |line|
-              puts line
-            end
-          end
-
-          Connection.new(self)
+          connection = Connection.new(self)
         end
       end
 

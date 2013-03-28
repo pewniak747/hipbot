@@ -6,8 +6,7 @@ module Hipbot
           @bot = bot
           @bot.connection = self
 
-          return unless setup_bot
-          setup_timers
+          setup_error_handler && setup_bot && setup_timers
         end
 
         def restart!
@@ -34,19 +33,18 @@ module Hipbot
         private
 
         def setup_bot
-          return unless initialize_client
-          initialize_rooms
-          initialize_users
-          initialize_callbacks
-          join_rooms
-          set_presence('Hello humans!')
-          true
+          initialize_client do
+            initialize_rooms
+            initialize_users
+            initialize_callbacks
+            join_rooms
+            set_presence('Hello humans!')
+          end
         end
 
         def initialize_client
-          ::Jabber.debug = true
           @client = ::Jabber::MUC::HipchatClient.new(@bot.jid + '/' + @bot.name)
-          @client.connect(@bot.password)
+          yield if @client.connect(@bot.password)
         end
 
         def initialize_rooms
@@ -61,10 +59,10 @@ module Hipbot
           User.bot = @bot
           @client.get_users.each do |v|
             params = {
-              email:   v[:vcard]['EMAIL/USERID'],
+                email: v[:vcard]['EMAIL/USERID'],
               mention: v[:item].attributes['mention_name'],
-              title:   v[:vcard]['TITLE'],
-              photo:   v[:vcard]['PHOTO'],
+                title: v[:vcard]['TITLE'],
+                photo: v[:vcard]['PHOTO'],
             }
             User.create(v[:item].jid, v[:item].iname, params)
           end
@@ -72,84 +70,94 @@ module Hipbot
         end
 
         def join_rooms
-          if Room.empty?
-            Jabber::debuglog "No rooms to join"
-            return false
+          with_rooms do |rooms|
+            rooms.each do |room_jid, _|
+              @client.join(room_jid)
+            end
           end
-          Room.each do |room_jid, _|
-            @client.join(room_jid)
-          end
-          true
         end
 
         def exit_all_rooms
-          Room.each do |room_jid, _|
-            @client.exit(room_jid, 'bye bye!')
+          with_rooms do |rooms|
+            rooms.each do |room_jid, _|
+              @client.exit(room_jid, 'bye bye!')
+            end
           end
         end
 
         def initialize_callbacks
-          @client.on_message do |room_jid, user_name, message|
-            room = Room[room_jid]
-            user = User[user_name]
-            next if room.nil? && user.nil?
+          @client.on_message{ |*args| message_callback *args }
+          @client.on_private_message{ |*args| private_message_callback *args }
+          @client.on_invite{ |*args| invite_callback *args }
+          @client.on_presence{ |*args| presence_callback *args }
+          @client.activate_callbacks
+        end
+
+        def message_callback room_jid, user_name, message
+          with_sender(room_jid, user_name) do |room, user|
             room.params.topic = message.subject if message.subject.present?
-            next if user_name == @bot.name || message.body.blank?
+            return if user_name == @bot.name || message.body.blank?
             Jabber::debuglog "[#{Time.now}] <#{room.name}> #{user_name}: #{message.body}"
-            begin
-              @bot.react(user, room, message.body)
-            rescue => e
-              Jabber::debuglog e.inspect
-              e.backtrace.each do |line|
-                Jabber::debuglog line
-              end
-            end
+            @bot.react(user, room, message.body)
           end
+        end
 
-          @client.on_private_message do |user_jid, message|
-            user = User[user_jid]
-            next if user.blank? || user.name == @bot.name
-            if message.body.nil?
-              # if message.active?
-              # elsif message.inactive?
-              # elsif message.composing?
-              # elsif message.gone?
-              # elsif message.paused?
-              # end
-            else
-              @bot.react(user, nil, message.body)
-            end
-          end
+        def invite_callback room_jid, user_name, room_name, topic
+          Room.create(room_jid, room_name, topic: topic)
+          @client.join(room_jid)
+        end
 
-          @client.on_invite do |room_jid, user_name, room_name, topic|
-            Room.create(room_jid, room_name, topic: topic)
-            @client.join(room_jid)
-          end
-
-          @client.on_presence do |room_jid, user_name, pres|
-            room = Room[room_jid]
-            next if room.blank? || user_name.blank?
-            user = User[user_name]
+        def presence_callback room_jid, user_name, pres
+          with_sender(room_jid, user_name) do |room, user|
             if pres == 'unavailable'
               if user_name == @bot.name
                 room.delete
               elsif user.present?
                 room.user_ids.delete(user.id)
               end
-            elsif pres.blank? && user.present? && room.user_ids.exclude?(user.id)
+            elsif pres.blank? && room.user_ids.exclude?(user.id)
               room.user_ids << user.id
             end
           end
+        end
 
-          @client.activate_callbacks
+        def private_message_callback user_jid, message
+          with_user(user_jid) do |user|
+            @bot.react(user, nil, message.body) if user.name != @bot.name
+          end if message.body.present?
+        end
+
+        def with_rooms
+          return Jabber::debuglog 'No rooms found' if Room.empty?
+          yield Room
+        end
+
+        def with_sender room_id, user_id
+          room = Room[room_id]
+          with_user(user_id) do |user|
+            yield room, user
+          end if room.present?
+        end
+
+        def with_user user_id
+          user = User[user_id]
+          yield user if user
         end
 
         def setup_timers
-          ::EM::add_periodic_timer(60) {
+          ::EM::add_periodic_timer(60) do
             @client.keep_alive(@bot.password) if @client.present?
-          }
+          end
         end
 
+        def setup_error_handler
+          ::EM.error_handler do |e|
+            Jabber::debuglog e.inspect
+            e.backtrace.each do |line|
+              Jabber::debuglog line
+            end
+          end
+        end
       end
     end
   end
