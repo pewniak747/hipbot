@@ -1,6 +1,6 @@
 module Hipbot
   class Bot < Reactable
-    attr_accessor :configuration, :connection
+    attr_accessor :configuration, :connection, :error_handler
 
     CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :plugins, :teams, :rooms]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
@@ -9,7 +9,8 @@ module Hipbot
     def initialize
       super
       self.configuration = Configuration.new.tap(&self.class.configuration)
-      extend(self.adapter || ::Hipbot::Adapters::Hipchat)
+      self.error_handler = self.class.error_handler
+      extend(self.adapter || Adapters::Hipchat)
     end
 
     def reactions
@@ -22,16 +23,23 @@ module Hipbot
     end
 
     class << self
-      def configure &block
-        @configuration = block
-      end
+      ACCESSORS = { configure: :configuration, on_preload: :preloader, on_error: :error_handler }
 
-      def configuration
-        @configuration || Proc.new{}
+      ACCESSORS.each do |setter, getter|
+        define_method(setter) do |&block|
+          instance_variable_set("@#{getter}", block)
+        end
+
+        define_method(getter) do
+          instance_variable_get("@#{getter}") || Proc.new{}
+        end
       end
 
       def start!
-        new.start!
+        ::EM::run do
+          Helpers.module_exec(&preloader)
+          new.start!
+        end
       end
     end
 
@@ -44,7 +52,7 @@ module Hipbot
     def included_plugins
       @included_plugins ||= begin
         Array(plugins).map do |object|
-          plugin = object.kind_of?(Hipbot::Plugin) ? object : object.new
+          plugin = object.kind_of?(Plugin) ? object : object.new
           plugin.bot = self
           plugin
         end
@@ -52,7 +60,7 @@ module Hipbot
     end
 
     def default_reactions
-      super + included_plugins.map(&:default_reactions).flatten
+      super + included_plugins.flat_map(&:default_reactions)
     end
 
     def matching_reactions sender, room, message

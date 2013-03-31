@@ -8,10 +8,7 @@ module Hipbot
       self.password = 'changeme'
       self.teams    = {}
       self.rooms    = {}
-    end
-
-    def helpers
-      @helpers ||= Module.new
+      self.helpers  = Module.new
     end
   end
 end

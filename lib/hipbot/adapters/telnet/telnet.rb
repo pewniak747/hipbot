@@ -6,9 +6,7 @@ module Hipbot
       end
 
       def start!
-        ::EM::run do
-          ::EM::connect('0.0.0.0', 3001, Connection, self)
-        end
+        ::EM::connect('0.0.0.0', 3001, Connection, self)
       end
     end
   end

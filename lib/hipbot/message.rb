@@ -22,7 +22,7 @@ module Hipbot
     end
 
     def mentions
-      recipients[1..-1] # TODO: Fix global message case
+      recipients[1..-1] || [] # TODO: Fix global message case
     end
   end
 end

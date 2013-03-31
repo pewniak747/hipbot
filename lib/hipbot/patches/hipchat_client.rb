@@ -90,7 +90,7 @@ module Jabber
       end
 
       def send_message(type, jid, text, subject = nil)
-        message = Message.new(JID.new(jid), text)
+        message = Message.new(JID.new(jid), text.to_s)
         message.type = type
         message.from = @my_jid
         message.subject = subject

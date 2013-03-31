@@ -1,6 +1,7 @@
 module Hipbot
   class Response < Struct.new(:bot, :reaction, :room, :message)
     delegate :sender, :recipients, :body, :to => :message
+    include Helpers
 
     def initialize bot, reaction, room, message
       super
@@ -9,20 +10,16 @@ module Hipbot
 
     def invoke arguments
       instance_exec(*arguments, &reaction.block)
+    rescue Exception => e
+      Jabber::debuglog e.inspect
+      Jabber::debuglog e.backtrace.join("\n")
+      instance_exec(e, &bot.error_handler)
     end
 
     private
 
-    def reply string, room = self.room
-      return bot.send_to_user(sender, string) if room.nil?
-      bot.send_to_room(room, string)
-    end
-
-    [:get, :post, :put, :delete].each do |http_verb|
-      define_method http_verb do |url, query = {}, &block|
-        http = ::EM::HttpRequest.new(url).send(http_verb, :query => query)
-        http.callback { block.call(::Hipbot::HttpResponse.new(http)) if block }
-      end
+    def reply message, room = self.room
+      room.nil? ? bot.send_to_user(sender, message) : bot.send_to_room(room, message)
     end
   end
 end
