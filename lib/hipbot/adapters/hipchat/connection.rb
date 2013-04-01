@@ -69,16 +69,16 @@ module Hipbot
 
         def join_rooms
           with_rooms do |rooms|
-            rooms.each do |room_jid, _|
-              @client.join(room_jid)
+            rooms.each do |r|
+              @client.join(r.id)
             end
           end
         end
 
         def exit_all_rooms
           with_rooms do |rooms|
-            rooms.each do |room_jid, _|
-              @client.exit(room_jid, 'bye bye!')
+            rooms.each do |r|
+              @client.exit(r.id, 'bye bye!')
             end
           end
         end

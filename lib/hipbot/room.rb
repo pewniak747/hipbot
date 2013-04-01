@@ -16,7 +16,7 @@ module Hipbot
     end
 
     def users
-      user_ids.map{ |id| User[id] }
+      User.find_many(user_ids)
     end
   end
 end

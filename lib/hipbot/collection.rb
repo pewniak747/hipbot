@@ -26,7 +26,7 @@ module Hipbot
       end
 
       def find_one item
-        collection[item] || collection.find{ |_, i| i.name == item }.try(:last)
+        collection[item] || find{ |i| i.name == item }
       end
 
       def find_many *items
@@ -37,7 +37,7 @@ module Hipbot
       protected
 
       def method_missing name, *args, &block
-        return collection.public_send(name, *args, &block) if collection.respond_to?(name)
+        return collection.values.public_send(name, *args, &block) if Array.instance_methods.include?(name)
         super
       end
     end
