@@ -26,7 +26,7 @@ module Hipbot
       end
 
       def json
-        @json ||= JSON.parse(body)
+        @json ||= JSON.parse(body) rescue {}
       end
     end
   end

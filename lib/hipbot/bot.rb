@@ -19,8 +19,9 @@ module Hipbot
     end
 
     def react sender, room, message
-      matches = matching_reactions(sender, room, message)
-      matches.first.invoke(sender, room, message) if matches.size > 0
+      matching_reactions(sender, room, message) do |matches|
+        matches.first.invoke(sender, room, message)
+      end
     end
 
     class << self
@@ -65,7 +66,8 @@ module Hipbot
     end
 
     def matching_reactions sender, room, message
-      reactions.select { |r| r.match?(sender, room, message) }
+      matches = reactions.select{ |r| r.match?(sender, room, message) }
+      yield matches if matches.any?
     end
   end
 end
