@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "a class that inherits", Hipbot::Bot do
   let(:described_class) { Class.new(Hipbot::Bot) }
-  subject { described_class.new }
+  subject { described_class.instance }
 
   context "#on" do
     let(:sender) { stub_everything(name: 'Tom Smith') }

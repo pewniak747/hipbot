@@ -48,7 +48,6 @@ module Hipbot
         end
 
         def initialize_rooms
-          Room.bot = @bot
           @client.get_rooms.each do |r|
             Room.create(r[:item].jid, r[:item].iname, topic: r[:details]['topic'])
           end
@@ -56,7 +55,6 @@ module Hipbot
         end
 
         def initialize_users
-          User.bot = @bot
           @client.get_users.each do |v|
             params = {
                 email: v[:vcard]['EMAIL/USERID'],

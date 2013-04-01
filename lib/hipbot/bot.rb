@@ -1,5 +1,6 @@
 module Hipbot
   class Bot < Reactable
+    include Singleton
     attr_accessor :configuration, :connection, :error_handler
 
     CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :plugins, :teams, :rooms]
@@ -38,7 +39,7 @@ module Hipbot
       def start!
         ::EM::run do
           Helpers.module_exec(&preloader)
-          new.start!
+          instance.start!
         end
       end
     end

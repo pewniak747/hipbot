@@ -13,8 +13,6 @@ module Hipbot
     end
 
     class << self
-      attr_accessor :bot
-
       def create *args, &block
         collection[args[0]] = new(*args, &block)
       end

@@ -8,11 +8,11 @@ module Hipbot
     end
 
     def set_topic topic
-      self.class.bot.set_topic(self, topic)
+      Bot.instance.set_topic(self, topic)
     end
 
     def send_message message
-      self.class.bot.send_to_room(self, message)
+      Bot.instance.send_to_room(self, message)
     end
 
     def users

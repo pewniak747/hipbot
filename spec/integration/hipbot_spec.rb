@@ -56,6 +56,8 @@ class MyHipbot < Hipbot::Bot
 end
 
 describe MyHipbot do
+  subject { described_class.instance }
+
   let(:room)   { Hipbot::Room.create('1', 'private', topic: 'topic') }
   let(:sender) { Hipbot::User.create('1', 'John Doe') }
 
