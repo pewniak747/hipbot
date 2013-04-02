@@ -5,7 +5,7 @@ gem 'eventmachine'
 gem 'em-http-request'
 gem 'xmpp4r'
 gem 'httparty'
-gem 'active_support'
+gem 'activesupport'
 gem 'i18n'
 gem 'daemons'
 

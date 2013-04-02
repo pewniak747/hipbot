@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Hipbot::VERSION
   gem.add_runtime_dependency "daemons", ["~> 1.1.8"]
-  gem.add_runtime_dependency "active_support", ["~> 3.0.0"]
+  gem.add_runtime_dependency "activesupport", ["~> 3.2.12"]
   gem.add_runtime_dependency "i18n", ["~> 0.6.0"]
   gem.add_runtime_dependency "eventmachine", ["~> 1.0.3"]
   gem.add_runtime_dependency "em-http-request", ["~> 1.0.3"]
