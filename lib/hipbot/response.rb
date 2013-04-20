@@ -11,8 +11,7 @@ module Hipbot
     def invoke arguments
       instance_exec(*arguments, &reaction.block)
     rescue Exception => e
-      Jabber::debuglog e.inspect
-      Jabber::debuglog e.backtrace.join("\n")
+      Hipbot.logger.error(e)
       instance_exec(e, &bot.error_handler)
     end
 

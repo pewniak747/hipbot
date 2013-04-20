@@ -6,7 +6,7 @@ module Hipbot
         conn = ::EM::HttpRequest.new(url, :connect_timeout => 5, :inactivity_timeout => 10)
         http = conn.send(http_verb, :query => query)
         http.callback{ block.call(HttpResponse.new(http)) } if block.present?
-        http.errback{ Jabber::debuglog "REQUEST TIMEOUT (#{url})" }
+        http.errback{ Hipbot.logger.error("http request timeout (#{url})") }
       end
 
       module_function http_verb

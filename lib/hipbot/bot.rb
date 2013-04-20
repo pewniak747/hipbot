@@ -3,7 +3,7 @@ module Hipbot
     include Singleton
     attr_accessor :configuration, :connection, :error_handler
 
-    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :plugins, :teams, :rooms]
+    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :plugins, :teams, :rooms, :logger]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
     alias_method :to_s, :name
 
@@ -39,6 +39,8 @@ module Hipbot
 
       def start!
         ::EM::run do
+          Jabber.debug = true
+          Jabber.logger = Hipbot::Bot.instance.logger
           Helpers.module_exec(&preloader)
           instance.start!
         end

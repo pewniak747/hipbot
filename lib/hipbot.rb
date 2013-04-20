@@ -8,6 +8,7 @@ require 'xmpp4r/muc'
 require 'hipbot/patches/hipchat_client'
 require 'hipbot/patches/encoding'
 
+require 'hipbot/logger'
 require 'hipbot/adapters/hipchat/hipchat'
 require 'hipbot/adapters/hipchat/connection'
 require 'hipbot/adapters/telnet/telnet'
