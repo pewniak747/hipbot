@@ -95,7 +95,6 @@ module Hipbot
           with_sender(room_jid, user_name) do |room, user|
             room.params.topic = message.subject if message.subject.present?
             return if user_name == @bot.name || message.body.blank?
-            Hipbot.logger.info("<#{room.name}> #{user_name}: #{message.body}")
             @bot.react(user, room, message.body)
           end
         end

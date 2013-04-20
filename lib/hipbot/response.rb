@@ -18,6 +18,7 @@ module Hipbot
     private
 
     def reply message, room = self.room
+      Hipbot.logger.info("REPLY in #{room}: #{message}")
       room.nil? ? bot.send_to_user(sender, message) : bot.send_to_room(room, message)
     end
   end

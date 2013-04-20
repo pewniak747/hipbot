@@ -19,7 +19,9 @@ module Hipbot
     end
 
     def react sender, room, message
+      Hipbot.logger.info("MESSAGE from #{sender} in #{room}")
       matching_reactions(sender, room, message) do |matches|
+        Hipbot.logger.info("REACTION #{matches.first.inspect}")
         matches.first.invoke(sender, room, message)
       end
     end
