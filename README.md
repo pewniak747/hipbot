@@ -195,10 +195,9 @@ heroku ps:scale worker=1
 
 ## TODO:
 
-* add extended logging
-
 ### Done:
 
+* ~~add extended logging~~
 * ~~add plugins support~~
 * ~~rewrite SimpleMUCClient~~
 * ~~handle private messages callbacks~~
