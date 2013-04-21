@@ -15,7 +15,7 @@ gem install hipbot
 
 ### Customize
 
-Create `bot.rb` file, subclass Hipbot::Bot and customize the responses.
+Create `bot.rb` file, subclass `Hipbot::Bot` and customize the responses.
 
 ``` ruby
 require 'hipbot'
