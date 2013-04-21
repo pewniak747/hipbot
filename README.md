@@ -15,19 +15,19 @@ gem install hipbot
 
 ### Customize
 
-In bot.rb file, subclass Hipbot::Bot and customize robot responses.
+Create `bot.rb` file, subclass Hipbot::Bot and customize the responses.
 
 ``` ruby
 require 'hipbot'
 
 class MyCompanyBot < Hipbot::Bot
   configure do |c|
-    c.name      = 'robot'
-    c.jid       = 'changeme@chat.hipchat.com'
-    c.password  = 'secret'
+    c.name      = 'robot' # required
+    c.jid       = 'changeme@chat.hipchat.com' # required
+    c.password  = 'secret' # required
     c.teams     = { vip: ['John', 'Mike'] }
     c.rooms     = { project_rooms: ['Project 1', 'Project 2'] }
-    c.plugins   = [PluginClass]
+    c.plugins   = [ PluginClass ]
   end
 
   on /^hello/ do
@@ -41,7 +41,7 @@ class MyCompanyBot < Hipbot::Bot
 
   on /^deploy/, room: :project_rooms do
     # ...
-    reply('deplying...')
+    reply('deploying...')
   end
 
   default do
@@ -167,6 +167,20 @@ class Bot < Hipbot::Bot
   end
 end
 ```
+
+#### Plugins
+
+To define a plugin, subclass `Hipbot::Plugin` and add responses like in bot:
+
+``` ruby
+class GreeterPlugin < Hipbot::Plugin
+  on /^hello/ do
+    reply('hello there!')
+  end
+end
+```
+
+For a collection of open-source plugins, see https://github.com/netguru/hipbot-plugins
 
 ### Run
 
