@@ -1,14 +1,12 @@
 module Hipbot
   class Reactable
-    def initialize
-      @defined_reactions = []
-    end
-
     def on *regexps, &block
+      @defined_reactions ||= []
       @defined_reactions << to_reaction(regexps, block)
     end
 
     def defined_reactions
+      @defined_reactions ||= []
       @defined_reactions + class_reactions
     end
 
