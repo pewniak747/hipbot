@@ -203,14 +203,23 @@ describe "a class that inherits", Hipbot::Bot do
           on /plugin respond/ do
             reply("plugin ack")
           end
+
+          on /plugin method/ do
+            reply(plugin.some_method)
+          end
+
           default do
             reply("plugin default")
+          end
+
+          def some_method
+            "some method"
           end
         end
       }
 
       before do
-        subject.configuration.plugins = [ plugin  ]
+        subject.configuration.plugins = [ plugin ]
       end
 
       it "should respond to reaction defined in plugin" do
@@ -229,6 +238,11 @@ describe "a class that inherits", Hipbot::Bot do
         end
         subject.expects(:send_to_room).with(room, 'bot default')
         subject.react(sender, room, '@robot blahblah')
+      end
+
+      it "should have access to #plugin inside reaction" do
+        subject.expects(:send_to_room).with(room, 'some method')
+        subject.react(sender, room, '@robot plugin method')
       end
     end
   end

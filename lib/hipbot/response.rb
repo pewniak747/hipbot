@@ -21,5 +21,9 @@ module Hipbot
       Hipbot.logger.info("REPLY in #{room}: #{message}")
       room.nil? ? bot.send_to_user(sender, message) : bot.send_to_room(room, message)
     end
+
+    def plugin
+      bot.plugin_for(reaction)
+    end
   end
 end

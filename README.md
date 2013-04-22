@@ -180,6 +180,28 @@ class GreeterPlugin < Hipbot::Plugin
 end
 ```
 
+You can gain access to plugin data inside reaction with `plugin` helper:
+
+``` ruby
+class GreeterPlugin < Hipbot::Plugin
+  attr_accessor :language
+  def initialize(language)
+    self.language = language
+  end
+
+  on /^hello/ do
+    case plugin.language
+    when :en
+      reply("hello!")
+    when :pl
+      reply("cześć!")
+    when :jp
+      reply("おはよう！")
+    end
+  end
+end
+```
+
 For a collection of open-source plugins, see https://github.com/netguru/hipbot-plugins
 
 ### Run

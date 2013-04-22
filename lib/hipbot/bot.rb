@@ -49,6 +49,10 @@ module Hipbot
       end
     end
 
+    def plugin_for(reaction)
+      included_plugins.find { |p| p.defined_reactions.include?(reaction) }
+    end
+
     private
 
     def plugin_reactions
