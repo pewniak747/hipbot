@@ -3,6 +3,8 @@
 [![Build Status](https://secure.travis-ci.org/pewniak747/hipbot.png?branch=master)](http://travis-ci.org/pewniak747/hipbot)
 [![Code Climate](https://codeclimate.com/github/pewniak747/hipbot.png)](https://codeclimate.com/github/pewniak747/hipbot)
 [![Coverage Status](https://coveralls.io/repos/pewniak747/hipbot/badge.png?branch=master)](https://coveralls.io/r/pewniak747/hipbot)
+[![Dependency Status](https://gemnasium.com/pewniak747/hipbot.png)](https://gemnasium.com/pewniak747/hipbot)
+[![Gem Version](https://badge.fury.io/rb/hipbot.png)](http://badge.fury.io/rb/hipbot)
 
 Hipbot is a XMPP bot for HipChat, written in ruby & eventmachine.
 
