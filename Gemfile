@@ -11,4 +11,5 @@ gem 'daemons'
 
 gem 'rspec'
 gem 'guard-rspec'
+gem 'coveralls', require: false
 gem 'mocha'
