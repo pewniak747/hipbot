@@ -121,7 +121,7 @@ module Jabber
 
       def activate_callbacks
         @stream.add_presence_callback(150, self) { |presence|
-          @presence_cbs.process(presence.from.strip, presence.from.resource, presence.type.to_s)
+          @presence_cbs.process(presence.from.strip.to_s, presence.from.resource, presence.type.to_s)
         }
 
         @stream.add_message_callback(150, self) { |message|
@@ -173,11 +173,11 @@ module Jabber
         if is_invite?(message)
           room_name = message.children.last.first_element_text('name')
           topic = message.children.last.first_element_text('topic')
-          @invite_cbs.process(message.from.strip, message.from.resource, room_name, topic)
+          @invite_cbs.process(message.from.strip.to_s, message.from.resource, room_name, topic)
         elsif message.type == :chat
-          @private_message_cbs.process(message.from.strip, message)
+          @private_message_cbs.process(message.from.strip.to_s, message)
         elsif message.type == :groupchat
-          @message_cbs.process(message.from.strip, message.from.resource, message)
+          @message_cbs.process(message.from.strip.to_s, message.from.resource, message)
         elsif message.type == :error
           false
         end
