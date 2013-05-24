@@ -13,8 +13,10 @@ module Hipbot
             block.call(response)
           rescue => e
             Hipbot.logger.error(e)
+            instance_exec(e, &Bot.error_handler)
           end
         end if block.present?
+
         http.errback do
           Hipbot.logger.error("HTTP-RESPONSE-ERROR: #{url}")
         end
@@ -37,7 +39,7 @@ module Hipbot
       end
 
       def json
-        @json ||= JSON.parse(body) rescue {}
+        @json ||= JSON.parse(body)
       end
     end
   end
