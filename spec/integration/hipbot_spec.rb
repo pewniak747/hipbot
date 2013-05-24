@@ -58,8 +58,8 @@ end
 describe MyHipbot do
   subject { described_class.instance }
 
-  let(:room)   { Hipbot::Room.create('1', 'private', topic: 'topic') }
-  let(:sender) { Hipbot::User.create('1', 'John Doe') }
+  let(:room)   { Hipbot::Room.create(id: '1', name: 'private', topic: 'topic') }
+  let(:sender) { Hipbot::User.create(id: '1', name: 'John Doe') }
 
   describe "configuration" do
     it "should set robot name" do

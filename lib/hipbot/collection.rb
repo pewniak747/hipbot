@@ -1,11 +1,17 @@
 module Hipbot
-  class Collection < Struct.new(:id, :name, :params)
+  class Collection
     private_class_method :new
+    attr_reader  :id, :name
     alias_method :to_s, :name
 
-    def initialize *args
-      super
-      self.params = OpenStruct.new(params)
+    def initialize args
+      @id     = args.delete(:id)
+      @name   = args.delete(:name)
+      @params = OpenStruct.new(args)
+    end
+
+    def set_param key, value
+      @params[key] = value
     end
 
     def delete

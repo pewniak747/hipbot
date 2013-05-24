@@ -48,23 +48,28 @@ module Hipbot
         end
 
         def initialize_rooms
-          @client.get_rooms.each do |r|
-            Room.create(r[:item].jid, r[:item].iname, topic: r[:details]['topic'])
-          end
-          true
+          @client.get_rooms.map do |room|
+            attributes = {
+                   id: room[:item].jid,
+                 name: room[:item].iname,
+                topic: room[:details]['topic'],
+            }
+            Room.create(attributes)
+          end.all?
         end
 
         def initialize_users
-          @client.get_users.each do |v|
-            params = {
-                email: v[:vcard]['EMAIL/USERID'],
-              mention: v[:item].attributes['mention_name'],
-                title: v[:vcard]['TITLE'],
-                photo: v[:vcard]['PHOTO'],
+          @client.get_users.map do |user|
+            attributes = {
+                   id: user[:item].jid,
+                 name: user[:item].iname,
+                email: user[:vcard]['EMAIL/USERID'],
+              mention: user[:item].attributes['mention_name'],
+                title: user[:vcard]['TITLE'],
+                photo: user[:vcard]['PHOTO'],
             }
-            User.create(v[:item].jid, v[:item].iname, params)
-          end
-          true
+            User.create(attributes)
+          end.all?
         end
 
         def join_rooms
@@ -100,7 +105,7 @@ module Hipbot
         end
 
         def invite_callback room_jid, user_name, room_name, topic
-          Room.create(room_jid, room_name, topic: topic)
+          Room.create(id: room_jid, name: room_name, topic: topic)
           @client.join(room_jid)
         end
 
