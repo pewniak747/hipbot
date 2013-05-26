@@ -56,6 +56,7 @@ class MyHipbot < Hipbot::Bot
 end
 
 describe MyHipbot do
+  before(:all) { described_class.instance.setup }
   subject { described_class.instance }
 
   let(:room)   { Hipbot::Room.create(id: '1', name: 'private', topic: 'topic') }
