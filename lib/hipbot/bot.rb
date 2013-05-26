@@ -23,6 +23,17 @@ module Hipbot
       end
     end
 
+    def setup
+      extend self.adapter
+      if self.orm
+        User.send(:include, self.orm)
+        Room.send(:include, self.orm)
+      end
+      helpers.module_exec(&self.class.preloader) if self.class.preloader
+      Jabber.debug  = true
+      Jabber.logger = self.logger
+    end
+
     class << self
       ACCESSORS = { configure: :configuration, on_preload: :preloader, on_error: :error_handler }
 
@@ -38,9 +49,7 @@ module Hipbot
 
       def start!
         ::EM::run do
-          Jabber.debug = true
-          Jabber.logger = Hipbot::Bot.instance.logger
-          Helpers.module_exec(&preloader)
+          instance.setup
           instance.start!
         end
       end
