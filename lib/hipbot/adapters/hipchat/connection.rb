@@ -115,10 +115,10 @@ module Hipbot
               if user_name == @bot.name
                 room.delete
               elsif user.present?
-                room.user_ids.delete(user.id)
+                room.users.delete(user)
               end
-            elsif pres.blank? && room.user_ids.exclude?(user.id)
-              room.user_ids << user.id
+            elsif pres.blank? && room.users.exclude?(user)
+              room.users << user
             end
           end
         end

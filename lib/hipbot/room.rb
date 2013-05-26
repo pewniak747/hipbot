@@ -9,7 +9,7 @@ module Hipbot
     end
 
     def users
-      User.find_many(user_ids)
+      @users ||= []
     end
   end
 end
