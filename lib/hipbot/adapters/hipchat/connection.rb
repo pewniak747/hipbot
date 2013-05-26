@@ -98,7 +98,7 @@ module Hipbot
 
         def message_callback room_jid, user_name, message
           with_sender(room_jid, user_name) do |room, user|
-            room.set_param(:topic, message.subject) if message.subject.present?
+            room.update_attribute(:topic, message.subject) if message.subject.present?
             return if user_name == @bot.name || message.body.blank?
             @bot.react(user, room, message.body)
           end

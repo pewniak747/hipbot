@@ -10,7 +10,7 @@ module Hipbot
       @params = OpenStruct.new(args)
     end
 
-    def set_param key, value
+    def update_attribute key, value
       @params[key] = value
     end
 
