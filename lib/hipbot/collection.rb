@@ -1,8 +1,12 @@
 module Hipbot
-  class Collection
-    private_class_method :new
-    attr_reader  :id, :name
-    alias_method :to_s, :name
+  module Collection
+    extend ActiveSupport::Concern
+
+    included do
+      extend ClassMethods
+      attr_reader  :id, :name
+      alias_method :to_s, :name
+    end
 
     def initialize args
       @id     = args.delete(:id)
@@ -18,7 +22,7 @@ module Hipbot
       self.class.collection.delete(self.id)
     end
 
-    class << self
+    module ClassMethods
       def create *args, &block
         collection[args[0]] = new(*args, &block)
       end

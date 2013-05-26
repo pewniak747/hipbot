@@ -3,6 +3,8 @@ module Hipbot
     attr_accessor *Bot::CONFIGURABLE_OPTIONS
 
     def initialize
+      self.adapter  = Adapters::Hipchat
+      self.orm      = Collection
       self.name     = 'robot'
       self.jid      = 'changeme'
       self.password = 'changeme'

@@ -1,12 +1,5 @@
 module Hipbot
-  class Room < Collection
-    attr_accessor :user_ids
-
-    def initialize *args
-      super
-      self.user_ids = []
-    end
-
+  class Room
     def set_topic topic
       Bot.instance.set_topic(self, topic)
     end

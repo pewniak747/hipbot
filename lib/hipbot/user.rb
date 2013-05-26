@@ -1,5 +1,5 @@
 module Hipbot
-  class User < Collection
+  class User
     def send_message message
       Bot.instance.send_to_user name, message
     end
