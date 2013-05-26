@@ -35,6 +35,7 @@ module Hipbot
     end
 
     class << self
+      alias_method :bot, :instance
       ACCESSORS = { configure: :configuration, on_preload: :preloader, on_error: :error_handler }
 
       ACCESSORS.each do |setter, getter|
