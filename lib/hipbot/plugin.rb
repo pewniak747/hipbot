@@ -1,11 +1,9 @@
 module Hipbot
   class Plugin < Reactable
-    attr_accessor :bot
+    cattr_accessor :bot
 
-    private
-
-    def reaction_target
-      bot
+    def self.configure
+      yield self.instance
     end
   end
 end

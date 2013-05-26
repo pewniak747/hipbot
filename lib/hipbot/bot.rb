@@ -75,8 +75,11 @@ module Hipbot
       end
     end
 
-    def default_reactions
-      super + included_plugins.flat_map(&:default_reactions)
+    def included_plugins
+      @included_plugins ||= Array(plugins).map do |object|
+        object.bot = self
+        object
+      end
     end
 
     def matching_reactions sender, room, message
