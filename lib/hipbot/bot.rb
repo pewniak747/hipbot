@@ -12,7 +12,7 @@ module Hipbot
     end
 
     def reactions
-      defined_reactions + plugin_reactions + default_reactions
+      self.class.reactions + plugin_reactions + default_reactions
     end
 
     def react sender, room, message
@@ -62,17 +62,11 @@ module Hipbot
     private
 
     def plugin_reactions
-      included_plugins.map(&:defined_reactions).flatten
+      included_plugins.map(&:reactions).flatten
     end
 
-    def included_plugins
-      @included_plugins ||= begin
-        Array(plugins).map do |object|
-          plugin = object.kind_of?(Plugin) ? object : object.new
-          plugin.bot = self
-          plugin
-        end
-      end
+    def default_reactions
+      self.class.default_reactions + included_plugins.map(&:default_reactions).flatten
     end
 
     def included_plugins
