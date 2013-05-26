@@ -23,7 +23,7 @@ module Hipbot
     end
 
     def plugin
-      bot.plugin_for(reaction)
+      reaction.klass.instance
     end
   end
 end

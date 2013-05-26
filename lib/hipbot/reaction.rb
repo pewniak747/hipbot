@@ -1,10 +1,10 @@
 module Hipbot
-  class Reaction < Struct.new(:bot, :regexps, :options, :block)
+  class Reaction < Struct.new(:klass, :regexps, :options, :block)
 
     def invoke sender, room, message
       message   = message_for(message, sender)
       arguments = arguments_for(message)
-      Response.new(bot, self, room, message).invoke(arguments)
+      Response.new(klass.bot, self, room, message).invoke(arguments)
     end
 
     def match? sender, room, message
@@ -35,7 +35,7 @@ module Hipbot
     end
 
     def matches_scope?(room, message)
-      global? || message.for?(bot) || room.nil?
+      global? || message.for?(klass.bot) || room.nil?
     end
 
     def matches_room?(room)
@@ -61,11 +61,11 @@ module Hipbot
     end
 
     def rooms
-      Array(options[:room]).flat_map{ |v| bot.rooms[v].presence || [v] }
+      @rooms ||= Array(options[:room]).flat_map{ |v| klass.bot.rooms[v].presence || [v] }
     end
 
     def users
-      Array(options[:from]).flat_map{ |v| bot.teams[v].presence || [v] }
+      @users ||= Array(options[:from]).flat_map{ |v| klass.bot.teams[v].presence || [v] }
     end
   end
 end
