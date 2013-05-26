@@ -20,7 +20,7 @@ gem install hipbot
 
 Create `bot.rb` file, subclass `Hipbot::Bot` and customize the responses.
 
-``` ruby
+```ruby
 require 'hipbot'
 
 class MyCompanyBot < Hipbot::Bot
@@ -63,7 +63,7 @@ MyCompanyBot.start!
 
 You can create a response by providing simple regexp:
 
-``` ruby
+```ruby
 on /^hello/ do
   reply('hello!')
 end
@@ -71,7 +71,7 @@ end
 
 Responses can pass arguments from regexps:
 
-``` ruby
+```ruby
 on /my name is (.*)/ do |user_name|
   reply('hello #{user_name}!')
 end
@@ -79,7 +79,7 @@ end
 
 Define multiple regexps for a response:
 
-``` ruby
+```ruby
 on /my name is (.*)/, /I am (.*)/ do |name|
   reply('hello #{user_name}!')
 end
@@ -87,7 +87,7 @@ end
 
 Use :from to only match messages from certain users or user groups defined in configuration
 
-``` ruby
+```ruby
 configure do |c|
   # ...
   c.teams = { vip: ['John', 'Mike'] }
@@ -100,7 +100,7 @@ end
 
 Use :room to only match messages in certain hipchat rooms
 
-``` ruby
+```ruby
 configure do |c|
   # ...
   c.rooms = { project_rooms: ['Project 1', 'Project 2'] }
@@ -113,7 +113,7 @@ end
 
 Use :global to react to messages that are not sent directly to @robot
 
-``` ruby
+```ruby
 on /hey I just met you/, global: true do
   reply('and this is crazy...')
 end
@@ -127,7 +127,7 @@ For more examples, check out (https://github.com/pewniak747/hipbot/tree/master/e
 
 Use http helpers (`get`, `post`, `put`, `delete`) to preform a http request:
 
-``` ruby
+```ruby
 on /curl (\S+)/ do |url|
   get url do |response|
     reply(response.code)
@@ -137,7 +137,7 @@ on /curl (\S+)/ do |url|
 end
 ```
 
-``` ruby
+```ruby
 on /ping site/ do
   get 'http://example.com', ping: "1" # issues http://example.com?ping=1
 end
@@ -152,7 +152,7 @@ Inside response you have access to following variables:
 
 You can define your own helpers and use them inside responses like this:
 
-``` ruby
+```ruby
 module HipbotHelpers
   def project_name
     "#{room.name}-project"
@@ -175,7 +175,7 @@ end
 
 To define a plugin, subclass `Hipbot::Plugin` and add responses like in bot:
 
-``` ruby
+```ruby
 class GreeterPlugin < Hipbot::Plugin
   on /^hello/ do
     reply('hello there!')
@@ -185,7 +185,7 @@ end
 
 You can gain access to plugin data inside reaction with `plugin` helper:
 
-``` ruby
+```ruby
 class GreeterPlugin < Hipbot::Plugin
   attr_accessor :language
   def initialize(language)
