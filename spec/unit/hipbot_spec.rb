@@ -232,15 +232,15 @@ describe "a class that inherits", Hipbot::Bot do
         subject.react(sender, room, '@robot blahblah')
       end
 
-      it "should respond to default defined in bot even if plugins define defaults" do
+      it "shouldn't respond to default defined in bot if plugins define own defaults" do
         described_class.default do
-          reply("bot default")
+          reply('bot default')
         end
         subject.expects(:send_to_room).with(room, 'bot default')
         subject.react(sender, room, '@robot blahblah')
       end
 
-      it "should have access to #plugin inside reaction" do
+      it 'should have access to #plugin inside reaction' do
         subject.expects(:send_to_room).with(room, 'some method')
         subject.react(sender, room, '@robot plugin method')
       end

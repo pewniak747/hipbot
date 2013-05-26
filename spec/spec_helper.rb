@@ -1,7 +1,6 @@
 require_relative '../lib/hipbot'
 
 require 'coveralls'
-
 Coveralls.wear!
 
 RSpec.configure do |config|
