@@ -39,8 +39,13 @@ module Hipbot
     end
 
     def matches_room?(room)
-      return true if options[:room].nil?
-      room.present? && (rooms.include?(room.name) || options[:room] == true)
+      if options[:room].nil?
+        true
+      elsif room.present?
+        rooms.include?(room.name) || options[:room] == true
+      else
+        options[:room] == false
+      end
     end
 
     def matches_sender?(message)
