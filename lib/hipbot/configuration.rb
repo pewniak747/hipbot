@@ -11,7 +11,7 @@ module Hipbot
       self.teams    = {}
       self.rooms    = {}
       self.helpers  = Module.new
-      self.logger   = Hipbot::Logger.new($stdout)
+      self.logger   = Logger.new($stdout)
     end
   end
 end
