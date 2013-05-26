@@ -2,7 +2,7 @@ module Hipbot
   class Bot < Reactable
     attr_accessor :configuration, :connection
 
-    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :plugins, :teams, :rooms, :logger]
+    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :plugins, :teams, :rooms, :logger, :orm]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
     alias_method :to_s, :name
 
