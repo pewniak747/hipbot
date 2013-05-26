@@ -12,7 +12,7 @@ module Hipbot
       instance_exec(*arguments, &reaction.block)
     rescue Exception => e
       Hipbot.logger.error(e)
-      instance_exec(e, &bot.error_handler)
+      instance_exec(e, &Bot.error_handler)
     end
 
     private

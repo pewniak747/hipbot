@@ -1,7 +1,6 @@
 module Hipbot
   class Bot < Reactable
-    include Singleton
-    attr_accessor :configuration, :connection, :error_handler
+    attr_accessor :configuration, :connection
 
     CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :plugins, :teams, :rooms, :logger]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
@@ -10,8 +9,6 @@ module Hipbot
     def initialize
       super
       self.configuration = Configuration.new.tap(&self.class.configuration)
-      self.error_handler = self.class.error_handler
-      extend(self.adapter || Adapters::Hipchat)
     end
 
     def reactions

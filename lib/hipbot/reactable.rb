@@ -1,14 +1,6 @@
 module Hipbot
   class Reactable
-    def on *regexps, &block
-      @defined_reactions ||= []
-      @defined_reactions << to_reaction(regexps, block)
-    end
-
-    def defined_reactions
-      @defined_reactions ||= []
-      @defined_reactions + class_reactions
-    end
+    include Singleton
 
     def default_reactions
       @default_reactions ||= begin
