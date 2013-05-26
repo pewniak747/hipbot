@@ -2,51 +2,50 @@ module Hipbot
   class Reactable
     include Singleton
 
-    def default_reactions
-      @default_reactions ||= begin
-        if reaction = self.class.default_reaction
-          [ to_reaction(reaction[0], reaction[-1]) ]
-        else
-          []
+    class << self
+      def default *params, &block
+        scope /(.*)/, *params do
+          default_reactions << to_reaction(block)
         end
       end
-    end
 
-    class << self
-      def on *regexps, &block
-        @reactions ||= []
-        @reactions << [regexps, block]
+      def scope *params, &block
+        params_stack << params
+        yield
+        params_stack.pop
+      end
+
+      def on *params, &block
+        scope *params do
+          reactions << to_reaction(block)
+        end
       end
 
       def reactions
-        @reactions || []
+        @reactions ||= []
       end
 
-      def default &block
-        @default_reaction = [[/(.*)/], block]
+      def default_reactions
+        @default_reactions ||= []
       end
 
-      def default_reaction
-        @default_reaction
+      def params_stack
+        @params_stack ||= []
       end
-    end
 
-    private
+      private
 
-    def class_reactions
-      @class_reactions ||= self.class.reactions.map do |opts|
-        to_reaction(opts[0], opts[-1])
+      def to_reaction block
+        current_options = {}
+        current_regexps = []
+
+        params_stack.each do |params|
+          options, regexps = params.partition{ |i| i.kind_of? Hash }
+          current_options.merge!(options.first) if options.any?
+          current_regexps += regexps
+        end
+        Reaction.new(self, current_regexps, current_options, block)
       end
-    end
-
-    def to_reaction(regexps, block)
-      regexps = regexps.dup
-      options = regexps[-1].kind_of?(Hash) ? regexps.pop : {}
-      Reaction.new(reaction_target, regexps, options, block)
-    end
-
-    def reaction_target
-      self
     end
   end
 end

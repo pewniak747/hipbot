@@ -50,8 +50,20 @@ class MyHipbot < Hipbot::Bot
     reply("you are #{sender.first_name}")
   end
 
-  default do
-    reply("I didn't understand you")
+  scope from: 'John Doe' do
+    on /John Doe thing/ do
+      reply('doing John Doe thing')
+    end
+
+    scope room: 'Project 1' do
+      on /John Doe project thing/ do
+        reply('doing John Doe project thing')
+      end
+    end
+  end
+
+  on /deploy/, room: :project_rooms do
+    reply('deploying')
   end
 end
 
@@ -90,7 +102,39 @@ describe MyHipbot do
 
     it "should respond with default reply" do
       subject.expects(:send_to_room).with(room, "I didn't understand you")
-      subject.react(sender, room, "@robbot blahlblah")
+      subject.react(sender, room, '@robbot private thing')
+    end
+
+    it 'allows private command if not in room' do
+      subject.expects(:send_to_user).with(sender, 'doing private thing')
+      subject.react(sender, nil, 'private thing')
+    end
+  end
+
+  describe 'scope' do
+    it 'sets its attributes to every reaction inside' do
+      subject.expects(:send_to_room).with(room, 'doing John Doe thing')
+      subject.react(sender, room, '@robbot John Doe thing')
+    end
+
+    it 'does not match other senders' do
+      subject.expects(:send_to_room).with(room, 'What do you mean, Other Guy?')
+      subject.react(other_sender, room, '@robbot John Doe thing')
+    end
+
+    it 'merges params if embedded' do
+      subject.expects(:send_to_room).with(room, 'doing John Doe project thing')
+      subject.react(sender, room, '@robbot John Doe project thing')
+    end
+
+    it 'ignores message from same sander in other room' do
+      subject.expects(:send_to_room).with(other_room, "I didn't understand you")
+      subject.react(sender, other_room, '@robbot John Doe project thing')
+    end
+
+    it 'ignores message from other sender in same room' do
+      subject.expects(:send_to_room).with(room, 'What do you mean, Other Guy?')
+      subject.react(other_sender, room, '@robbot John Doe project thing')
     end
   end
 
