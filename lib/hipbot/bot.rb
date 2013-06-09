@@ -2,7 +2,7 @@ module Hipbot
   class Bot < Reactable
     attr_accessor :configuration, :connection
 
-    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :plugins, :teams, :rooms, :logger, :orm]
+    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :plugins, :teams, :rooms, :logger, :storage]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
     alias_method :to_s, :name
 
@@ -25,10 +25,12 @@ module Hipbot
 
     def setup
       extend self.adapter
-      if self.orm
-        User.send(:include, self.orm)
-        Room.send(:include, self.orm)
+
+      if self.storage
+        User.send(:include, self.storage)
+        Room.send(:include, self.storage)
       end
+
       helpers.module_exec(&self.class.preloader) if self.class.preloader
       Jabber.debug  = true
       Jabber.logger = self.logger
