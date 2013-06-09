@@ -4,15 +4,15 @@ module Hipbot
 
     def initialize
       self.adapter  = Adapters::Hipchat
-      self.storage  = Collection
-      self.name     = 'robot'
-      self.jid      = 'changeme'
-      self.password = 'changeme'
-      self.teams    = {}
-      self.rooms    = {}
       self.helpers  = Module.new
+      self.jid      = 'changeme'
       self.logger   = Logger.new($stdout)
+      self.name     = 'robot'
+      self.password = 'changeme'
       self.plugins  = []
+      self.rooms    = {}
+      self.storage  = Collection
+      self.teams    = {}
     end
   end
 end

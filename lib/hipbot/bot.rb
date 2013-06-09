@@ -2,7 +2,7 @@ module Hipbot
   class Bot < Reactable
     attr_accessor :configuration, :connection
 
-    CONFIGURABLE_OPTIONS = [:name, :jid, :password, :adapter, :helpers, :plugins, :teams, :rooms, :logger, :storage]
+    CONFIGURABLE_OPTIONS = [:adapter, :helpers, :jid, :logger, :name, :password, :plugins, :rooms, :storage, :teams]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
     alias_method :to_s, :name
 
@@ -12,7 +12,7 @@ module Hipbot
     end
 
     def reactions
-      self.class.reactions + plugin_reactions + default_reactions
+      plugin_reactions + default_reactions
     end
 
     def react sender, room, message
@@ -32,6 +32,7 @@ module Hipbot
       end
 
       helpers.module_exec(&self.class.preloader) if self.class.preloader
+      plugins.prepend(self.class)
       Jabber.debug  = true
       Jabber.logger = self.logger
     end
@@ -61,18 +62,11 @@ module Hipbot
     private
 
     def plugin_reactions
-      included_plugins.map(&:reactions).flatten
+      plugins.flat_map(&:reactions)
     end
 
     def default_reactions
-      self.class.default_reactions + included_plugins.map(&:default_reactions).flatten
-    end
-
-    def included_plugins
-      @included_plugins ||= Array(plugins).map do |object|
-        object.bot = self
-        object
-      end
+      plugins.flat_map(&:default_reactions)
     end
 
     def matching_reactions sender, room, message
