@@ -1,5 +1,5 @@
 module Hipbot
-  class Reaction < Struct.new(:klass, :regexps, :options, :block)
+  class Reaction < Struct.new(:klass, :options, :block)
 
     def invoke sender, room, message
       message   = message_for(message, sender)
@@ -13,7 +13,7 @@ module Hipbot
     end
 
     def inspect
-      "#<Hipbot::Reaction #{regexps} #{options}>"
+      "#<Hipbot::Reaction #{options}>"
     end
 
     protected
@@ -31,7 +31,7 @@ module Hipbot
     end
 
     def matching_regexp(message)
-      regexps.find{ |regexp| regexp =~ (global? ? message.raw_body : message.body) }
+      options[:regexps].find{ |regexp| regexp =~ (global? ? message.raw_body : message.body) }
     end
 
     def matches_scope?(room, message)
