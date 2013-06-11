@@ -35,7 +35,7 @@ module Hipbot
     end
 
     def matches_scope?(room, message)
-      global? || message.for?(Hipbot.bot) || room.nil?
+      global? || message.for?(Hipbot.user) || room.nil?
     end
 
     def matches_room?(room)

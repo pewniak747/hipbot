@@ -2,9 +2,8 @@ module Hipbot
   module Adapters
     module Hipchat
       class Connection
-        def initialize bot
-          @bot = bot
-          @bot.connection = self
+        def initialize
+          Hipbot.connection = self
 
           setup_error_handler && setup_bot && setup_timers
         end
@@ -37,14 +36,15 @@ module Hipbot
             initialize_rooms
             initialize_users
             initialize_callbacks
+            set_name
             join_rooms
             set_presence('Hello humans!')
           end
         end
 
         def initialize_client
-          @client = ::Jabber::MUC::HipchatClient.new(@bot.jid + '/' + @bot.name)
-          yield if @client.connect(@bot.password)
+          @client = ::Jabber::MUC::HipchatClient.new(Hipbot.jid)
+          yield if @client.connect(Hipbot.password)
         end
 
         def initialize_rooms
@@ -68,8 +68,16 @@ module Hipbot
                 title: user[:vcard]['TITLE'],
                 photo: user[:vcard]['PHOTO'],
             }
-            User.create(attributes)
+            User.create(attributes).tap do |user|
+              if user.id == Hipbot.jid
+                Hipbot.configuration.user = user
+              end
+            end
           end.all?
+        end
+
+        def set_name
+          @client.name = Hipbot.name
         end
 
         def join_rooms
@@ -99,8 +107,8 @@ module Hipbot
         def message_callback room_jid, user_name, message
           with_sender(room_jid, user_name) do |room, user|
             room.update_attribute(:topic, message.subject) if message.subject.present?
-            return if user_name == @bot.name || message.body.blank?
-            @bot.react(user, room, message.body)
+            return if user_name == Hipbot.name || message.body.blank?
+            Hipbot.react(user, room, message.body)
           end
         end
 
@@ -112,7 +120,7 @@ module Hipbot
         def presence_callback room_jid, user_name, pres
           with_sender(room_jid, user_name) do |room, user|
             if pres == 'unavailable'
-              if user_name == @bot.name
+              if user_name == Hipbot.name
                 room.delete
               elsif user.present?
                 room.users.delete(user)
@@ -125,7 +133,7 @@ module Hipbot
 
         def private_message_callback user_jid, message
           with_user(user_jid) do |user|
-            @bot.react(user, nil, message.body) if user.name != @bot.name
+            Hipbot.react(user, nil, message.body) if user.name != Hipbot.name
           end if message.body.present?
         end
 
@@ -148,7 +156,7 @@ module Hipbot
 
         def setup_timers
           ::EM::add_periodic_timer(60) do
-            @client.keep_alive(@bot.password) if @client.present?
+            @client.keep_alive(Hipbot.password) if @client.present?
           end
         end
 

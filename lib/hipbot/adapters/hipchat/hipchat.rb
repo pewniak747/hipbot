@@ -2,7 +2,7 @@ module Hipbot
   module Adapters
     module Hipchat
       def start!
-        connection = Connection.new(self)
+        connection = Connection.new
       end
 
       def method_missing(sym, *args, &block)

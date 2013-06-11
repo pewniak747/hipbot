@@ -1,6 +1,7 @@
 module Hipbot
   class << self
     attr_accessor :bot, :plugins
+    delegate :name, to: :bot
 
     def plugins
       @plugins ||= []
@@ -17,8 +18,9 @@ module Hipbot
 
     attr_accessor :configuration, :connection
 
-    CONFIGURABLE_OPTIONS = [:adapter, :error_handler, :helpers, :jid, :logger, :name, :password, :plugins, :preloader, :rooms, :storage, :teams]
+    CONFIGURABLE_OPTIONS = [:adapter, :error_handler, :helpers, :jid, :logger, :password, :plugins, :preloader, :rooms, :storage, :teams, :user]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
+    delegate :name, to: :user
     alias_method :to_s, :name
 
     def initialize
@@ -39,7 +41,6 @@ module Hipbot
 
     def setup
       extend adapter
-
       Hipbot.bot = self
 
       User.send(:include, storage)

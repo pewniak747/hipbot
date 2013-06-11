@@ -28,7 +28,6 @@ end
 
 class MyHipbot < Hipbot::Bot
   configure do |config|
-    config.name    = 'robbot'
     config.jid     = 'robbot@chat.hipchat.com'
     config.helpers = HipbotHelpers
     config.teams   = { vip: ['John Doe', 'Jane Doe'] }
@@ -101,6 +100,10 @@ describe MyHipbot do
   let(:sender) { Hipbot::User.create(id: '1', name: 'John Doe') }
   let(:other_room)   { Hipbot::Room.create(id: '2', name: 'Hyde Park', topic: 'nice weather today') }
   let(:other_sender) { Hipbot::User.create(id: '2', name: 'Other Guy') }
+
+  before do
+    Hipbot.bot.configuration.user = Hipbot::User.create(name: 'robbot')
+  end
 
   describe 'configuration' do
     it 'should set robot name' do

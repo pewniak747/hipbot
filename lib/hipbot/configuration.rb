@@ -3,18 +3,21 @@ module Hipbot
     attr_accessor *Bot::CONFIGURABLE_OPTIONS
 
     def initialize
-      self.adapter  = Adapters::Hipchat
+      self.adapter       = Adapters::Hipchat
       self.error_handler = Proc.new{}
-      self.helpers  = Module.new
-      self.jid      = 'changeme'
-      self.logger   = Logger.new($stdout)
-      self.name     = 'robot'
-      self.password = 'changeme'
-      self.plugins  = Hipbot.plugins
-      self.preloader = Proc.new{}
-      self.rooms    = {}
-      self.storage  = Collection
-      self.teams    = {}
+      self.helpers       = Module.new
+      self.jid           = ''
+      self.logger        = Logger.new($stdout)
+      self.password      = ''
+      self.plugins       = Hipbot.plugins
+      self.preloader     = Proc.new{}
+      self.rooms         = {}
+      self.storage       = Collection
+      self.teams         = {}
+    end
+
+    def user
+      @user ||= User.tap{ |u| u.send(:include, self.storage) }.new(name: 'robot')
     end
   end
 end

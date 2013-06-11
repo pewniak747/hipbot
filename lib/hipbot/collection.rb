@@ -4,18 +4,18 @@ module Hipbot
 
     included do
       extend ClassMethods
-      attr_reader  :id, :name
+      attr_reader  :id, :name, :attributes
       alias_method :to_s, :name
     end
 
     def initialize args
       @id     = args.delete(:id)
       @name   = args.delete(:name)
-      @params = OpenStruct.new(args)
+      @attributes = OpenStruct.new(args)
     end
 
     def update_attribute key, value
-      @params[key] = value
+      @attributes[key] = value
     end
 
     def delete

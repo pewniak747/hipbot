@@ -14,7 +14,7 @@ module Hipbot
     end
 
     def for? recipient
-      recipients.include? recipient.to_s.gsub(/\s+/, '')
+      recipients.include? recipient.mention
     end
 
     def strip_recipient body

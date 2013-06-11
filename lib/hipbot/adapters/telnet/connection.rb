@@ -2,14 +2,13 @@ module Hipbot
   module Adapters
     module Telnet
       class Connection < EM::Connection
-        def initialize bot
-          @bot = bot
-          @bot.connection = self
+        def initialize
+          Hipbot.connection = self
         end
 
         def receive_data(data)
-          sender, room, message = *data.strip.split(':')
-          @bot.react(sender, room, message)
+          sender, room, message = data.strip.split(':')
+          Hipbot.react(sender, room, message)
         end
       end
     end

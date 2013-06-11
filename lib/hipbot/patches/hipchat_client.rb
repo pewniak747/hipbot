@@ -52,6 +52,10 @@ module Jabber
         @my_jid.resource
       end
 
+      def name= resource
+        @my_jid.resource = resource
+      end
+
       def on_presence(prio = 0, ref = nil, &block)
         @presence_cbs.add(prio, ref) do |room_jid, user_name, pres_type|
           block.call(room_jid, user_name, pres_type)
