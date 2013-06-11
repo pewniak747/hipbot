@@ -11,7 +11,7 @@ module Hipbot
     def initialize args
       @id     = args.delete(:id)
       @name   = args.delete(:name)
-      @attributes = OpenStruct.new(args)
+      @attributes = args
     end
 
     def update_attribute key, value
