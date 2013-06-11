@@ -17,7 +17,7 @@ module Hipbot
     end
 
     def user
-      @user ||= User.tap{ |u| u.send(:include, self.storage) }.new(name: 'robot')
+      @user ||= User.new(name: 'robot')
     end
   end
 end
