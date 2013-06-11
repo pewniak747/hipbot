@@ -13,7 +13,7 @@ module Hipbot
             block.call(response)
           rescue => e
             Hipbot.logger.error(e)
-            instance_exec(e, &Bot.error_handler)
+            instance_exec(e, &Hipbot.error_handler)
           end
         end if block.present?
 

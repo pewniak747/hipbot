@@ -1,14 +1,28 @@
 module Hipbot
-  class Bot < Reactable
+  class << self
+    attr_accessor :bot, :plugins
+
+    def plugins
+      @plugins ||= []
+    end
+
+    def method_missing name, *params, &block
+      bot.send(name, *params, &block)
+    end
+  end
+
+  class Bot
+    extend Reactable
+    include Singleton
+
     attr_accessor :configuration, :connection
 
-    CONFIGURABLE_OPTIONS = [:adapter, :helpers, :jid, :logger, :name, :password, :plugins, :rooms, :storage, :teams]
+    CONFIGURABLE_OPTIONS = [:adapter, :error_handler, :helpers, :jid, :logger, :name, :password, :plugins, :preloader, :rooms, :storage, :teams]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
     alias_method :to_s, :name
 
     def initialize
-      super
-      self.configuration = Configuration.new.tap(&self.class.configuration)
+      self.configuration ||= Configuration.new
     end
 
     def reactions
@@ -16,39 +30,38 @@ module Hipbot
     end
 
     def react sender, room, message
-      Hipbot.logger.info("MESSAGE from #{sender} in #{room}")
+      logger.info("MESSAGE from #{sender} in #{room}")
       matching_reactions(sender, room, message) do |matches|
-        Hipbot.logger.info("REACTION #{matches.first.inspect}")
+        logger.info("REACTION #{matches.first.inspect}")
         matches.first.invoke(sender, room, message)
       end
     end
 
     def setup
-      extend self.adapter
+      extend adapter
 
-      if self.storage
-        User.send(:include, self.storage)
-        Room.send(:include, self.storage)
-      end
+      Hipbot.bot = self
 
-      helpers.module_exec(&self.class.preloader) if self.class.preloader
-      plugins.prepend(self.class)
+      User.send(:include, storage)
+      Room.send(:include, storage)
+
+      helpers.module_exec(&preloader)
+      plugins.append(self)
       Jabber.debug  = true
-      Jabber.logger = self.logger
+      Jabber.logger = logger
     end
 
     class << self
-      alias_method :bot, :instance
-      ACCESSORS = { configure: :configuration, on_preload: :preloader, on_error: :error_handler }
+      def configure &block
+        instance.configuration = Configuration.new.tap(&block)
+      end
 
-      ACCESSORS.each do |setter, getter|
-        define_method(setter) do |&block|
-          instance_variable_set("@#{getter}", block)
-        end
+      def on_preload &block
+        instance.configuration.preloader = block
+      end
 
-        define_method(getter) do
-          instance_variable_get("@#{getter}") || Proc.new{}
-        end
+      def on_error &block
+        instance.configuration.error_handler = block
       end
 
       def start!
@@ -62,11 +75,11 @@ module Hipbot
     private
 
     def plugin_reactions
-      plugins.flat_map(&:reactions)
+      plugins.flat_map{ |p| p.class.reactions }
     end
 
     def default_reactions
-      plugins.flat_map(&:default_reactions)
+      plugins.flat_map{ |p| p.class.default_reactions }
     end
 
     def matching_reactions sender, room, message

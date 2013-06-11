@@ -1,9 +1,16 @@
 module Hipbot
-  class Plugin < Reactable
-    cattr_accessor :bot
+  module Plugin
+    include Reactable
 
-    def self.configure
-      yield self.instance
+    def configure
+      yield instance
+    end
+
+    class << self
+      def extended base
+        base.send(:include, Singleton)
+        Hipbot.plugins.prepend(base.instance)
+      end
     end
   end
 end

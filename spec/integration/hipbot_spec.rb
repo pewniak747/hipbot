@@ -10,13 +10,17 @@ module HipbotHelpers
   end
 end
 
-class AwesomePlugin < Hipbot::Plugin
+class AwesomePlugin
+  extend Hipbot::Plugin
+
   on /respond awesome/ do
     reply('awesome responded')
   end
 end
 
-class CoolPlugin < Hipbot::Plugin
+class CoolPlugin
+  extend Hipbot::Plugin
+
   on /respond cool/ do
     reply('cool responded')
   end
@@ -27,7 +31,6 @@ class MyHipbot < Hipbot::Bot
     config.name    = 'robbot'
     config.jid     = 'robbot@chat.hipchat.com'
     config.helpers = HipbotHelpers
-    config.plugins = [AwesomePlugin, CoolPlugin]
     config.teams   = { vip: ['John Doe', 'Jane Doe'] }
     config.rooms   = { project_rooms: ['Project 1', 'Project 2'] }
   end
@@ -91,8 +94,8 @@ class MyHipbot < Hipbot::Bot
 end
 
 describe MyHipbot do
-  before(:all) { described_class.instance.setup }
-  subject { described_class.instance }
+  before(:all) { MyHipbot.instance.setup }
+  subject { MyHipbot.instance }
 
   let(:room)   { Hipbot::Room.create(id: '1', name: 'Project 1', topic: 'project 1 stuff only') }
   let(:sender) { Hipbot::User.create(id: '1', name: 'John Doe') }

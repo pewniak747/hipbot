@@ -1,9 +1,11 @@
 module Hipbot
-  class Response < Struct.new(:bot, :reaction, :room, :message)
+  class Response < Struct.new(:reaction, :room, :message)
     delegate :sender, :recipients, :body, :to => :message
+    delegate :bot, :to => Hipbot
+
     include Helpers
 
-    def initialize bot, reaction, room, message
+    def initialize reaction, room, message
       super
       extend(bot.helpers)
     end
@@ -11,14 +13,14 @@ module Hipbot
     def invoke arguments
       instance_exec(*arguments, &reaction.block)
     rescue Exception => e
-      Hipbot.logger.error(e)
-      instance_exec(e, &Bot.error_handler)
+      bot.logger.error(e)
+      instance_exec(e, &bot.error_handler)
     end
 
     private
 
     def reply message, room = self.room
-      Hipbot.logger.info("REPLY in #{room}: #{message}")
+      bot.logger.info("REPLY in #{room}: #{message}")
       room.nil? ? bot.send_to_user(sender, message) : bot.send_to_room(room, message)
     end
 

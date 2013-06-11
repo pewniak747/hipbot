@@ -8,8 +8,4 @@ module Hipbot
       super(severity, "[#{severity_name}][#{Time.now}] #{msg}")
     end
   end
-
-  def self.logger
-    Hipbot::Bot.instance.logger
-  end
 end

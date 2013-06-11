@@ -4,7 +4,7 @@ module Hipbot
     def invoke sender, room, message
       message   = message_for(message, sender)
       arguments = arguments_for(message)
-      Response.new(klass.bot, self, room, message).invoke(arguments)
+      Response.new(self, room, message).invoke(arguments)
     end
 
     def match? sender, room, message
@@ -35,14 +35,14 @@ module Hipbot
     end
 
     def matches_scope?(room, message)
-      global? || message.for?(klass.bot) || room.nil?
+      global? || message.for?(Hipbot.bot) || room.nil?
     end
 
     def matches_room?(room)
       if options[:room].nil?
         true
       elsif room.present?
-        rooms.include?(room.name) || options[:room] == true
+        options[:room] == true || rooms.include?(room.name)
       else
         options[:room] == false
       end
@@ -61,11 +61,11 @@ module Hipbot
     end
 
     def rooms
-      @rooms ||= Array(options[:room]).flat_map{ |v| klass.bot.rooms[v].presence || [v] }
+      @rooms ||= Array(options[:room]).flat_map{ |v| Hipbot.rooms[v].presence || [v] }
     end
 
     def users
-      @users ||= Array(options[:from]).flat_map{ |v| klass.bot.teams[v].presence || [v] }
+      @users ||= Array(options[:from]).flat_map{ |v| Hipbot.teams[v].presence || [v] }
     end
   end
 end
