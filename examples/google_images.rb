@@ -9,6 +9,7 @@ class SampleBot < Hipbot::Bot
   configure do |c|
     c.jid = ENV['HIPBOT_JID']
     c.password = ENV['HIPBOT_PASSWORD']
+    c.name = ENV['HIPBOT_NAME']
   end
 
   on /\Aimage (.+)/i do |img_str|

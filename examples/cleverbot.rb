@@ -9,6 +9,7 @@ class CleverHipbot < Hipbot::Bot
   configure do |c|
     c.jid = ENV['HIPBOT_JID']
     c.password = ENV['HIPBOT_PASSWORD']
+    c.name = ENV['HIPBOT_NAME']
   end
 
   cleverbot = ::Cleverbot::Client.new

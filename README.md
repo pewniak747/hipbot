@@ -25,6 +25,7 @@ require 'hipbot'
 
 class MyCompanyBot < Hipbot::Bot
   configure do |c|
+    c.name      = 'robot' # required
     c.jid       = 'changeme@chat.hipchat.com' # required
     c.password  = 'secret' # required
     c.teams     = { vip: ['John', 'Mike'] }
