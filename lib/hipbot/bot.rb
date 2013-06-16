@@ -27,16 +27,11 @@ module Hipbot
       self.configuration ||= Configuration.new
     end
 
-    def reactions
-      plugin_reactions + default_reactions
-    end
-
     def react sender, room, message
-      logger.info("MESSAGE from #{sender} in #{room}")
-      matching_reactions(sender, room, message) do |matches|
-        logger.info("REACTION #{matches.first.inspect}")
-        matches.first.invoke(sender, room, message)
-      end
+      message = Message.new(message, room, sender)
+      matches = matching_reactions(message, plugin_reactions)
+      matches = matching_reactions(message, default_reactions)[0..0] if matches.empty?
+      matches.each(&:invoke)
     end
 
     def setup
@@ -45,6 +40,7 @@ module Hipbot
 
       User.send(:include, storage)
       Room.send(:include, storage)
+      Response.send(:include, helpers)
 
       helpers.module_exec(&preloader)
       plugins.append(self)
@@ -73,7 +69,16 @@ module Hipbot
       end
     end
 
-    private
+    protected
+
+    def matching_reactions message, reactions
+      reactions.map{ |reaction| matching_rection(message, reaction) }.compact
+    end
+
+    def matching_rection message, reaction
+      match = reaction.match_with(message)
+      match.matches? ? match : nil
+    end
 
     def plugin_reactions
       plugins.flat_map{ |p| p.class.reactions }
@@ -81,11 +86,6 @@ module Hipbot
 
     def default_reactions
       plugins.flat_map{ |p| p.class.default_reactions }
-    end
-
-    def matching_reactions sender, room, message
-      matches = reactions.select{ |r| r.match?(sender, room, message) }
-      yield matches if matches.any?
     end
   end
 end

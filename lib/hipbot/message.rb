@@ -1,16 +1,12 @@
 module Hipbot
-  class Message
-    attr_reader :body, :sender, :raw_body
+  class Message < Struct.new(:raw_body, :room, :sender)
+    attr_accessor :body, :recipients
 
-    def initialize body, sender
-      @raw_body = body
-      @body     = strip_recipient(body)
-      @sender   = sender
-    end
-
-    def recipients
-      results = raw_body.scan(/@(\w+)/) + raw_body.scan(/@"(.*)"/)
-      results.flatten.uniq
+    def initialize *args
+      super
+      Hipbot.logger.info("MESSAGE from #{sender} in #{room}")
+      self.body       = strip_recipient(raw_body)
+      self.recipients = raw_body.scan(/@(\p{L}++)/).flatten.compact.uniq
     end
 
     def for? recipient
@@ -18,11 +14,15 @@ module Hipbot
     end
 
     def strip_recipient body
-      body.gsub(/^@\w+\W*/, '')
+      body.gsub(/^@\p{L}++[^\p{L}]*/, '').strip
     end
 
     def mentions
       recipients[1..-1] || [] # TODO: Fix global message case
+    end
+
+    def private?
+      room.nil?
     end
   end
 end

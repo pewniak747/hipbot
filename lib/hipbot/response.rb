@@ -1,27 +1,24 @@
 module Hipbot
-  class Response < Struct.new(:reaction, :room, :message)
-    delegate :sender, :recipients, :body, :to => :message
-    delegate :bot, :to => Hipbot
-
+  class Response < Struct.new(:reaction, :message)
     include Helpers
 
-    def initialize reaction, room, message
-      super
-      extend(bot.helpers)
-    end
+    delegate :sender, :recipients, :body, :room, :to => :message
+    delegate :bot, :to => Hipbot
 
     def invoke arguments
+      Hipbot.logger.info("REACTION #{reaction.inspect}")
       instance_exec(*arguments, &reaction.block)
+      true
     rescue Exception => e
-      bot.logger.error(e)
-      instance_exec(e, &bot.error_handler)
+      Hipbot.logger.error(e)
+      instance_exec(e, &Hipbot.error_handler)
+      false
     end
 
-    private
+    protected
 
     def reply message, room = self.room
-      bot.logger.info("REPLY in #{room}: #{message}")
-      room.nil? ? bot.send_to_user(sender, message) : bot.send_to_room(room, message)
+      room.nil? ? Hipbot.send_to_user(sender, message) : Hipbot.send_to_room(room, message)
     end
 
     def plugin

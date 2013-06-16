@@ -14,14 +14,17 @@ module Hipbot
         end
 
         def send_to_room(room, message)
+          Hipbot.logger.info("REPLY in #{room}: #{message}")
           @client.send_message(:groupchat, room.id, message)
         end
 
         def send_to_user(user, message)
+          Hipbot.logger.info("REPLY to #{user}: #{message}")
           @client.send_message(:chat, user.id, message)
         end
 
         def set_topic(room, topic)
+          Hipbot.logger.info("TOPIC set in #{room}: #{topic}")
           @client.send_message(:groupchat, room.id, nil, topic)
         end
 

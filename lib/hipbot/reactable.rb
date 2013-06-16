@@ -1,7 +1,7 @@
 module Hipbot
   module Reactable
     def default *params, &block
-      scope /(.*)/, *params do
+      scope *params do
         default_reactions << to_reaction(block)
       end
     end
