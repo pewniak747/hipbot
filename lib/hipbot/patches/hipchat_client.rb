@@ -116,6 +116,8 @@ module Jabber
           Jabber::debuglog "MUCBrowser initialized"
           @conference_domain = @muc_browser.muc_rooms(@chat_domain).keys.first
           Jabber::debuglog "No conference domain found" if !@conference_domain.present?
+          @roster = Roster::Helper.new(@stream) # TODO: Error handling
+          @vcard = Vcard::Helper.new(@stream) # TODO: Error handling
           true
         rescue => e
           Jabber::debuglog "Connection failed"
@@ -145,7 +147,7 @@ module Jabber
             details = {}
             item.first.children.each{ |c| details[c.name] = c.text }
             rooms << {
-              :item => item,
+              :item    => item,
               :details => details
             }
           end
@@ -154,15 +156,23 @@ module Jabber
       end
 
       def get_users
-        roster = Roster::Helper.new(@stream) # TODO: Error handling
-        vcard = Vcard::Helper.new(@stream) # TODO: Error handling
-        roster.wait_for_roster
-        roster.items.map do |jid, item|
+        @roster.wait_for_roster
+        @roster.items.map do |jid, item|
           {
-            :item => item,
-            :vcard => vcard.get(jid)
+                jid: item.jid.to_s,
+               name: item.iname,
+            mention: item.attributes['mention_name'],
           }
-        end.compact
+        end
+      end
+
+      def get_user_details user_jid
+        vcard = @vcard.get(user_jid)
+        {
+          email: vcard['EMAIL/USERID'],
+          title: vcard['TITLE'],
+          photo: vcard['PHOTO'],
+        }
       end
 
       def deactivate_callbacks

@@ -5,7 +5,7 @@ module Hipbot
     end
 
     def mention
-      attributes[:mention] || name.delete(' ')
+      attributes['mention'] || name.delete(' ')
     end
 
     def first_name

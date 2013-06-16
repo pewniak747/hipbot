@@ -4,7 +4,6 @@ module Hipbot
       class Connection
         def initialize
           Hipbot.connection = self
-
           setup_error_handler && setup_bot && setup_timers
         end
 
@@ -24,22 +23,23 @@ module Hipbot
         end
 
         def set_topic(room, topic)
-          Hipbot.logger.info("TOPIC set in #{room}: #{topic}")
+          Hipbot.logger.info("TOPIC set in #{room} to '#{topic}'")
           @client.send_message(:groupchat, room.id, nil, topic)
         end
 
         def set_presence(status = nil, type = :available)
+          Hipbot.logger.info("PRESENCE set to #{type} with '#{status}'")
           @client.set_presence(type, nil, status)
         end
 
-        private
+        protected
 
         def setup_bot
           initialize_client do
             initialize_rooms
             initialize_users
             initialize_callbacks
-            set_name
+            set_bot_user
             join_rooms
             set_presence('Hello humans!')
           end
@@ -51,51 +51,40 @@ module Hipbot
         end
 
         def initialize_rooms
-          @client.get_rooms.map do |room|
-            attributes = {
-                   id: room[:item].jid,
-                 name: room[:item].iname,
-                topic: room[:details]['topic'],
-            }
-            Room.create(attributes)
-          end.all?
+          @client.get_rooms.each do |room_data|
+            room = Room.find_or_create_by(id: room_data[:item].jid)
+            room.update_attributes({
+                 name: room_data[:item].iname,
+                topic: room_data[:details]['topic'],
+            })
+          end
         end
 
         def initialize_users
-          @client.get_users.map do |user|
-            attributes = {
-                   id: user[:item].jid,
-                 name: user[:item].iname,
-                email: user[:vcard]['EMAIL/USERID'],
-              mention: user[:item].attributes['mention_name'],
-                title: user[:vcard]['TITLE'],
-                photo: user[:vcard]['PHOTO'],
-            }
-            User.create(attributes).tap do |user|
-              if user.id == Hipbot.jid
-                Hipbot.configuration.user = user
-              end
-            end
-          end.all?
-        end
+          @client.get_users.each do |user_data|
+            user = User.find_or_create_by(id: user_data.delete(:jid))
+            user.update_attributes(user_data)
 
-        def set_name
-          @client.name = Hipbot.name
-        end
-
-        def join_rooms
-          with_rooms do |rooms|
-            rooms.each do |r|
-              @client.join(r.id)
+            if user.attributes['email'].nil?
+              user.update_attributes(@client.get_user_details(user.id))
             end
           end
         end
 
+        def set_bot_user
+          Hipbot.configuration.user = User[Hipbot.jid]
+          @client.name = Hipbot.user
+        end
+
+        def join_rooms
+          with_rooms do |room|
+            @client.join(room.id)
+          end
+        end
+
         def exit_all_rooms
-          with_rooms do |rooms|
-            rooms.each do |r|
-              @client.exit(r.id, 'bye bye!')
-            end
+          with_rooms do |room|
+            @client.exit(room.id, 'bye bye!')
           end
         end
 
@@ -141,8 +130,8 @@ module Hipbot
         end
 
         def with_rooms
-          return Jabber::debuglog 'No rooms found' if Room.empty?
-          yield Room
+          return Hipbot.logger.error 'No rooms found' if Room.empty?
+          Room.each{ |room| yield room }
         end
 
         def with_sender room_id, user_id
@@ -165,9 +154,9 @@ module Hipbot
 
         def setup_error_handler
           ::EM.error_handler do |e|
-            Jabber::debuglog e.inspect
+            Hipbot.logger.error e.inspect
             e.backtrace.each do |line|
-              Jabber::debuglog line
+              Hipbot.logger.error line
             end
           end
         end

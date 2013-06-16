@@ -4,18 +4,28 @@ module Hipbot
 
     included do
       extend ClassMethods
-      attr_reader  :id, :name, :attributes
+      attr_accessor :id, :name, :attributes
       alias_method :to_s, :name
     end
 
     def initialize args
-      @id     = args.delete(:id)
-      @name   = args.delete(:name)
-      @attributes = args
+      self.id         = args.delete(:id)
+      self.name       = args.delete(:name)
+      self.attributes = args
     end
 
     def update_attribute key, value
-      @attributes[key] = value
+      if key == name
+        self.name = value
+      else
+        self.attributes[key] = value
+      end
+    end
+
+    def update_attributes hash
+      hash.each do |k, v|
+        update_attribute k, v
+      end
     end
 
     def delete
@@ -42,6 +52,10 @@ module Hipbot
       def find_many *items
         items.flatten!
         items.map{ |i| find_one(i) }.compact.uniq
+      end
+
+      def find_or_create_by hash
+        find_one(hash[:id] || hash[:name]) || create(hash)
       end
 
       protected
