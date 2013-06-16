@@ -6,7 +6,7 @@ module Hipbot
       super
       Hipbot.logger.info("MESSAGE from #{sender} in #{room}")
       self.body       = strip_recipient(raw_body)
-      self.recipients = raw_body.scan(/@(\p{L}++)/).flatten.compact.uniq
+      self.recipients = raw_body.scan(/@(\p{Word}++)/).flatten.compact.uniq
     end
 
     def for? recipient
@@ -14,7 +14,7 @@ module Hipbot
     end
 
     def strip_recipient body
-      body.gsub(/^@\p{L}++[^\p{L}]*/, '').strip
+      body.gsub(/^@\p{Word}++[^\p{Word}]*/, '').strip
     end
 
     def mentions
