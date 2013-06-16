@@ -4,6 +4,9 @@ describe Hipbot::Message do
   subject { Hipbot::Message }
   let(:sender) { stub }
   let(:room) { stub }
+  before(:all) do
+    Hipbot.bot = Hipbot::Bot.instance
+  end
 
   it "should have a body" do
     message = subject.new('this is a message', room, sender)
