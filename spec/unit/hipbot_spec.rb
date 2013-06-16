@@ -4,7 +4,7 @@ describe "a class that inherits", Hipbot::Bot do
   let(:described_class) { Class.new(Hipbot::Bot) }
 
   before(:each) do
-    Hipbot.plugins.clear
+    described_class.instance.plugins.clear
     described_class.instance.setup
   end
   subject { described_class.instance }
