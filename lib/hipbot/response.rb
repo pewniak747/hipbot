@@ -22,7 +22,7 @@ module Hipbot
     end
 
     def plugin
-      reaction.klass.instance
+      reaction.plugin.instance
     end
   end
 end

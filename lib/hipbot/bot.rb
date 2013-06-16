@@ -48,6 +48,14 @@ module Hipbot
       Jabber.logger = logger
     end
 
+    def plugin_reactions
+      plugins.flat_map{ |p| p.class.reactions }
+    end
+
+    def default_reactions
+      plugins.flat_map{ |p| p.class.default_reactions }
+    end
+
     class << self
       def configure &block
         instance.configuration = Configuration.new.tap(&block)
@@ -80,12 +88,5 @@ module Hipbot
       match.matches? ? match : nil
     end
 
-    def plugin_reactions
-      plugins.flat_map{ |p| p.class.reactions }
-    end
-
-    def default_reactions
-      plugins.flat_map{ |p| p.class.default_reactions }
-    end
   end
 end

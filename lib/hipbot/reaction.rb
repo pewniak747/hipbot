@@ -1,47 +1,59 @@
 module Hipbot
-  class Reaction < Struct.new(:klass, :options, :block)
-    def match_with message
-      Match.new(self, message)
-    end
-
-    def inspect
-      "#<Hipbot::Reaction #{options}>"
-    end
-
-    def regexps
-      options[:regexps]
-    end
-
-    def anywhere?
-      options[:room].nil?
-    end
-
+  class Reaction < Struct.new(:plugin, :options, :block)
     def any_room?
       options[:room] == true
-    end
-
-    def private_message_only?
-      options[:room] == false
-    end
-
-    def global?
-      !!options[:global]
-    end
-
-    def from_all?
-      options[:from].blank?
     end
 
     def anything?
       regexps.blank?
     end
 
-    def users
-      replace_symbols options[:from], Hipbot.teams
+    def anywhere?
+      options[:room].nil?
+    end
+
+    def desc
+      options[:desc]
+    end
+
+    def from_all?
+      options[:from].blank?
+    end
+
+    def global?
+      !!options[:global]
+    end
+
+    def inspect
+      "#<Hipbot::Reaction #{options}>"
+    end
+
+    def plugin_name
+      plugin.name.demodulize
+    end
+
+    def match_with message
+      Match.new(self, message)
+    end
+
+    def private_message_only?
+      options[:room] == false
+    end
+
+    def readable_command
+      regexps.to_s.gsub(/(?<!\\)(\/|\[|\]|\^|\\z|\$|\\)/, '')
+    end
+
+    def regexps
+      options[:regexps]
     end
 
     def rooms
       replace_symbols options[:room], Hipbot.rooms
+    end
+
+    def users
+      replace_symbols options[:from], Hipbot.teams
     end
 
     protected
