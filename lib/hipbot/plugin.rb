@@ -17,10 +17,6 @@ module Hipbot
       Hipbot.plugins.prepend(self.instance)
     end
 
-    def reply message, room = self.room
-      room.nil? ? Hipbot.send_to_user(sender, message) : Hipbot.send_to_room(room, message)
-    end
-
     module ClassMethods
       def configure
         yield instance
