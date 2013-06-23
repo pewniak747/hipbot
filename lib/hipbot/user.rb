@@ -1,7 +1,7 @@
 module Hipbot
   class User
     def send_message message
-      Hipbot.send_to_user name, message
+      Hipbot.send_to_user self, message
     end
 
     def mention
