@@ -209,7 +209,7 @@ describe "a class that inherits", Hipbot::Bot do
     context "plugins" do
       let!(:plugin) {
         Class.new do
-          extend Hipbot::Plugin
+          include Hipbot::Plugin
 
           on /plugin respond/ do
             reply("plugin ack")

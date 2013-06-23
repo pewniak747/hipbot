@@ -9,7 +9,7 @@ module HipbotHelpers
 end
 
 class AwesomePlugin
-  extend Hipbot::Plugin
+  include Hipbot::Plugin
 
   desc 'respond awesome - responds with awesome'
   on /respond awesome/ do
@@ -18,7 +18,7 @@ class AwesomePlugin
 end
 
 class CoolPlugin
-  extend Hipbot::Plugin
+  include Hipbot::Plugin
 
   desc 'respond cool - responds with cool'
   on /respond cool/ do

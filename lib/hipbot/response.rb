@@ -17,12 +17,12 @@ module Hipbot
 
     protected
 
-    def reply message, room = self.room
-      room.nil? ? Hipbot.send_to_user(sender, message) : Hipbot.send_to_room(room, message)
+    def method_missing method, *args, &block
+      plugin.send(method, *args, &block)
     end
 
     def plugin
-      reaction.plugin.instance
+      reaction.plugin.with_response(self)
     end
   end
 end
