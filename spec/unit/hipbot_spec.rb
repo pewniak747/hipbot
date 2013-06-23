@@ -10,7 +10,7 @@ describe "a class that inherits", Hipbot::Bot do
   subject { described_class.instance }
 
   context "#on" do
-    let(:sender) { stub_everything(name: 'Tom Smith') }
+    let(:sender) { stub_everything(name: 'Tom Smith', reactions: []) }
     let(:room)   { stub_everything }
 
     it "should reply to no arguments" do
@@ -94,7 +94,7 @@ describe "a class that inherits", Hipbot::Bot do
     end
 
     context "messages from particular sender" do
-      let(:other_user) { stub(name: "John") }
+      let(:other_user) { stub(name: "John", reactions: []) }
 
       it "should reply" do
         described_class.on /wazzup\?/, from: sender.name do
@@ -132,6 +132,7 @@ describe "a class that inherits", Hipbot::Bot do
     context "messages in particular room" do
       let(:room)       { stub(:name => 'room') }
       let(:other_room) { stub(:name => 'other_room') }
+
       it "should reply" do
         described_class.on /wazzup\?/, room: 'room' do
           reply('Wazzup, Tom?')
@@ -139,6 +140,7 @@ describe "a class that inherits", Hipbot::Bot do
         subject.expects(:send_to_room).with(room, 'Wazzup, Tom?')
         subject.react(sender, room, '@robot wazzup?')
       end
+
       it "should reply if room acceptable" do
         described_class.on /wazzup\?/, room: ['other_room', 'room'] do
           reply('wazzup, tom?')
@@ -146,6 +148,7 @@ describe "a class that inherits", Hipbot::Bot do
         subject.expects(:send_to_room).with(room, 'wazzup, tom?')
         subject.react(sender, room, '@robot wazzup?')
       end
+
       it "should not reply if room unacceptable" do
         described_class.on /wazzup\?/, room: 'room' do
           reply('wazzup, tom?')
@@ -153,6 +156,7 @@ describe "a class that inherits", Hipbot::Bot do
         subject.expects(:send_to_room).never
         subject.react(sender, other_room, '@robot wazzup?')
       end
+
       it "should not reply if room does not match" do
         described_class.on /wazzup\?/, room: ['other_room'] do
           reply('wazzup, tom?')
@@ -163,7 +167,7 @@ describe "a class that inherits", Hipbot::Bot do
     end
 
     context "response helper" do
-      let(:user){ stub(name: 'Tom Smith', first_name: 'Tom') }
+      let(:user){ stub(name: 'Tom Smith', first_name: 'Tom', reactions: []) }
 
       it "message" do
         described_class.on /.*/ do

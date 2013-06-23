@@ -1,5 +1,7 @@
 module Hipbot
   class User
+    include Reactable
+
     def send_message message
       Hipbot.send_to_user self, message
     end

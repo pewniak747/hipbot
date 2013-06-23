@@ -29,9 +29,7 @@ module Hipbot
 
     def react sender, room, message
       message = Message.new(message, room, sender)
-      matches = matching_reactions(message, plugin_reactions)
-      matches = matching_reactions(message, default_reactions)[0..0] if matches.empty?
-      matches.each(&:invoke)
+      matching_reactions(message, sender.reactions, plugin_reactions, default_reactions).each(&:invoke)
     end
 
     def setup
@@ -79,8 +77,12 @@ module Hipbot
 
     protected
 
-    def matching_reactions message, reactions
-      reactions.map{ |reaction| matching_rection(message, reaction) }.compact
+    def matching_reactions message, *reaction_sets
+      reaction_sets.each do |reactions|
+        matches = reactions.map{ |reaction| matching_rection(message, reaction) }.compact
+        return matches if matches.any?
+      end
+      []
     end
 
     def matching_rection message, reaction
