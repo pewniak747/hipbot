@@ -93,6 +93,30 @@ module Jabber
         @stream.send(pres) { |r| block.call(r) }
       end
 
+      def kick(recipients, room_jid)
+        iq = Iq.new(:set, room_jid)
+        iq.from = @my_jid
+        iq.add(IqQueryMUCAdmin.new)
+        recipients.each do |recipient|
+          item = IqQueryMUCAdminItem.new
+          item.nick = recipient
+          item.role = :none
+          iq.query.add(item)
+        end
+        @stream.send_with_id(iq)
+      end
+
+      def invite(recipients, room_jid)
+        msg = Message.new
+        msg.from = @my_jid
+        msg.to   = room_jid
+        x = msg.add(XMUCUser.new)
+        recipients.each do |jid|
+          x.add(XMUCUserInvite.new(jid))
+        end
+        @stream.send(msg)
+      end
+
       def send_message(type, jid, text, subject = nil)
         message = Message.new(JID.new(jid), text.to_s)
         message.type = type
