@@ -16,7 +16,7 @@ module Hipbot
     end
 
     def update_attribute key, value
-      if key == name
+      if key == :name
         self.name = value
       else
         self.attributes[key] = value
