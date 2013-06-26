@@ -10,6 +10,8 @@ Hipbot is a XMPP bot for HipChat, written in ruby & eventmachine.
 
 ## Usage
 
+For easy install, follow the instructions on https://github.com/netguru/hipbot-example .
+
 ### Install
 
 ```
@@ -224,18 +226,7 @@ Run `hipbot` to see all available commands.
 
 ## Deploying to Heroku
 
-Create a Procfile & add it to your repo:
-
-```
-worker: bundle exec hipbot run
-```
-
-```
-heroku create
-git push heroku master
-heroku ps:scale web=0
-heroku ps:scale worker=1
-```
+Follow the instructions on https://github.com/netguru/hipbot-example .
 
 ## TODO:
 
