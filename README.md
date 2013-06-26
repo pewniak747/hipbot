@@ -30,7 +30,6 @@ class MyCompanyBot < Hipbot::Bot
     c.password  = 'secret' # required
     c.teams     = { vip: ['John', 'Mike'] }
     c.rooms     = { project_rooms: ['Project 1', 'Project 2'] }
-    c.plugins   = [ PluginClass ]
   end
 
   on /^hello/ do
