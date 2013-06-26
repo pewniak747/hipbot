@@ -52,7 +52,9 @@ class MyCompanyBot < Hipbot::Bot
   end
 end
 
-class PluginClass < Hipbot::Plugin
+class PluginClass
+  include Hipbot::Plugin
+
   on /^plugin/ do
     reply('this is from plugin!')
   end
@@ -173,10 +175,11 @@ end
 
 #### Plugins
 
-To define a plugin, subclass `Hipbot::Plugin` and add responses like in bot:
+To define a plugin, include `Hipbot::Plugin` and add responses like in bot:
 
 ```ruby
-class GreeterPlugin < Hipbot::Plugin
+class GreeterPlugin
+  include Hipbot::Plugin
   on /^hello/ do
     reply('hello there!')
   end
@@ -186,11 +189,10 @@ end
 You can gain access to plugin data inside reaction with `plugin` helper:
 
 ```ruby
-class GreeterPlugin < Hipbot::Plugin
+class GreeterPlugin
+  include Hipbot::Plugin
+
   attr_accessor :language
-  def initialize(language)
-    self.language = language
-  end
 
   on /^hello/ do
     case plugin.language
@@ -202,6 +204,10 @@ class GreeterPlugin < Hipbot::Plugin
       reply("おはよう！")
     end
   end
+end
+
+GreeterPlugin.configure do |c|
+  c.language = :jp
 end
 ```
 
