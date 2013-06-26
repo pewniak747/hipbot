@@ -4,14 +4,15 @@ module Hipbot
 
     included do
       extend ClassMethods
+
       attr_accessor :id, :name, :attributes
       alias_method :to_s, :name
     end
 
-    def initialize args
-      self.id         = args.delete(:id)
-      self.name       = args.delete(:name)
-      self.attributes = args
+    def initialize params
+      self.id         = params.delete(:id)
+      self.name       = params.delete(:name)
+      self.attributes = params
     end
 
     def update_attribute key, value
@@ -33,8 +34,8 @@ module Hipbot
     end
 
     module ClassMethods
-      def create *args, &block
-        collection[args[0]] = new(*args, &block)
+      def create params, &block
+        collection[params[:id]] = new(params, &block)
       end
 
       def collection
@@ -54,8 +55,8 @@ module Hipbot
         items.map{ |i| find_one(i) }.compact.uniq
       end
 
-      def find_or_create_by hash
-        find_one(hash[:id] || hash[:name]) || create(hash)
+      def find_or_create_by params
+        find_one(params[:id] || params[:name]) || create(params)
       end
 
       protected
