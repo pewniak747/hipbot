@@ -52,7 +52,7 @@ module Hipbot
 
         def initialize_rooms
           @client.get_rooms.each do |room_data|
-            room = Room.find_or_create_by(id: room_data[:item].jid)
+            room = Room.find_or_create_by(id: room_data[:item].jid.to_s)
             room.update_attributes({
                  name: room_data[:item].iname,
                 topic: room_data[:details]['topic'],
