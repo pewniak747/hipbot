@@ -10,6 +10,7 @@ module Hipbot
     end
 
     def initialize params
+      params = params.with_indifferent_access
       self.id         = params.delete(:id)
       self.name       = params.delete(:name)
       self.attributes = params
