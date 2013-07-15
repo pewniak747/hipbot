@@ -142,8 +142,8 @@ module Hipbot
         end
 
         def with_user user_id
-          user = User[user_id]
-          yield(user || User.new(name: user_id))
+          user = User[user_id] || User.new(name: user_id)
+          yield user
         end
 
         def setup_timers
