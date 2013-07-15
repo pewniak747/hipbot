@@ -41,7 +41,7 @@ module Hipbot
             initialize_callbacks
             set_bot_user
             join_rooms
-            set_presence('Hello humans!')
+            set_presence(Hipbot.status)
           end
         end
 

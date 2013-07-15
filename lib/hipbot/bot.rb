@@ -18,7 +18,7 @@ module Hipbot
 
     attr_accessor :configuration, :connection
 
-    CONFIGURABLE_OPTIONS = [:adapter, :error_handler, :helpers, :jid, :logger, :password, :plugins, :preloader, :rooms, :storage, :teams, :user]
+    CONFIGURABLE_OPTIONS = [:adapter, :error_handler, :helpers, :jid, :logger, :password, :plugins, :preloader, :rooms, :status, :storage, :teams, :user]
     delegate *CONFIGURABLE_OPTIONS, to: :configuration
     delegate :name, to: :user
     alias_method :to_s, :name
