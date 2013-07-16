@@ -12,7 +12,7 @@ module Hipbot
       self.plugins       = Hipbot.plugins
       self.preloader     = Proc.new{}
       self.rooms         = {}
-      self.status        = 'Siema'
+      self.status        = ''
       self.storage       = Collection
       self.teams         = {}
     end
