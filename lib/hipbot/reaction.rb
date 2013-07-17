@@ -59,7 +59,7 @@ module Hipbot
     protected
 
     def replace_symbols values, replacements_hash
-      Array(values).flat_map{ |v| replacements_hash[v].presence || v.to_s }
+      Array(values).flat_map{ |v| replacements_hash[v] || v }.map(&:to_s)
     end
   end
 end

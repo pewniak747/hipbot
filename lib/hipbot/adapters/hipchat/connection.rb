@@ -12,6 +12,18 @@ module Hipbot
           setup_bot
         end
 
+        def invite_to_room(room, users)
+          recipient_ids = Array(users).map(&:id)
+          Hipbot.logger.info("INVITING to #{room}: #{recipient_ids}")
+          @client.invite(recipient_ids, room.id)
+        end
+
+        def kick_from_room(room, users)
+          recipient_ids = Array(users).map(&:id)
+          Hipbot.logger.info("KICKING from #{room}: #{recipient_ids}")
+          @client.kick(recipient_ids, room.id)
+        end
+
         def send_to_room(room, message)
           Hipbot.logger.info("REPLY in #{room}: #{message}")
           @client.send_message(:groupchat, room.id, message)
