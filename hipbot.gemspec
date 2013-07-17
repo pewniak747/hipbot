@@ -7,6 +7,7 @@ Gem::Specification.new do |gem|
   gem.description   = "Hipbot is a bot for HipChat, written in ruby & eventmachine."
   gem.summary       = "Hipbot is a bot for HipChat, written in ruby & eventmachine."
   gem.homepage      = "http://github.com/pewniak747/hipbot"
+  gem.license       = "MIT"
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
