@@ -12,6 +12,10 @@ module Hipbot
       options[:room].nil?
     end
 
+    def delete
+      plugin.reactions.delete(self)
+    end
+
     def desc
       options[:desc]
     end

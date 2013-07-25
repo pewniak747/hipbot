@@ -15,7 +15,7 @@ module Hipbot
     end
 
     def matches_regexp?
-      reaction.anything? || regexp_match.present?
+      reaction.anything? || regexp_match.present? || reaction.regexps.empty?
     end
 
     def regexp_match
