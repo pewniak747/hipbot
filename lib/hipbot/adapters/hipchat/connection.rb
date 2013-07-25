@@ -166,10 +166,8 @@ module Hipbot
 
         def setup_error_handler
           ::EM.error_handler do |e|
-            Hipbot.logger.error e.inspect
-            e.backtrace.each do |line|
-              Hipbot.logger.error line
-            end
+            Hipbot.logger.error(e)
+            instance_exec(e, &Hipbot.error_handler)
           end
         end
       end

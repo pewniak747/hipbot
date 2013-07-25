@@ -209,7 +209,7 @@ module Jabber
 
       def handle_message(message)
         if is_invite?(message)
-          handle_message(message)
+          handle_invite(message)
         elsif message.type == :chat
           handle_private_message(message)
         elsif message.type == :groupchat
