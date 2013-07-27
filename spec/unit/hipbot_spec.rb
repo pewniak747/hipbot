@@ -105,7 +105,7 @@ describe "a class that inherits", Hipbot::Bot do
       end
 
       it "should reply if sender acceptable" do
-        described_class.on /wazzup\?/, from: [stub, sender.name] do
+        described_class.on /wazzup\?/, from: ['someone', sender.name] do
           reply('wazzup, tom?')
         end
         subject.expects(:send_to_room).with(room, 'wazzup, tom?')
