@@ -229,6 +229,8 @@ Follow the instructions on https://github.com/netguru/hipbot-example .
 
 ## TODO:
 
+* make reactions asynchronous
+
 ### Done:
 
 * ~~add extended logging~~
