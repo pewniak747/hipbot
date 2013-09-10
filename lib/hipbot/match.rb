@@ -1,7 +1,7 @@
 module Hipbot
   class Match < Struct.new(:reaction, :message)
     def matches?
-      matches_regexp? && matches_scope? && matches_sender? && matches_place?
+      matches_scope? && matches_place? && matches_regexp? && matches_sender? && matches_condition?
     end
 
     def invoke
@@ -39,6 +39,10 @@ module Hipbot
 
     def matches_sender?
       reaction.from_all? || reaction.users.include?(message.sender.name)
+    end
+
+    def matches_condition?
+      reaction.condition.call(*reaction.condition.parameters.map{ |parameter| message.send(parameter.last) })
     end
 
     def message_text

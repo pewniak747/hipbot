@@ -12,6 +12,10 @@ module Hipbot
       options[:room].nil?
     end
 
+    def condition
+      options[:if] || Proc.new{ true }
+    end
+
     def delete
       plugin.reactions.delete(self)
     end
