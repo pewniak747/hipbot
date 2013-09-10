@@ -5,6 +5,7 @@ module Hipbot
     def initialize *args
       super
       Hipbot.logger.info("MESSAGE from #{sender} in #{room}")
+      self.raw_body   = raw_body.force_encoding('UTF-8')
       self.body       = strip_recipient(raw_body)
       self.recipients = raw_body.scan(/@(\p{Word}++)/).flatten.compact.uniq
     end
