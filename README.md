@@ -229,6 +229,8 @@ Follow the instructions on https://github.com/netguru/hipbot-example .
 
 ## TODO:
 
+* add tests for Match class
+* add testing adapter for testing custom responses with RSpec
 * make reactions asynchronous
 * add HipChat API integration (?)
 
