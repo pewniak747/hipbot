@@ -5,6 +5,7 @@ describe "a class that inherits", Hipbot::Bot do
 
   before(:each) do
     described_class.instance.plugins.clear
+    described_class.instance.configuration.logger = NullLogger.instance
     described_class.instance.setup
   end
   subject { described_class.instance }

@@ -12,6 +12,7 @@ describe MyHipbot do
 
   before do
     Hipbot.bot.configuration.user = Hipbot::User.create(name: 'robbot')
+    Hipbot.bot.configuration.logger = NullLogger.instance
   end
 
   describe 'configuration' do
