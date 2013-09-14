@@ -53,5 +53,23 @@ describe Hipbot::Match do
         its(:matches?) { should be_false }
       end
     end
+
+    describe "specific condition" do
+      describe "returning true" do
+        before do
+          reaction.stubs(condition: proc { true })
+        end
+
+        its(:matches?) { should be_true }
+      end
+
+      describe "returning false" do
+        before do
+          reaction.stubs(condition: proc { false })
+        end
+
+        its(:matches?) { should be_false }
+      end
+    end
   end
 end
