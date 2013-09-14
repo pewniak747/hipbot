@@ -5,10 +5,14 @@ module Hipbot
     end
 
     def invoke
-      Response.new(reaction, message).invoke(params)
+      response.invoke(params)
     end
 
     protected
+
+    def response
+      Response.new(reaction, message)
+    end
 
     def params
       reaction.anything? ? [message.body] : regexp_match[1..-1]
