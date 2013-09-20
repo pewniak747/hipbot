@@ -13,7 +13,7 @@ module Hipbot
       self.preloader     = Proc.new{}
       self.rooms         = {}
       self.status        = ''
-      self.storage       = Collection
+      self.storage       = Storages::Hash
       self.teams         = {}
     end
 

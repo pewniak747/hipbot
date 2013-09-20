@@ -89,14 +89,14 @@ class MyBot < Hipbot::Bot
     # Custom helpers module (optional) - see below for examples
     c.helpers  = MyHipbotHelpers
 
-    # Logger (optional, default: Hipbot::Logger.new($stdout))
+    # Logger (default: Hipbot::Logger.new($stdout))
     c.logger   = Hipbot::Logger.new($stdout)
 
-    # Initial status message (optional, default: '')
+    # Initial status message (default: '')
     c.status   = "I'm here to help"
 
-    # Storage adapter (optional, default: Hipbot::Collection)
-    c.storage  = Hipbot::Collection
+    # Storage adapter (default: Hipbot::Storages::Hash)
+    c.storage  = Hipbot::Storages::Hash
 
     # Predefined room groups (optional)
     c.rooms    = { project_rooms: ['Project 1', 'Project 2'] }
@@ -143,7 +143,7 @@ end
 ```
 ```ruby
 on /^get project room JID$/ do
-  project_room = Hipbot::Room['project room']
+  project_room = Hipbot::Room.find_by(name: 'project room')
   reply(project_room.id)
 end
 ```
@@ -167,7 +167,7 @@ end
 ```
 ```ruby
 on /^get John Smith's JID$/ do
-  john = Hipbot::Room['John Smith']
+  john = Hipbot::Room.find_by(name: 'John Smith')
   reply(john.id)
 end
 ```
@@ -198,7 +198,7 @@ end
 ```
 ```ruby
 on /^I need help$/ do
-  help_room = Hipbot::Room['help room']
+  help_room = Hipbot::Room.find_by(name: 'help room')
   reply("#{sender} needs help in #{room}", help_room) # Replies in help room
 end
 ```
@@ -211,7 +211,7 @@ end
 ```
 ```ruby
 on /^send private message to John$/ do
-  john = Hipbot::User['John Smith']
+  john = Hipbot::User.find_by(name: 'John Smith')
   john.send_message("Hello, John!")
 end
 ```
@@ -229,7 +229,7 @@ end
 ```
 ```ruby
 on /^change topic there$/ do
-  there = Hipbot::Room['there']
+  there = Hipbot::Room.find_by(name: 'there')
   there.set_topic("New Topic")
 end
 ```
@@ -396,13 +396,13 @@ end
 This behavior is experimental and not officially supported by HipChat. Bot must be an admin in order to perform this actions.
 ```ruby
 on /^kick (.*)/ do |user_name|
-  user = Hipbot::User[user_name]
+  user = Hipbot::User.find_by(name: user_name)
   room.kick(user)
 end
 ```
 ```ruby
 on /^invite (.*)$/ do |user_name|
-  user = Hipbot::User[user_name]
+  user = Hipbot::User.find_by(name: user_name)
   room.invite(user)
 end
 ```
@@ -486,7 +486,7 @@ Define `on_error` block in your HipBot class to handle runtime exceptions:
 ```ruby
 class MyBot < Hipbot::Bot
   on_error do |error|
-    hipbot_room = HipBot::Room['hipbot room']
+    hipbot_room = HipBot::Room.find_by(name: 'hipbot room')
     reply(error.message, hipbot_room)
     # If exception was raised in reaction, there are some context variables available:
     reply("#{error.message} raised by #{message.body} from #{sender} in #{room}", hipbot_room)

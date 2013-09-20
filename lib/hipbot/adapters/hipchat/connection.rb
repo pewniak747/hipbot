@@ -84,7 +84,7 @@ module Hipbot
         end
 
         def set_bot_user
-          Hipbot.configuration.user = User[Hipbot.jid]
+          Hipbot.configuration.user = User.find(Hipbot.jid)
           @client.name = Hipbot.user
         end
 
@@ -125,7 +125,7 @@ module Hipbot
           with_sender(room_jid, user_name) do |room, user|
             if pres == 'unavailable'
               if user_name == Hipbot.name
-                room.delete
+                room.destroy
               elsif user.present?
                 room.users.delete(user)
               end
@@ -147,15 +147,14 @@ module Hipbot
         end
 
         def with_sender room_id, user_id
-          room = Room[room_id]
+          room = Room.where(id: room_id).first
           with_user(user_id) do |user|
             yield room, user
           end if room.present?
         end
 
         def with_user user_id
-          user = User[user_id] || User.new(name: user_id)
-          yield user
+          yield User.find_or_initialize_by(id: user_id)
         end
 
         def setup_timers
