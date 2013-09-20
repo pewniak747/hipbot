@@ -4,8 +4,8 @@ require File.expand_path('../lib/hipbot/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Bartosz Kopiński", "Tomasz Pewiński"]
   gem.email         = ["bartosz.kopinski@netguru.pl", "pewniak747@gmail.com"]
-  gem.description   = "Hipbot is a bot for HipChat, written in ruby & eventmachine."
-  gem.summary       = "Hipbot is a bot for HipChat, written in ruby & eventmachine."
+  gem.description   = "Hipbot is a XMPP bot for HipChat, written in Ruby with EventMachine."
+  gem.summary       = "Hipbot is a XMPP bot for HipChat, written in Ruby with EventMachine."
   gem.homepage      = "http://github.com/pewniak747/hipbot"
   gem.license       = "MIT"
 
