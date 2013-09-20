@@ -484,7 +484,7 @@ For a collection of open-source plugins, see [hipbot-plugins](https://github.com
 
 ### Exception handling
 Define `on_error` block in your HipBot class to handle runtime exceptions:
-```
+```ruby
 class MyBot < Hipbot::Bot
   on_error do |error|
     hipbot_room = HipBot::Room['hipbot room']
