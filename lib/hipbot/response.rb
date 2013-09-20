@@ -2,7 +2,7 @@ module Hipbot
   class Response < Struct.new(:reaction, :message)
     include Helpers
 
-    delegate :sender, :recipients, :body, :room, :to => :message
+    delegate :sender, :room, :to => :message
     delegate :bot, :to => Hipbot
 
     def invoke arguments
