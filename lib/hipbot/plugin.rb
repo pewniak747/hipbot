@@ -11,8 +11,8 @@ module Hipbot
 
       attr_accessor :response
 
-      delegate :sender, :recipients, :body, :room, :reply, :to => :response
-      delegate :bot, :to => Hipbot
+      delegate :sender, :recipients, :body, :room, :reply, to: :response
+      delegate :bot, to: Hipbot
 
       Hipbot.plugins.prepend(self.instance)
     end

@@ -45,13 +45,13 @@ describe Hipbot::Message do
   end
 
   it "should be for bot" do
-    user = stub(:mention => 'robot')
+    user = stub(mention: 'robot')
     message = subject.new('hello @robot!', room, sender)
     message.for?(user).should be_true
   end
 
   it "should not be for bot" do
-    user = stub(:mention => 'robot')
+    user = stub(mention: 'robot')
     message = subject.new('hello @tom!', room, sender)
     message.for?(user).should be_false
   end

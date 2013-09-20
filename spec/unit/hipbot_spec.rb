@@ -131,8 +131,8 @@ describe "a class that inherits", Hipbot::Bot do
     end
 
     context "messages in particular room" do
-      let(:room)       { stub(:name => 'room') }
-      let(:other_room) { stub(:name => 'other_room') }
+      let(:room)       { stub(name: 'room') }
+      let(:other_room) { stub(name: 'other_room') }
 
       it "should reply" do
         described_class.on /wazzup\?/, room: 'room' do

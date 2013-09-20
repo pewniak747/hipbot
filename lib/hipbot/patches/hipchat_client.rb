@@ -23,7 +23,7 @@ module Jabber
         @callbacks[:invite]          = CallbackList.new
       end
 
-      def join(jid, password = nil, opts = { :history => false })
+      def join(jid, password = nil, opts = { history: false })
         room_jid = JID.new(jid)
         xmuc = XMUC.new
         xmuc.password = password
@@ -167,8 +167,8 @@ module Jabber
             details = {}
             item.first.children.each{ |c| details[c.name] = c.text }
             rooms << {
-              :item    => item,
-              :details => details
+              item:    item,
+              details: details
             }
           end
         end
