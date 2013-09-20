@@ -1,5 +1,7 @@
 module Hipbot
   class Reaction < Struct.new(:plugin, :options, :block)
+    include Cache
+
     def any_room?
       options[:room] == true
     end
@@ -56,12 +58,12 @@ module Hipbot
       options[:regexps]
     end
 
-    def rooms
-      replace_symbols options[:room], Hipbot.rooms
+    attr_cache :rooms do
+      replace_symbols(options[:room], Hipbot.rooms)
     end
 
-    def users
-      replace_symbols options[:from], Hipbot.teams
+    attr_cache :users do
+      replace_symbols(options[:from], Hipbot.teams)
     end
 
     protected

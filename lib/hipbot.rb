@@ -5,6 +5,7 @@ require 'em-http-request'
 require 'xmpp4r'
 require 'xmpp4r/muc'
 
+require 'hipbot/cache'
 require 'hipbot/patches/hipchat_client'
 require 'hipbot/patches/encoding'
 

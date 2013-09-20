@@ -1,5 +1,7 @@
 module Hipbot
   class Match < Struct.new(:reaction, :message)
+    include Cache
+
     def matches?
       matches_scope? && matches_place? && matches_regexp? && matches_sender? && matches_condition?
     end
@@ -22,8 +24,8 @@ module Hipbot
       reaction.anything? || regexp_match.present? || reaction.regexps.empty?
     end
 
-    def regexp_match
-      @regexp_match ||= reaction.regexps.inject(nil) do |result, regexp|
+    attr_cache :regexp_match do
+      reaction.regexps.inject(nil) do |result, regexp|
         break result if result
         message_text.match(regexp)
       end

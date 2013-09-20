@@ -6,20 +6,21 @@ require_relative '../../lib/hipbot/reaction_factory'
 describe Hipbot::ReactionFactory do
   subject { described_class.new(stub) }
 
-  let(:restrictions) { [] }
+  let(:params) { [] }
   let(:block) { stub }
 
-  let(:reaction) { subject.build(restrictions, block) }
+  let(:options_stack) { [subject.get_reaction_options(params)] }
+  let(:reaction) { subject.build(options_stack, block) }
 
   describe "taking a regexp" do
-    let(:restrictions) { [/.*/] }
+    let(:params) { [/.*/] }
 
     it "builds a reaction with regexp" do
       expect(reaction.regexps).to eq([/.*/])
     end
 
     describe "with additional options" do
-      let(:restrictions) { [/.*/, { from: 'wat' }] }
+      let(:params) { [/.*/, { from: 'wat' }] }
 
       it "builds a reaction with proper options" do
         expect(reaction.options).to eq(from: 'wat', regexps: [/.*/], desc: nil)
@@ -28,7 +29,7 @@ describe Hipbot::ReactionFactory do
   end
 
   describe "taking multiple regexps and options" do
-    let(:restrictions) { [/.*/, /wat/, { from: 'wat' }] }
+    let(:params) { [/.*/, /wat/, { from: 'wat' }] }
 
     it "builds a reaction with proper options" do
       expect(reaction.options).to eq(from: 'wat', regexps: [/.*/, /wat/], desc: nil)
@@ -45,12 +46,12 @@ describe Hipbot::ReactionFactory do
     end
 
     it "resets description after first built reaction" do
-      subject.build(restrictions, block)
+      subject.build(params, block)
       expect(reaction.desc).to be_nil
     end
   end
 
-  it "applies optional scope restrictions as default" do
-    expect(subject.build(restrictions, block, { from: 'dave' }).options[:from]).to eq('dave')
+  it "applies optional scope params as default" do
+    expect(subject.build([{ from: 'dave' }], block).options[:from]).to eq('dave')
   end
 end

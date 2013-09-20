@@ -1,5 +1,10 @@
 module Hipbot
   class Room
+    include Cache
+    include Reactable
+
+    attr_cache :users
+
     def set_topic topic
       Hipbot.set_topic(self, topic)
     end
@@ -14,10 +19,6 @@ module Hipbot
 
     def kick users
       Hipbot.kick_from_room(self, users)
-    end
-
-    def users
-      @users ||= []
     end
   end
 end

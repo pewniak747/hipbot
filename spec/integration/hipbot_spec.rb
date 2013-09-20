@@ -145,4 +145,26 @@ describe MyHipbot do
       subject.react(sender, room, '@robbot respond cool')
     end
   end
+
+  describe 'method reaction' do
+    it 'should reply to a method reaction defined in plugin' do
+      subject.expects(:send_to_room).with(room, 'parameter: empty')
+      subject.react(sender, room, '@robbot method reaction')
+    end
+
+    it 'should reply to a method reaction defined in plugin with parameters' do
+      subject.expects(:send_to_room).with(room, 'parameter: method param')
+      subject.react(sender, room, '@robbot method reaction method param')
+    end
+
+    it 'should reply to a scope method reaction defined in plugin' do
+      subject.expects(:send_to_room).with(room, 'scope method reaction')
+      subject.react(sender, room, '@robbot scope method reaction')
+    end
+
+    it 'should reply to a scope regexp with method reaction defined in plugin', focus: true do
+      subject.expects(:send_to_room).with(room, 'parameter: empty')
+      subject.react(sender, room, '@robbot scope regexp')
+    end
+  end
 end

@@ -15,6 +15,26 @@ class AwesomePlugin
   on /respond awesome/ do
     reply('awesome responded')
   end
+
+  def method_reaction param = 'empty'
+    reply("parameter: #{param}")
+  end
+
+  on /^method reaction$/, :method_reaction
+  on /^method reaction (.*)$/, :method_reaction
+  on /^no block reaction$/
+
+  def scope_method_reaction
+    reply('scope method reaction')
+  end
+
+  scope :scope_method_reaction do
+    on /^scope method reaction$/
+  end
+
+  scope /^scope regexp$/ do
+    on :method_reaction
+  end
 end
 
 class CoolPlugin
