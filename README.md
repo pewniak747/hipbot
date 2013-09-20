@@ -480,7 +480,6 @@ GreeterPlugin.configure do |c|
   c.language = :jp
 end
 ```
-For a collection of open-source plugins, see [hipbot-plugins](https://github.com/netguru/hipbot-plugins).
 
 ### Exception handling
 Define `on_error` block in your HipBot class to handle runtime exceptions:
@@ -508,7 +507,7 @@ class MyBot < Hipbot::Bot
 end
 ```
 
-For more examples, check out [examples directory](https://github.com/pewniak747/hipbot/tree/master/examples).
+For more examples, check out [hipbot-plugins](https://github.com/netguru/hipbot-plugins).
 
 ## Deploying to Heroku
 Follow the instructions on [hipbot-example](https://github.com/netguru/hipbot-example).
