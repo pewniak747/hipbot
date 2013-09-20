@@ -9,7 +9,7 @@ Hipbot is a XMPP bot for HipChat, written in Ruby with EventMachine.
 [![Gem Version](https://badge.fury.io/rb/hipbot.png)](http://badge.fury.io/rb/hipbot)
 
 ### Compatibility
-HipBot is tested on:
+Hipbot is tested on:
 
 * Ruby 1.9.2, 1.9.3 and 2.0.0
 * JRuby 1.9 mode
@@ -52,7 +52,7 @@ MyBot.start!
 ```
 
 ### Running
-Start hipbot as a daemon by executing:
+Start Hipbot as a daemon by executing:
 
 ```shell
 hipbot start
@@ -68,7 +68,7 @@ ruby bot.rb
 
 ### Behavior
 * On start and runtime:
-    * Joins every accessible room (ie. open or with HipBot invited)
+    * Joins every accessible room (ie. open or with Hipbot invited)
     * Fetches details and presences of all users in Lobby
     * Pings XMPP server every 60 seconds to keep alive
 * On new message:
@@ -116,7 +116,7 @@ Inside the reaction block you have access to following context objects:
 * `reaction`
 
 ### Bot presence
-Use `bot.set_presence` method to change HipBot presence:
+Use `bot.set_presence` method to change Hipbot presence:
 ```ruby
 on /^change status$/ do
   bot.set_presence("Hello humans")
@@ -296,7 +296,7 @@ end
 ```
 
 ### Global reaction
-By default, HipBot reacts only to its HipChat mention.
+By default, Hipbot reacts only to its HipChat mention.
 Use `global: true` option to match all messages:
 
 ```ruby
@@ -361,7 +361,7 @@ end
 
 ### Default reactions
 Default reaction can take the same options as regular one.
-HipBot fall backs to default reactions if there is no matching normal reaction.
+Hipbot fall backs to default reactions if there is no matching normal reaction.
 ```ruby
 default do
   reply("I don't understand you!")
@@ -482,11 +482,11 @@ end
 ```
 
 ### Exception handling
-Define `on_error` block in your HipBot class to handle runtime exceptions:
+Define `on_error` block in your Hipbot class to handle runtime exceptions:
 ```ruby
 class MyBot < Hipbot::Bot
   on_error do |error|
-    hipbot_room = HipBot::Room.find_by(name: 'hipbot room')
+    hipbot_room = Hipbot::Room.find_by(name: 'hipbot room')
     reply(error.message, hipbot_room)
     # If exception was raised in reaction, there are some context variables available:
     reply("#{error.message} raised by #{message.body} from #{sender} in #{room}", hipbot_room)
@@ -495,7 +495,7 @@ end
 ```
 
 ### Preloader for EventMachine
-In order to use EventMachine runtime methods, define them within `on_preload` block in your HipBot class:
+In order to use EventMachine runtime methods, define them within `on_preload` block in your Hipbot class:
 ```ruby
 class MyBot < Hipbot::Bot
   on_preload do
