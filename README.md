@@ -17,11 +17,10 @@ Hipbot is tested on:
 
 ### Dependencies
 
-* daemons ~> 1.1.8
-* activesupport ~> 3.2.12
-* i18n ~> 0.6.0
-* eventmachine ~> 1.0.3
-* em-http-request ~> 1.0.3
+* daemons >= 1.1.8
+* activesupport >= 3.2.12
+* eventmachine >= 1.0.3
+* em-http-request >= 1.0.3
 * xmpp4r ~> 0.5
 
 ## Getting started
