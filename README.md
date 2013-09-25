@@ -376,7 +376,7 @@ end
 ### Descriptions
 Use `desc` modifier to describe following reaction:
 ```ruby
-desc '@hipbot restart - Restarts the server'
+desc '@hipbot restart server_name - Restarts the server'
 on /^restart (.*)$/ do |server|
   if server.empty?
     reply("Usage: #{reaction.desc}")
