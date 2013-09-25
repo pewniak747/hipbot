@@ -12,7 +12,7 @@ module Hipbot
       protected
 
       def update_topic room, message
-        room.update_attribute(:topic, message.subject) unless message.subject.blank?
+        room.update_attribute(:topic, message.subject) unless message.subject.to_s.empty?
       end
     end
   end

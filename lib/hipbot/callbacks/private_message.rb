@@ -11,7 +11,7 @@ module Hipbot
       protected
 
       def ignore_message? sender, message
-        message.body.blank? || sender.myself?
+        message.body.to_s.empty? || sender.myself?
       end
     end
   end

@@ -18,7 +18,7 @@ module Hipbot
       protected
 
       def user_joined? presence, room, user
-        presence.empty? && room.users.exclude?(user)
+        presence.empty? && !room.users.include?(user)
       end
 
       def user_left? presence

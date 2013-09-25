@@ -126,7 +126,7 @@ module Jabber
         message.from    = my_jid
         message.subject = subject
 
-        @send_thread.join if @send_thread.present? && @send_thread.alive?
+        @send_thread.join if !@send_thread.nil? && @send_thread.alive?
         @send_thread = Thread.new do
           @stream.send(message)
           sleep(0.2)
@@ -141,7 +141,7 @@ module Jabber
         @muc_browser = MUCBrowser.new(@stream)
         Jabber::debuglog "MUCBrowser initialized"
         self.conference_domain = @muc_browser.muc_rooms(chat_domain).keys.first
-        Jabber::debuglog "No conference domain found" if !conference_domain.present?
+        Jabber::debuglog "No conference domain found" if conference_domain.nil?
         @roster = Roster::Helper.new(@stream) # TODO: Error handling
         @vcard  = Vcard::Helper.new(@stream) # TODO: Error handling
         true
