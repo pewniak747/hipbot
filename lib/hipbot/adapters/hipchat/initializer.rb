@@ -36,18 +36,24 @@ module Hipbot
             })
             room.id
           end
-          Room.not.in(id: room_ids).each(&:destroy)
+          clean_other_objects(Room, room_ids) if room_ids.any?
         end
 
         def initialize_users
-          client.get_users.each do |user_data|
+          user_ids = client.get_users.map do |user_data|
             user = User.find_or_create_by(id: user_data.delete(:jid))
             user.update_attributes(user_data)
 
             if user.attributes['email'].nil?
               user.update_attributes(client.get_user_details(user.id))
             end
+            user.id
           end
+          clean_other_objects(User, user_ids) if user_ids.any?
+        end
+
+        def clean_other_objects klass, object_ids
+          klass.to_a.select{ |r| !object_ids.include?(r.id) }.each(&:destroy)
         end
 
         def initialize_bot_user
