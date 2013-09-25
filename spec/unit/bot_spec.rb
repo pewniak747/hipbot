@@ -10,9 +10,10 @@ describe "a class that inherits", Hipbot::Bot do
   end
   subject { described_class.instance }
 
+  let(:room) { Hipbot::Room.new(name: 'Test Room') }
+
   context "#on" do
-    let(:sender) { stub_everything(name: 'Tom Smith', reactions: []) }
-    let(:room)   { stub_everything }
+    let(:sender) { Hipbot::User.new(name: 'Tom Smith') }
 
     it "should reply to no arguments" do
       described_class.on /^hello there$/ do
@@ -95,7 +96,7 @@ describe "a class that inherits", Hipbot::Bot do
     end
 
     context "messages from particular sender" do
-      let(:other_user) { stub(name: "John", reactions: []) }
+      let(:other_user) { Hipbot::User.new(name: "John") }
 
       it "should reply" do
         described_class.on /wazzup\?/, from: sender.name do
@@ -131,11 +132,10 @@ describe "a class that inherits", Hipbot::Bot do
     end
 
     context "messages in particular room" do
-      let(:room)       { stub(name: 'room') }
-      let(:other_room) { stub(name: 'other_room') }
+      let(:other_room) { Hipbot::Room.new(name: 'Test Room 2') }
 
       it "should reply" do
-        described_class.on /wazzup\?/, room: 'room' do
+        described_class.on /wazzup\?/, room: 'Test Room' do
           reply('Wazzup, Tom?')
         end
         subject.expects(:send_to_room).with(room, 'Wazzup, Tom?')
@@ -143,7 +143,7 @@ describe "a class that inherits", Hipbot::Bot do
       end
 
       it "should reply if room acceptable" do
-        described_class.on /wazzup\?/, room: ['other_room', 'room'] do
+        described_class.on /wazzup\?/, room: ['Test Room 2', 'Test Room'] do
           reply('wazzup, tom?')
         end
         subject.expects(:send_to_room).with(room, 'wazzup, tom?')
@@ -151,7 +151,7 @@ describe "a class that inherits", Hipbot::Bot do
       end
 
       it "should not reply if room unacceptable" do
-        described_class.on /wazzup\?/, room: 'room' do
+        described_class.on /wazzup\?/, room: 'Test Room' do
           reply('wazzup, tom?')
         end
         subject.expects(:send_to_room).never
@@ -159,7 +159,7 @@ describe "a class that inherits", Hipbot::Bot do
       end
 
       it "should not reply if room does not match" do
-        described_class.on /wazzup\?/, room: ['other_room'] do
+        described_class.on /wazzup\?/, room: ['Test Room 2'] do
           reply('wazzup, tom?')
         end
         subject.expects(:send_to_room).never
@@ -168,7 +168,7 @@ describe "a class that inherits", Hipbot::Bot do
     end
 
     context "response helper" do
-      let(:user){ stub(name: 'Tom Smith', first_name: 'Tom', reactions: []) }
+      let(:user){ Hipbot::User.new(name: 'Tom Smith') }
 
       it "message" do
         described_class.on /.*/ do
@@ -260,7 +260,7 @@ describe "a class that inherits", Hipbot::Bot do
   end
 
   describe "configurable options" do
-    Hipbot::Bot::CONFIGURABLE_OPTIONS.each do |option|
+    Hipbot::Configuration::OPTIONS.each do |option|
       it "should delegate #{option} to configuration" do
         value = stub
         subject.configuration.expects(option).returns(value)
