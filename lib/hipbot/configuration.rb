@@ -8,7 +8,7 @@ module Hipbot
 
     def initialize
       self.adapter       = Adapters::Hipchat
-      self.error_handler = Proc.new{}
+      self.error_handler = Proc.new{ |e| Hipbot.logger.error(e) }
       self.helpers       = Module.new
       self.jid           = ''
       self.logger        = Logger.new($stdout)
@@ -22,7 +22,7 @@ module Hipbot
     end
 
     def user
-      @user ||= User.new(name: 'robot')
+      @user ||= User.new(name: 'robot', mention: 'robot')
     end
   end
 end
