@@ -32,7 +32,7 @@ module Hipbot
     end
 
     def get_options(stack)
-      stack.inject{ |all, h| all.deep_merge(h) } || {}
+      stack.inject{ |all, h| all.merge(h) } || {}
     end
   end
 end

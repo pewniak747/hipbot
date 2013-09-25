@@ -7,7 +7,7 @@ module Hipbot
     end
 
     def anything?
-      regexps.blank?
+      regexps.empty?
     end
 
     def anywhere?
@@ -27,7 +27,7 @@ module Hipbot
     end
 
     def from_all?
-      options[:from].blank?
+      options[:from].nil?
     end
 
     def global?
@@ -55,7 +55,7 @@ module Hipbot
     end
 
     def regexps
-      options[:regexps]
+      options[:regexps] || []
     end
 
     attr_cache :rooms do

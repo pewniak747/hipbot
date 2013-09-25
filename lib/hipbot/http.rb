@@ -14,7 +14,7 @@ module Hipbot
         http.errback(&ERROR_CALLBACK)
         http.callback do
           success(&success_block)
-        end if success_block.present?
+        end unless success_block.nil?
       end
 
       protected

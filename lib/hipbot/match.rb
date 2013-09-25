@@ -21,7 +21,7 @@ module Hipbot
     end
 
     def matches_regexp?
-      reaction.anything? || regexp_match.present? || reaction.regexps.empty?
+      reaction.anything? || !regexp_match.nil? || reaction.regexps.empty?
     end
 
     attr_cache :regexp_match do
@@ -36,7 +36,7 @@ module Hipbot
     end
 
     def matches_place?
-      reaction.anywhere? || (message.room.present? ? matches_room? : reaction.private_message_only?)
+      reaction.anywhere? || (message.room.nil? ? reaction.private_message_only? : matches_room?)
     end
 
     def matches_room?

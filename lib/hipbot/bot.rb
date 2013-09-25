@@ -39,9 +39,7 @@ module Hipbot
       Response.send(:include, helpers)
 
       helpers.module_exec(&preloader)
-      plugins.append(self)
-      Jabber.debug  = true
-      Jabber.logger = logger
+      plugins << self
     end
 
     def plugin_reactions
@@ -88,6 +86,5 @@ module Hipbot
       match = reaction.match_with(message)
       match.matches? ? match : nil
     end
-
   end
 end

@@ -14,7 +14,7 @@ module Hipbot
       delegate :sender, :recipients, :body, :room, :reply, to: :response
       delegate :bot, to: Hipbot
 
-      Hipbot.plugins.prepend(self.instance)
+      Hipbot.plugins.unshift(self.instance)
     end
 
     module ClassMethods
