@@ -1,6 +1,10 @@
 module Hipbot
   class Configuration
-    attr_accessor *Bot::CONFIGURABLE_OPTIONS
+    OPTIONS = [
+      :adapter, :error_handler, :helpers, :jid, :join, :logger, :password,
+      :plugins, :preloader, :rooms, :status, :storage, :teams, :user
+    ]
+    attr_accessor *OPTIONS
 
     def initialize
       self.adapter       = Adapters::Hipchat
