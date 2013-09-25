@@ -1,3 +1,4 @@
+# encoding: utf-8
 module Hipbot
   class Message < Struct.new(:raw_body, :room, :sender)
     attr_accessor :body, :recipients
