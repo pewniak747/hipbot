@@ -1,30 +1,43 @@
 # encoding: utf-8
 module Hipbot
   class Message < Struct.new(:raw_body, :room, :sender)
-    attr_accessor :body, :recipients
+    include Cache
+
+    attr_accessor :body
+
+    MENTION_REGEXP = /@(\p{Word}++)/.freeze
 
     def initialize *args
       super
       Hipbot.logger.info("MESSAGE from #{sender} in #{room}")
-      self.raw_body   = raw_body.force_encoding('UTF-8')
-      self.body       = strip_recipient(raw_body)
-      self.recipients = raw_body.scan(/@(\p{Word}++)/).flatten.compact.uniq
+      self.raw_body = raw_body.force_encoding('UTF-8')
+      self.body     = strip_bot_mention
     end
 
-    def for? recipient
-      recipients.include? recipient.mention
+    def for? user
+      recipients.include? user.mention
     end
 
-    def strip_recipient body
-      body.gsub(/^@\p{Word}++[^\p{Word}]*/, '').strip
+    attr_cache :recipients do
+      raw_body.scan(MENTION_REGEXP).flatten.compact.uniq
     end
 
-    def mentions
-      recipients[1..-1] || [] # TODO: Fix global message case
+    attr_cache :mentions do
+      recipients.tap{ |r| r.delete(bot_mention) }
     end
 
     def private?
       room.nil?
+    end
+
+    protected
+
+    def bot_mention
+      Hipbot.user.mention
+    end
+
+    def strip_bot_mention
+      raw_body.gsub(/^@#{bot_mention}[^\p{Word}]*/, '')
     end
   end
 end
