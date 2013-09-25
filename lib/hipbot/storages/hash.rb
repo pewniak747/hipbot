@@ -43,6 +43,10 @@ module Hipbot
       module ClassMethods
         include Cache
 
+        def all
+          collection.values
+        end
+
         def create params
           collection[params[:id]] = new(params)
         end
@@ -76,7 +80,7 @@ module Hipbot
         protected
 
         def method_missing name, *args, &block
-          return collection.values.public_send(name, *args, &block) if Array.instance_methods.include?(name)
+          return all.public_send(name, *args, &block) if Array.instance_methods.include?(name)
           super
         end
       end
