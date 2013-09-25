@@ -20,5 +20,13 @@ module Hipbot
     def kick users
       Hipbot.kick_from_room(self, users)
     end
+
+    def join
+      Hipbot.join_room(self)
+    end
+
+    def leave
+      Hipbot.leave_room(self)
+    end
   end
 end

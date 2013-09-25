@@ -13,5 +13,9 @@ module Hipbot
     def first_name
       name.split.first
     end
+
+    def myself?
+      self == Hipbot.user
+    end
   end
 end
