@@ -13,8 +13,9 @@ module Hipbot
   end
 
   class Bot
-    extend Reactable
+    include Adapter
     include Singleton
+    extend Reactable
 
     attr_accessor :configuration, :connection
 
@@ -31,7 +32,6 @@ module Hipbot
     end
 
     def setup
-      extend adapter
       Hipbot.bot = self
 
       User.send(:include, storage)
@@ -66,7 +66,8 @@ module Hipbot
       end
 
       def start!
-        ::EM::run do
+        ::EM.error_handler(&instance.configuration.error_handler)
+        ::EM.run do
           instance.setup
           instance.start!
         end
