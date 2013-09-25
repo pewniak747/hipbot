@@ -1,3 +1,5 @@
+require 'xmpp4r'
+require 'xmpp4r/muc'
 require 'xmpp4r/muc/x/muc'
 require 'xmpp4r/muc/iq/mucowner'
 require 'xmpp4r/muc/iq/mucadmin'
