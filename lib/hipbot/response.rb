@@ -5,18 +5,19 @@ module Hipbot
     delegate :sender, :room, to: :message
     delegate :bot, to: Hipbot
 
+    def initialize *_
+      super
+      Hipbot.logger.info("RESPONSE WITH #{reaction.inspect}")
+    end
+
     def invoke arguments
-      Hipbot.logger.info("REACTION #{reaction.inspect}")
       instance_exec(*arguments, &reaction.block)
-      true
     rescue Exception => e
-      Hipbot.logger.error(e)
       instance_exec(e, &Hipbot.error_handler)
-      false
     end
 
     def reply message, room = self.room
-      room.nil? ? Hipbot.send_to_user(sender, message) : Hipbot.send_to_room(room, message)
+      (room || sender).send_message(message)
     end
 
     protected
