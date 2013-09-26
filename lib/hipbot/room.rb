@@ -28,5 +28,9 @@ module Hipbot
     def leave
       Hipbot.leave_room(self)
     end
+
+    def archived?
+      !!attributes[:archived]
+    end
   end
 end

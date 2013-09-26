@@ -28,12 +28,14 @@ module Hipbot
         def initialize_rooms
           room_ids = client.get_rooms.map do |room_data|
             room = Room.find_or_create_by(id: room_data[:item].jid.to_s)
-            room.update_attributes({
+            room.update_attributes(
                     name: room_data[:item].iname,
                    topic: room_data[:details]['topic'],
                  privacy: room_data[:details]['privacy'],
               hipchat_id: room_data[:details]['id'],
-            })
+                archived: room_data[:details].has_key?('is_archived'),
+               guest_url: room_data[:details]['guest_url'],
+            )
             room.id
           end
           clean_other_objects(Room, room_ids) if room_ids.any?

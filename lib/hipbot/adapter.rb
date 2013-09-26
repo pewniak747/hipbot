@@ -5,7 +5,7 @@ module Hipbot
       self.connection = adapter.new
       connection.start!
       set_presence(status)
-      join_all_rooms
+      join_rooms(join)
     end
 
     def restart!
@@ -56,8 +56,19 @@ module Hipbot
 
     protected
 
-    def join_all_rooms
-      Room.each(&:join)
+    def join_rooms criteria
+      rooms_to_join(criteria).each(&:join)
+    end
+
+    def rooms_to_join criteria
+      case criteria
+        when :all then Room.all
+        when :private then Room.where(privacy: 'private')
+        when :public then Room.where(privacy: 'public')
+        when Array then criteria.flat_map{ |c| rooms_to_join(c) }.uniq
+        when String then Room.where(name: criteria)
+        else []
+      end.reject(&:archived?)
     end
 
     def leave_all_rooms

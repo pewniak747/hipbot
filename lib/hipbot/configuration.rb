@@ -11,6 +11,7 @@ module Hipbot
       self.error_handler = Proc.new{ |e| Hipbot.logger.error(e) }
       self.helpers       = Module.new
       self.jid           = ''
+      self.join          = :all
       self.logger        = Logger.new($stdout)
       self.password      = ''
       self.plugins       = Hipbot.plugins
