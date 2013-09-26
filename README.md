@@ -387,7 +387,7 @@ end
 You can fetch the descriptions and create help reaction, eg:
 ```ruby
 on /^help$/ do
-  reply Hipbot.plugin_reactions.map(&:desc).compact.join("\n")
+  reply Hipbot.reactions.map(&:desc).compact.join("\n")
 end
 ```
 

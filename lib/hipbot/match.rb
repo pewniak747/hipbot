@@ -7,24 +7,20 @@ module Hipbot
     end
 
     def invoke
-      response.invoke(params)
+      Response.new(reaction, message).invoke(reaction_parameters)
     end
 
     protected
 
-    def response
-      Response.new(reaction, message)
-    end
-
-    def params
-      reaction.anything? ? [message.body] : regexp_match[1..-1]
+    def reaction_parameters
+      reaction.to_anything? ? [message.body] : match_data[1..-1]
     end
 
     def matches_regexp?
-      reaction.anything? || !regexp_match.nil? || reaction.regexps.empty?
+      reaction.to_anything? || !match_data.nil? || reaction.regexps.empty?
     end
 
-    attr_cache :regexp_match do
+    attr_cache :match_data do
       reaction.regexps.inject(nil) do |result, regexp|
         break result if result
         message_text.match(regexp)
@@ -36,11 +32,11 @@ module Hipbot
     end
 
     def matches_place?
-      reaction.anywhere? || (message.room.nil? ? reaction.private_message_only? : matches_room?)
+      reaction.from_anywhere? || (message.room.nil? ? reaction.to_private_message? : matches_room?)
     end
 
     def matches_room?
-      reaction.any_room? || reaction.rooms.include?(message.room.name)
+      reaction.in_any_room? || reaction.rooms.include?(message.room.name)
     end
 
     def matches_sender?
@@ -53,6 +49,12 @@ module Hipbot
 
     def message_text
       reaction.global? ? message.raw_body : message.body
+    end
+
+    class << self
+      def invoke_all matches
+        matches.each(&:invoke)
+      end
     end
   end
 end

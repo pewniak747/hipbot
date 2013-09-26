@@ -1,7 +1,6 @@
 module Hipbot
   class Room
     include Cache
-    include Reactable
 
     attr_cache :users
 

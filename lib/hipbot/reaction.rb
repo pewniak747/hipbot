@@ -2,15 +2,15 @@ module Hipbot
   class Reaction < Struct.new(:plugin, :options, :block)
     include Cache
 
-    def any_room?
+    def in_any_room?
       options[:room] == true
     end
 
-    def anything?
+    def to_anything?
       regexps.empty?
     end
 
-    def anywhere?
+    def from_anywhere?
       options[:room].nil?
     end
 
@@ -46,7 +46,7 @@ module Hipbot
       Match.new(self, message)
     end
 
-    def private_message_only?
+    def to_private_message?
       options[:room] == false
     end
 

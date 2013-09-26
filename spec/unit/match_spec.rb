@@ -5,7 +5,16 @@ describe Hipbot::Match do
   subject { described_class.new(reaction, message) }
 
   let(:message) { stub(for?: true, body: 'test message') }
-  let(:reaction) { stub(global?: false, anywhere?: true, anything?: false, from_all?: true, regexps: [/.*/], condition: proc { true }) }
+  let(:reaction) do
+    stub(
+      global?: false,
+      from_anywhere?: true,
+      to_anything?: false,
+      from_all?: true,
+      regexps: [/.*/],
+      condition: proc { true }
+    )
+  end
 
   before do
     Hipbot.stubs(:user)
@@ -77,7 +86,7 @@ describe Hipbot::Match do
     let(:response) { stub }
 
     before do
-      subject.stubs(response: response)
+      Hipbot::Response.stubs(new: response)
     end
 
     after do
@@ -86,7 +95,7 @@ describe Hipbot::Match do
 
     describe "a reaction with no regexps" do
       before do
-        reaction.stubs(anything?: true)
+        reaction.stubs(to_anything?: true)
       end
 
       it "calls response with message body" do
