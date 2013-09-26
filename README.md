@@ -67,7 +67,6 @@ ruby bot.rb
 
 ### Behavior
 * On start and runtime:
-    * Joins every accessible room (ie. open or with Hipbot invited)
     * Fetches details and presences of all users in Lobby
     * Pings XMPP server every 60 seconds to keep alive
 * On new message:
@@ -102,6 +101,10 @@ class MyBot < Hipbot::Bot
 
     # Predefined user groups (optional)
     c.teams    = { admins: ['John Smith'] }
+
+    # Auto join criteria (default: :all)
+    # Accepted values: :all, :public, :private, :none, "project name"
+    c.join     = :private
   end
 end
 ```
@@ -113,6 +116,30 @@ Inside the reaction block you have access to following context objects:
 * `sender`
 * `message`
 * `reaction`
+
+### Joining rooms
+Hipbot will join all accessible rooms by default on startup and invite.
+
+To change auto join method use `join` configuration option:
+```ruby
+configure do |c|
+  # ...
+  c.join = :private
+end
+```
+```ruby
+configure do |c|
+  # ...
+  c.join = :none
+end
+```
+```ruby
+configure do |c|
+  # ...
+  c.join = ['Project Room', :public]
+end
+```
+Notice: Archived rooms are always ignored
 
 ### Bot presence
 Use `bot.set_presence` method to change Hipbot presence:
@@ -136,7 +163,7 @@ end
 Use `Hipbot::Room` for collection of available rooms.
 ```ruby
 on /^list all rooms$/ do
-  all_rooms = Hipbot::Room.map(&:name)
+  all_rooms = Hipbot::Room.all.map(&:name)
   reply(all_rooms.join(', '))
 end
 ```
@@ -149,10 +176,16 @@ end
 Use `room` for current room object (it's `nil` if message is private):
 ```ruby
 on /^where am I\?$/ do
-  reply("You are in #{room}")
-  reply("JID: #{room.id}")
-  reply("Topic: #{room.topic}")
-  reply("Users online: #{room.users.count}")
+  reply(
+    "You are in #{room}\n" +
+    "JID: #{room.id}\n" +
+    "Topic: #{room.topic}\n" +
+    "Users online: #{room.users.count}\n" +
+    "Privacy: #{room.privacy}\n" +
+    "Hipchat ID: #{room.hipchat_id}\n" +
+    "Archived?: #{room.archived ? 'yes' : 'no'}\n" +
+    "Guest URL: #{room.guest_url}"
+  )
 end
 ```
 
@@ -160,7 +193,7 @@ end
 Use `Hipbot::User` for collection of all users:
 ```ruby
 on /^list all users$/ do
-  all_users = Hipbot::User.map(&:name)
+  all_users = Hipbot::User.all.map(&:name)
   reply(all_users.join(', '))
 end
 ```
@@ -173,12 +206,14 @@ end
 Use `sender` for message sender object:
 ```ruby
 on /^who am I\?$/ do
-  reply("You are #{sender}")
-  reply("JID: #{sender.id}")
-  reply("Mention: @#{sender.mention}")
-  reply("E-mail: #{sender.email}")
-  reply("Title: #{sender.title}")
-  reply("Photo: #{sender.photo}")
+  reply(
+    "You are #{sender}\n" +
+    "JID: #{sender.id}\n" +
+    "Mention: @#{sender.mention}\n" +
+    "E-mail: #{sender.email}\n" +
+    "Title: #{sender.title}\n" +
+    "Photo: #{sender.photo}"
+  )
 end
 ```
 Use `Room#users` method for online users array:
@@ -189,16 +224,19 @@ end
 ```
 
 ### Replying
-Use `reply` method to send a message:
+Use `reply` method to send a message.
+
+Reply in the same room / chat:
 ```ruby
 on /^hello$/ do
-  reply("Hello!") # Replies in the same room / chat
+  reply("Hello!")
 end
 ```
+Reply in "help room":
 ```ruby
 on /^I need help$/ do
   help_room = Hipbot::Room.find_by(name: 'help room')
-  reply("#{sender} needs help in #{room}", help_room) # Replies in help room
+  reply("#{sender} needs help in #{room}", help_room)
 end
 ```
 
@@ -255,7 +293,6 @@ end
 ### Sender restriction
 Use `:from` option to match messages only from certain users or user groups defined in configuration.
 It accepts string, symbol and array values.
-
 ```ruby
 configure do |c|
   # ...
@@ -270,7 +307,6 @@ end
 ### Room restriction
 Use `:room` option to match messages opny from certain HipChat rooms.
 It accepts string, symbol, array and boolean values.
-
 ```ruby
 configure do |c|
   # ...
