@@ -103,7 +103,7 @@ class MyBot < Hipbot::Bot
     c.teams    = { admins: ['John Smith'] }
 
     # Auto join criteria (default: :all)
-    # Accepted values: :all, :public, :private, :none, "project name"
+    # Accepted values: :all, :public, :private, :none, "room name"
     c.join     = :private
   end
 end
