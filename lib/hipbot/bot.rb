@@ -14,12 +14,10 @@ module Hipbot
 
   class Bot
     include Adapter
+    include Configurable
     include Singleton
     extend Reactable
 
-    attr_accessor :configuration, :connection
-
-    delegate *Configuration::OPTIONS, to: :configuration
     delegate :name, :to_s, to: :user
 
     def initialize
@@ -51,10 +49,6 @@ module Hipbot
     end
 
     class << self
-      def configure &block
-        instance.configuration = Configuration.new.tap(&block)
-      end
-
       def on_preload &block
         instance.configuration.preloader = block
       end

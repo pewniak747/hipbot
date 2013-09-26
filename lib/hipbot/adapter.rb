@@ -1,5 +1,7 @@
 module Hipbot
   module Adapter
+    attr_accessor :connection
+
     def start!
       logger.info("STARTING")
       self.connection = adapter.new
