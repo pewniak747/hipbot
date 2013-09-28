@@ -50,12 +50,14 @@ module Hipbot
       options[:room] == false
     end
 
-    def readable_command
-      regexps.to_s.gsub(/(?<!\\)(\/|\[|\]|\^|\\z|\$|\\)/, '')
+    attr_cache :readable_command do
+      regexps.map(&:source).join(' or ').gsub(/\^|\\z|\$|\\/, '')
     end
 
-    def regexps
-      options[:regexps] || []
+    attr_cache :regexps do
+      Array(options[:regexps]).map do |regexp|
+        Regexp.new(regexp.source, Regexp::IGNORECASE)
+      end
     end
 
     attr_cache :rooms do
