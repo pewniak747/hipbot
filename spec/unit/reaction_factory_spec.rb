@@ -16,7 +16,7 @@ describe Hipbot::ReactionFactory do
     let(:params) { [/.*/] }
 
     it "builds a reaction with regexp" do
-      expect(reaction.regexps).to eq([/.*/])
+      expect(reaction.regexps).to eq([/.*/i])
     end
 
     describe "with additional options" do
