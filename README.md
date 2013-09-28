@@ -515,6 +515,7 @@ GreeterPlugin.configure do |c|
   c.language = :jp
 end
 ```
+For more examples, check out [hipbot-plugins](https://github.com/netguru/hipbot-plugins).
 
 ### Exception handling
 Define `on_error` block in your Hipbot class to handle runtime exceptions:
@@ -597,9 +598,20 @@ module Hipbot
   end
 end
 ```
+#### Other storage
+Storage adapter is included in room and user classes upon loading.
+Make sure your adapter implements all methods from [Hipbot::Storages::Base](https://github.com/pewniak747/hipbot/blob/master/lib/hipbot/storages/base.rb)
+```ruby
+module MyStorageAdapter
+  include Hipbot::Storages::Base
+  # ...
+end
 
-For more examples, check out [hipbot-plugins](https://github.com/netguru/hipbot-plugins).
-
+configure do |c|
+  # ...
+  c.storage = MyStorageAdapter
+end
+```
 ## Deploying to Heroku
 Follow the instructions on [hipbot-example](https://github.com/netguru/hipbot-example).
 
