@@ -427,7 +427,7 @@ on /^help$/ do
 end
 ```
 
-### Users managment
+### User managment
 This behavior is experimental and not officially supported by HipChat. Bot must be an admin in order to perform this actions.
 ```ruby
 on /^kick (.*)/ do |user_name|
@@ -538,6 +538,62 @@ class MyBot < Hipbot::Bot
       Updater::update_stock_prices
       Updater::update_server_statuses
     end
+  end
+end
+```
+
+### Storage
+Hipbot uses in-memory hash storage by default, however you can use persistent
+storage adapter to speed up boot time and extend the functionality.
+
+#### MongoDB
+In order to use MongoDB storage, enable Mongoid adapter and add `allow_dynamic_fields: true` to your Mongoid config:
+```ruby
+require 'hipbot/storages/mongoid'
+configure do |c|
+  # ...
+  c.storage = Hipbot::Storages::Mongoid
+end
+```
+Sample config file:
+```yaml
+sessions:
+  default:
+    hosts:
+      - localhost:27017
+    database: hipbot
+options:
+  allow_dynamic_fields: true
+```
+You can optionally override user and room classes with these base models:
+```ruby
+module Hipbot
+  class User
+    include Mongoid::Document
+
+    has_and_belongs_to_many :rooms, class_name: 'Hipbot::User', inverse_of: :users
+
+    field :email,      type: String
+    field :mention,    type: String
+    field :phone,      type: String
+    field :photo,      type: String
+    field :title,      type: String
+    field :is_online,  type: Boolean
+  end
+end
+```
+```ruby
+module Hipbot
+  class Room
+    include Mongoid::Document
+
+    has_and_belongs_to_many :users, class_name: 'Hipbot::User', inverse_of: :rooms
+
+    field :archived,   type: Boolean
+    field :guest_url,  type: String
+    field :hipchat_id, type: String
+    field :privacy,    type: String
+    field :topic,      type: String
   end
 end
 ```

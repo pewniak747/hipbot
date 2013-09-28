@@ -5,10 +5,9 @@ module Hipbot
 
       included do
         include ::Mongoid::Document
-        attr_accessible :id, :name
 
-        field :_id,     type: String
-        field :name,    type: String
+        field :_id,  type: String
+        field :name, type: String
 
         alias_method :to_s, :name
 
