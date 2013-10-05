@@ -30,7 +30,11 @@ Hipbot is tested on:
 gem install hipbot
 ```
 
-### Quick setup
+### 1 minute setup on heroku
+
+Follow the instructions on [hipbot-example](https://github.com/netguru/hipbot-example).
+
+### Custom setup
 Create `bot.rb` file, subclass `Hipbot::Bot` and customize the responses.
 
 ```ruby
@@ -612,8 +616,6 @@ configure do |c|
   c.storage = MyStorageAdapter
 end
 ```
-## Deploying to Heroku
-Follow the instructions on [hipbot-example](https://github.com/netguru/hipbot-example).
 
 ## Contributing
 ### To do:
