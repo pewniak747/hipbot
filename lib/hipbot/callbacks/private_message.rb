@@ -1,17 +1,11 @@
 module Hipbot
   module Callbacks
-    class PrivateMessage < Base
-      def initialize user_id, message
+    class PrivateMessage < Message
+      def initialize user_id, message_body
         with_user(user_id) do |user|
-          return if ignore_message?(user, message)
-          Hipbot.react(user, nil, message.body)
+          return if ignore_message?(user, message_body)
+          Hipbot.react(user, nil, message_body)
         end
-      end
-
-      protected
-
-      def ignore_message? sender, message
-        message.body.to_s.empty? || sender.myself?
       end
     end
   end
