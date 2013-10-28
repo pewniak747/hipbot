@@ -10,7 +10,7 @@ describe Hipbot::Storages::Hash do
   context 'collection' do
     context '#create' do
       it 'creates new item' do
-        collection.count.should == 1
+        collection.all.count.should == 1
       end
 
       it 'saves the id' do
@@ -69,7 +69,7 @@ describe Hipbot::Storages::Hash do
 
     it 'destroys itself' do
       item.destroy
-      collection.should be_empty
+      collection.all.should be_empty
     end
   end
 end

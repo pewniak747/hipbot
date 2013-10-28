@@ -74,7 +74,7 @@ module Hipbot
     end
 
     def leave_all_rooms
-      Room.each(&:leave)
+      Room.all.each(&:leave)
     end
   end
 end
