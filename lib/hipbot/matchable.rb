@@ -7,7 +7,7 @@ module Hipbot
     end
 
     def reactions
-      reactions_sets.flatten
+      reaction_sets.flatten
     end
 
     protected
@@ -17,8 +17,9 @@ module Hipbot
     end
 
     def reaction_sets
-      reactables.flat_map do |reactable|
-        [reactable.reactions, reactable.default_reactions]
+      reactables.each_with_object([]) do |reactable, array|
+        array.prepend(reactable.reactions)
+        array.append(reactable.default_reactions)
       end
     end
 
