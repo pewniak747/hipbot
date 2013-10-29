@@ -18,8 +18,8 @@ module Hipbot
 
     def reaction_sets
       reactables.each_with_object([]) do |reactable, array|
-        array.prepend(reactable.reactions)
-        array.append(reactable.default_reactions)
+        array.unshift(reactable.reactions)
+        array.push(reactable.default_reactions)
       end
     end
 
