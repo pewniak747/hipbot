@@ -3,15 +3,12 @@ module Hipbot
     class Base
       protected
 
-      def with_sender room_id, user_name
-        room = Room.where(id: room_id).first
-        with_user(user_name) do |user|
-          yield room, user
-        end unless room.nil?
+      def with_room params
+        yield Room.find_or_create_by(params)
       end
 
-      def with_user user_name
-        yield User.find_or_initialize_by(name: user_name)
+      def with_user params
+        yield User.find_or_create_by(params)
       end
     end
   end
