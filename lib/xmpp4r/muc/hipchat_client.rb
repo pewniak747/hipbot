@@ -10,19 +10,15 @@ require 'xmpp4r/vcard'
 module Jabber
   module MUC
     class HipchatClient
-      attr_accessor :my_jid, :chat_domain, :conference_domain
+      attr_accessor :my_jid, :chat_domain, :conference_domain, :stream
 
       def initialize(jid)
         self.my_jid = JID.new(jid)
-        @stream = Client.new(my_jid.strip) # TODO: Error Handling
+        self.stream = Client.new(my_jid.strip) # TODO: Error Handling
         Jabber::debuglog "Stream initialized"
         self.chat_domain = my_jid.domain
 
-        @callbacks = {}
-        @callbacks[:presence]        = CallbackList.new
-        @callbacks[:message]         = CallbackList.new
-        @callbacks[:private_message] = CallbackList.new
-        @callbacks[:invite]          = CallbackList.new
+        @callbacks = Hash.new { |hash, key| hash[key] = CallbackList.new }
       end
 
       def join(jid, password = nil, opts = { history: false })
@@ -46,7 +42,7 @@ module Jabber
       end
 
       def keep_alive password
-        if @stream.is_disconnected?
+        if stream.is_disconnected?
           connect(password)
         end
       end
@@ -59,31 +55,11 @@ module Jabber
         my_jid.resource = resource
       end
 
-      def on_presence(prio = 0, ref = nil, &block)
-        @callbacks[:presence].add(prio, ref) do |room_jid, user_name, pres_type|
-          block.call(room_jid, user_name, pres_type)
-          false
-        end
-      end
-
-      def on_message(prio = 0, ref = nil, &block)
-        @callbacks[:message].add(prio, ref) do |room_jid, user_name, message|
-          block.call(room_jid, user_name, message)
-          false
-        end
-      end
-
-      def on_private_message(prio = 0, ref = nil, &block)
-        @callbacks[:private_message].add(prio, ref) do |user_jid, message|
-          block.call(user_jid, message)
-          false
-        end
-      end
-
-      def on_invite(prio = 0, ref = nil, &block)
-        @callbacks[:invite].add(prio, ref) do |room_jid, user_name, room_name, topic|
-          block.call(room_jid, user_name, room_name, topic)
-          false
+      %w(lobby_presence room_presence room_message private_message invite).each do |callback_name|
+        define_method("on_#{callback_name}") do |prio = 0, ref = nil, &block|
+          @callbacks[callback_name.to_sym].add(prio, ref) do |*args|
+            block.(*args)
+          end
         end
       end
 
@@ -93,7 +69,7 @@ module Jabber
         pres.to   = to if to
         pres.from = my_jid
         pres.add(xmuc) if xmuc
-        @stream.send(pres) { |r| block.call(r) }
+        stream.send(pres) { |r| block.(r) }
       end
 
       def kick(recipients, room_jid)
@@ -106,7 +82,7 @@ module Jabber
           item.role = :none
           iq.query.add(item)
         end
-        @stream.send_with_id(iq)
+        stream.send_with_id(iq)
       end
 
       def invite(recipients, room_jid)
@@ -117,7 +93,7 @@ module Jabber
         recipients.each do |jid|
           x.add(XMUCUserInvite.new(jid))
         end
-        @stream.send(msg)
+        stream.send(msg)
       end
 
       def send_message(type, jid, text, subject = nil)
@@ -128,43 +104,38 @@ module Jabber
 
         @send_thread.join if !@send_thread.nil? && @send_thread.alive?
         @send_thread = Thread.new do
-          @stream.send(message)
+          stream.send(message)
           sleep(0.2)
         end
       end
 
       def connect password
-        @stream.connect
+        stream.connect
         Jabber::debuglog "Connected to stream"
-        @stream.auth(password)
+        stream.auth(password)
         Jabber::debuglog "Authenticated"
-        @muc_browser = MUCBrowser.new(@stream)
+        @muc_browser = MUCBrowser.new(stream)
         Jabber::debuglog "MUCBrowser initialized"
         self.conference_domain = @muc_browser.muc_rooms(chat_domain).keys.first
         Jabber::debuglog "No conference domain found" if conference_domain.nil?
-        @roster = Roster::Helper.new(@stream) # TODO: Error handling
-        @vcard  = Vcard::Helper.new(@stream) # TODO: Error handling
+        @roster = Roster::Helper.new(stream) # TODO: Error handling
+        @vcard  = Vcard::Helper.new(stream) # TODO: Error handling
         true
       end
 
       def activate_callbacks
-        @stream.add_presence_callback(150, self) do |presence|
-          handle_presence(presence)
-        end
-
-        @stream.add_message_callback(150, self) do |message|
-          handle_message(message)
-        end
+        stream.add_presence_callback(150, self){ |presence| handle_presence(presence) }
+        stream.add_message_callback(150, self){ |message| handle_message(message) }
         Jabber::debuglog "Callbacks activated"
       end
 
       def get_rooms
         iq = Iq.new(:get, conference_domain)
-        iq.from = @stream.jid
+        iq.from = stream.jid
         iq.add(Discovery::IqQueryDiscoItems.new)
 
         rooms = []
-        @stream.send_with_id(iq) do |answer|
+        stream.send_with_id(iq) do |answer|
           answer.query.each_element('item') do |item|
             details = {}
             item.first.children.each{ |c| details[c.name] = c.text }
@@ -198,15 +169,22 @@ module Jabber
       end
 
       def deactivate_callbacks
-        @stream.delete_presence_callback(self)
-        @stream.delete_message_callback(self)
+        stream.delete_presence_callback(self)
+        stream.delete_message_callback(self)
         Jabber::debuglog "Callbacks deactivated"
       end
 
       private
 
       def handle_presence(presence)
-        @callbacks[:presence].process(presence.from.strip.to_s, presence.from.resource, presence.type.to_s)
+        from_jid      = presence.from.strip.to_s
+        presence_type = presence.type.to_s
+        user_name     = presence.from.resource
+        if user_name.nil?
+          @callbacks[:lobby_presence].process(from_jid, presence_type)
+        else
+          @callbacks[:room_presence].process(from_jid, user_name, presence_type)
+        end
       end
 
       def handle_message(message)
@@ -224,15 +202,23 @@ module Jabber
       def handle_invite(message)
         room_name = message.children.last.first_element_text('name')
         topic     = message.children.last.first_element_text('topic')
-        @callbacks[:invite].process(message.from.strip.to_s, message.from.resource, room_name, topic)
+        room_jid  = message.from.strip.to_s
+        user_name = message.from.resource
+        @callbacks[:invite].process(room_jid, user_name, room_name, topic)
       end
 
       def handle_private_message(message)
-        @callbacks[:private_message].process(message.from.strip.to_s, message)
+        user_jid     = message.from.strip.to_s
+        message_body = message.body.to_s
+        @callbacks[:private_message].process(user_jid, message_body)
       end
 
       def handle_group_message(message)
-        @callbacks[:message].process(message.from.strip.to_s, message.from.resource, message)
+        room_jid     = message.from.strip.to_s
+        user_name    = message.from.resource
+        message_body = message.body.to_s
+        topic        = message.subject.to_s
+        @callbacks[:room_message].process(room_jid, user_name, message_body, topic)
       end
 
       def handle_error(message)
