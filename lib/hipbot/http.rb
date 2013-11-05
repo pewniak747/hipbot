@@ -3,7 +3,7 @@ module Hipbot
     class Request < Struct.new(:url, :query, :method)
       DEFAULT_HEADERS     = { 'accept-encoding' => 'gzip, compressed' }.freeze
       CONNECTION_SETTINGS = { connect_timeout: 5, inactivity_timeout: 10 }.freeze
-      ERROR_CALLBACK      = ->{ Hipbot.logger.error("HTTP-RESPONSE-ERROR: #{url}") }
+      ERROR_CALLBACK      = ->(error){ Hipbot.logger.error(error) }
 
       def initialize *args
         super
