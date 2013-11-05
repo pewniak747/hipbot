@@ -45,7 +45,11 @@ module Hipbot
         ::EM.error_handler(&instance.configuration.error_handler)
         ::EM.run do
           instance.setup
-          instance.start!
+          begin
+            instance.start!
+          rescue Exception => e
+            instance_exec(e, &instance.configuration.error_handler)
+          end
         end
       end
     end
