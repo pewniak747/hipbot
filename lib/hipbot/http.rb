@@ -54,7 +54,7 @@ module Hipbot
       end
 
       def json
-        @json ||= JSON.parse(body)
+        @json ||= JSON.parse(body) || {}
       end
     end
   end
