@@ -7,6 +7,7 @@ gem 'xmpp4r'
 gem 'httparty'
 gem 'activesupport'
 gem 'daemons'
+gem 'xmpp4r-hipchat', github: 'bartoszkopinski/xmpp4r-hipchat', branch: 'master'
 
 gem 'rspec'
 gem 'guard-rspec'

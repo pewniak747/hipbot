@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/bartoszkopinski/xmpp4r-hipchat.git
+  revision: 63bcdad3ad26bcbf20ae248fad30a44a12375c83
+  branch: master
+  specs:
+    xmpp4r-hipchat (0.0.1)
+      xmpp4r (~> 0.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -98,3 +106,4 @@ DEPENDENCIES
   rake
   rspec
   xmpp4r
+  xmpp4r-hipchat!
