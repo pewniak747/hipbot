@@ -11,7 +11,9 @@ module Hipbot
     end
 
     def invoke arguments
-      instance_exec(*arguments, &reaction.block)
+      handle_answer do
+        instance_exec(*arguments, &reaction.block)
+      end
     rescue Exception => e
       instance_exec(e, &Hipbot.error_handler)
     end
@@ -21,6 +23,11 @@ module Hipbot
     end
 
     protected
+
+    def handle_answer
+      answer = catch(:error){ yield }
+      reply(answer) if answer.is_a?(String) && !answer.blank?
+    end
 
     def method_missing method, *args, &block
       plugin.send(method, *args, &block)
