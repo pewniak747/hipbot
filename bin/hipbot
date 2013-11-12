@@ -2,11 +2,11 @@
 
 require 'daemons'
 
-hipbot_file = 'bot.rb'
+HIPBOT_FILE = 'bot.rb'
 
-if File.exists?(hipbot_file)
-  Daemons.run(hipbot_file)
+if File.exists?(HIPBOT_FILE)
+  Daemons.run(HIPBOT_FILE)
 else
-  puts "File #{hipbot_file} not found!"
+  puts "File #{HIPBOT_FILE} not found!"
   exit 1
 end
