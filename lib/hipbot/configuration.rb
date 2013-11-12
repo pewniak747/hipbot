@@ -23,7 +23,7 @@ module Hipbot
     end
 
     def user
-      @user ||= User.new(name: 'robot', mention: 'robot')
+      @user ||= User.new(name: 'robot')
     end
   end
 end
