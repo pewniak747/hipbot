@@ -522,14 +522,14 @@ end
 For more examples, check out [hipbot-plugins](https://github.com/netguru/hipbot-plugins).
 
 ### Exception handling
-Define `on_error` block in your Hipbot class to handle runtime exceptions:
+Define `on_exception` block in your Hipbot class to handle runtime exceptions:
 ```ruby
 class MyBot < Hipbot::Bot
-  on_error do |error|
+  on_exception do |e|
     hipbot_room = Hipbot::Room.find_by(name: 'hipbot room')
-    reply(error.message, hipbot_room)
+    reply(e.message, hipbot_room)
     # If exception was raised in reaction, there are some context variables available:
-    reply("#{error.message} raised by #{message.body} from #{sender} in #{room}", hipbot_room)
+    reply("#{e.message} raised by #{message.body} from #{sender} in #{room}", hipbot_room)
   end
 end
 ```

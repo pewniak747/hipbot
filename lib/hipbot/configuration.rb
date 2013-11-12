@@ -1,14 +1,14 @@
 module Hipbot
   class Configuration
     OPTIONS = [
-      :adapter, :error_handler, :helpers, :jid, :join, :logger, :password,
+      :adapter, :exception_handler, :helpers, :jid, :join, :logger, :password,
       :plugins, :preloader, :rooms, :status, :storage, :teams, :user
     ]
     attr_accessor *OPTIONS
 
     def initialize
       self.adapter       = Adapters::Hipchat
-      self.error_handler = Proc.new{ |e| Hipbot.logger.error(e) }
+      self.exception_handler = Proc.new{ |e| Hipbot.logger.error(e) }
       self.helpers       = Module.new
       self.jid           = ''
       self.join          = :all

@@ -37,18 +37,18 @@ module Hipbot
         instance.configuration.preloader = block
       end
 
-      def on_error &block
-        instance.configuration.error_handler = block
+      def on_exception &block
+        instance.configuration.exception_handler = block
       end
 
       def start!
-        ::EM.error_handler(&instance.configuration.error_handler)
+        ::EM.error_handler(&instance.configuration.exception_handler)
         ::EM.run do
           instance.setup
           begin
             instance.start!
           rescue Exception => e
-            instance_exec(e, &instance.configuration.error_handler)
+            instance_exec(e, &instance.configuration.exception_handler)
           end
         end
       end

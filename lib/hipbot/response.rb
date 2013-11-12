@@ -15,7 +15,7 @@ module Hipbot
         instance_exec(*arguments, &reaction.block)
       end
     rescue Exception => e
-      instance_exec(e, &Hipbot.error_handler)
+      instance_exec(e, &Hipbot.exception_handler)
     end
 
     def reply message, room = self.room
