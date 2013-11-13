@@ -23,7 +23,7 @@ module Hipbot
         yield Http::Response.new(http)
       rescue => e
         Hipbot.logger.error(e)
-        instance_exec(e, &Hipbot.error_handler)
+        instance_exec(e, &Hipbot.exception_handler)
       end
 
       def http
