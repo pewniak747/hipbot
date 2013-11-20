@@ -22,7 +22,6 @@ module Hipbot
       def success
         yield Http::Response.new(http)
       rescue => e
-        Hipbot.logger.error(e)
         instance_exec(e, &Hipbot.exception_handler)
       end
 
@@ -38,7 +37,7 @@ module Hipbot
     class Response < Struct.new(:raw_response)
       def initialize *args
         super
-        Hipbot.logger.info("HTTP-RESPONSE: #{headers}")
+        Hipbot.logger.debug("HTTP-RESPONSE: #{body}")
       end
 
       def body
