@@ -28,7 +28,7 @@ module Hipbot
     end
 
     def matches_scope?
-      reaction.global? || message.for?(Hipbot.user) || message.private?
+      reaction.global? || message.private? || message.for?(Hipbot.user)
     end
 
     def matches_place?
