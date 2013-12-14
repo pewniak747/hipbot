@@ -2,9 +2,15 @@ module Hipbot
   module Reactable
     include Cache
 
-    attr_cache :reactions, :default_reactions, :options_stack
+    attr_cache :reactions, :default_reactions, :presence_reactions, :options_stack
     attr_cache :reaction_factory do
       ReactionFactory.new(self)
+    end
+
+    def on_presence *params, &block
+      scope *params do
+        presence_reactions << to_reaction(block)
+      end
     end
 
     def on *params, &block

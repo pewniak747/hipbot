@@ -1,24 +1,27 @@
 module Hipbot
   module Callbacks
     class RoomPresence < Presence
-      def initialize room_id, user_name, presence
-        self.presence = presence
-        room_presence(room_id, user_name)
+      attr_accessor :room_id, :user_name
+
+      def initialize room_id, user_name, presence, role
+        self.presence  = presence
+        self.user_name = user_name
+        self.room_id   = room_id
+        handle_room_presence
       end
 
       protected
 
-      def room_presence room_id, user_name
+      def handle_room_presence
         with_room(id: room_id) do |room|
           with_user(name: user_name) do |user|
+            Hipbot.react_to_presence(user, presence, room)
             if offline_presence?
-              if user.myself?
-                room.destroy
-              elsif !user.nil?
-                room.users.delete(user)
-              end
+              room.on_leave(user)
             elsif online_presence? && !room.users.include?(user)
-              room.users << user
+              room.on_join(user)
+            else
+              # TODO: Availability status change handling
             end
           end
         end

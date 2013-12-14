@@ -20,6 +20,13 @@ describe MyHipbot do
     end
   end
 
+  describe 'presence reactions' do
+    it 'greets joining user', focus: true do
+      subject.should_receive(:send_to_room).with(room, 'Welcome, John Doe!')
+      subject.react_to_presence(sender, :available, room)
+    end
+  end
+
   describe 'replying' do
     it 'should reply to hello' do
       subject.expects(:send_to_room).with(room, 'hello!')

@@ -63,6 +63,15 @@ class MyHipbot < Hipbot::Bot
     reply("I didn't understand you")
   end
 
+  on_presence do |status|
+    case status
+    when :available
+      reply("Welcome, #{sender.name}!")
+    when :unavailable
+      reply("Bye bye, #{sender.name}!")
+    end
+  end
+
   desc 'greets the user'
   on /^hello hipbot!$/ do
     reply('hello!')

@@ -4,6 +4,18 @@ module Hipbot
 
     attr_cache :users
 
+    def on_join user
+      self.users << user
+    end
+
+    def on_leave user
+      if user.myself?
+        self.destroy
+      else
+        self.users.delete(user)
+      end
+    end
+
     def set_topic topic
       Hipbot.set_topic(self, topic)
     end
