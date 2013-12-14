@@ -19,7 +19,7 @@ describe "a class that inherits", Hipbot::Bot do
       described_class.on /^hello there$/ do
         reply('hi!')
       end
-      subject.expects(:send_to_room).with(room, 'hi!')
+      subject.should_receive(:send_to_room).with(room, 'hi!')
       subject.react(sender, room, '@robot hello there')
     end
 
@@ -27,7 +27,7 @@ describe "a class that inherits", Hipbot::Bot do
       described_class.on /^you are (.*), robot$/ do |adj|
         reply("i know i'm #{adj}!")
       end
-      subject.expects(:send_to_room).with(room, "i know i'm cool!")
+      subject.should_receive(:send_to_room).with(room, "i know i'm cool!")
       subject.react(sender, room, '@robot you are cool, robot')
     end
 
@@ -35,7 +35,7 @@ describe "a class that inherits", Hipbot::Bot do
       described_class.on /^send "(.*)" to (.*@.*)$/ do |message, recipient|
         reply("sent \"#{message}\" to #{recipient}")
       end
-      subject.expects(:send_to_room).with(room, 'sent "hello!" to robot@robots.org')
+      subject.should_receive(:send_to_room).with(room, 'sent "hello!" to robot@robots.org')
       subject.react(sender, room, '@robot send "hello!" to robot@robots.org')
     end
 
@@ -43,14 +43,14 @@ describe "a class that inherits", Hipbot::Bot do
       described_class.default do |message|
         reply("I don't understand \"#{message}\"")
       end
-      subject.expects(:send_to_room).with(room, 'I don\'t understand "hello robot!"')
+      subject.should_receive(:send_to_room).with(room, 'I don\'t understand "hello robot!"')
       subject.react(sender, room, '@robot hello robot!')
     end
 
     it "should choose first option when multiple options match" do
       described_class.on /hello there/ do reply('hello there') end
       described_class.on /hello (.*)/ do reply('hello') end
-      subject.expects(:send_to_room).with(room, 'hello there')
+      subject.should_receive(:send_to_room).with(room, 'hello there')
       subject.react(sender, room, '@robot hello there')
     end
 
@@ -62,17 +62,17 @@ describe "a class that inherits", Hipbot::Bot do
       end
 
       it "should understand simple english" do |msg|
-        subject.expects(:send_to_room).with(room, 'hello tom')
+        subject.should_receive(:send_to_room).with(room, 'hello tom')
         subject.react(sender, room, '@robot hello tom')
       end
 
       it "should understand english" do |msg|
-        subject.expects(:send_to_room).with(room, 'hello tom')
+        subject.should_receive(:send_to_room).with(room, 'hello tom')
         subject.react(sender, room, '@robot good morning tom')
       end
 
       it "should understand german" do |msg|
-        subject.expects(:send_to_room).with(room, 'hello tom')
+        subject.should_receive(:send_to_room).with(room, 'hello tom')
         subject.react(sender, room, '@robot guten tag tom')
       end
     end
@@ -82,7 +82,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /^you are (.*)$/, global: true do |adj|
           reply("i know i'm #{adj}!")
         end
-        subject.expects(:send_to_room).with(room, "i know i'm cool!")
+        subject.should_receive(:send_to_room).with(room, "i know i'm cool!")
         subject.react(sender, room, 'you are cool')
       end
 
@@ -90,7 +90,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /^you are (.*)$/ do |adj|
           reply("i know i'm #{adj}!")
         end
-        subject.expects(:send_to_room).never
+        subject.should_receive(:send_to_room).never
         subject.react(sender, room, 'you are cool')
       end
     end
@@ -102,7 +102,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /wazzup\?/, from: sender.name do
           reply('Wazzup, Tom?')
         end
-        subject.expects(:send_to_room).with(room, 'Wazzup, Tom?')
+        subject.should_receive(:send_to_room).with(room, 'Wazzup, Tom?')
         subject.react(sender, room, '@robot wazzup?')
       end
 
@@ -110,7 +110,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /wazzup\?/, from: ['someone', sender.name] do
           reply('wazzup, tom?')
         end
-        subject.expects(:send_to_room).with(room, 'wazzup, tom?')
+        subject.should_receive(:send_to_room).with(room, 'wazzup, tom?')
         subject.react(sender, room, '@robot wazzup?')
       end
 
@@ -118,7 +118,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /wazzup\?/, from: sender.name do
           reply('wazzup, tom?')
         end
-        subject.expects(:send_to_room).never
+        subject.should_receive(:send_to_room).never
         subject.react(other_user, room, '@robot wazzup?')
       end
 
@@ -126,7 +126,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /wazzup\?/, from: [sender.name] do
           reply('wazzup, tom?')
         end
-        subject.expects(:send_to_room).never
+        subject.should_receive(:send_to_room).never
         subject.react(other_user, room, '@robot wazzup?')
       end
     end
@@ -138,7 +138,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /wazzup\?/, room: 'Test Room' do
           reply('Wazzup, Tom?')
         end
-        subject.expects(:send_to_room).with(room, 'Wazzup, Tom?')
+        subject.should_receive(:send_to_room).with(room, 'Wazzup, Tom?')
         subject.react(sender, room, '@robot wazzup?')
       end
 
@@ -146,7 +146,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /wazzup\?/, room: ['Test Room 2', 'Test Room'] do
           reply('wazzup, tom?')
         end
-        subject.expects(:send_to_room).with(room, 'wazzup, tom?')
+        subject.should_receive(:send_to_room).with(room, 'wazzup, tom?')
         subject.react(sender, room, '@robot wazzup?')
       end
 
@@ -154,7 +154,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /wazzup\?/, room: 'Test Room' do
           reply('wazzup, tom?')
         end
-        subject.expects(:send_to_room).never
+        subject.should_receive(:send_to_room).never
         subject.react(sender, other_room, '@robot wazzup?')
       end
 
@@ -162,7 +162,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /wazzup\?/, room: ['Test Room 2'] do
           reply('wazzup, tom?')
         end
-        subject.expects(:send_to_room).never
+        subject.should_receive(:send_to_room).never
         subject.react(sender, room, '@robot wazzup?')
       end
     end
@@ -174,7 +174,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /.*/ do
           reply("you said: #{message.body}")
         end
-        subject.expects(:send_to_room).with(room, "you said: hello")
+        subject.should_receive(:send_to_room).with(room, "you said: hello")
         subject.react(user, room, "@robot hello")
       end
 
@@ -182,7 +182,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /.*/ do
           reply("you are: #{sender.name}")
         end
-        subject.expects(:send_to_room).with(room, "you are: Tom Smith")
+        subject.should_receive(:send_to_room).with(room, "you are: Tom Smith")
         subject.react(user, room, "@robot hello")
       end
 
@@ -190,7 +190,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /.*/ do
           reply("recipients: #{message.recipients.join(', ')}")
         end
-        subject.expects(:send_to_room).with(room, "recipients: robot, dave")
+        subject.should_receive(:send_to_room).with(room, "recipients: robot, dave")
         subject.react(user, room, "@robot tell @dave hello from me")
       end
 
@@ -198,7 +198,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /.*/ do
           reply(message.sender.first_name)
         end
-        subject.expects(:send_to_room).with(room, 'Tom')
+        subject.should_receive(:send_to_room).with(room, 'Tom')
         subject.react(user, room, '@robot What\'s my name?')
       end
 
@@ -206,7 +206,7 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.on /.*/ do
           reply(message.mentions.join(' '))
         end
-        subject.expects(:send_to_room).with(room, 'dave rachel')
+        subject.should_receive(:send_to_room).with(room, 'dave rachel')
         subject.react(user, room, '@robot do you know @dave? @dave is @rachel father')
       end
     end
@@ -235,12 +235,12 @@ describe "a class that inherits", Hipbot::Bot do
       }
 
       it "should respond to reaction defined in plugin" do
-        subject.expects(:send_to_room).with(room, 'plugin ack')
+        subject.should_receive(:send_to_room).with(room, 'plugin ack')
         subject.react(sender, room, '@robot plugin respond')
       end
 
       it "should respond to default reaction defined in plugin" do
-        subject.expects(:send_to_room).with(room, 'plugin default')
+        subject.should_receive(:send_to_room).with(room, 'plugin default')
         subject.react(sender, room, '@robot blahblah')
       end
 
@@ -248,12 +248,12 @@ describe "a class that inherits", Hipbot::Bot do
         described_class.default do
           reply('bot default')
         end
-        subject.expects(:send_to_room).with(room, 'plugin default')
+        subject.should_receive(:send_to_room).with(room, 'plugin default')
         subject.react(sender, room, '@robot blahblah')
       end
 
       it 'should have access to #plugin inside reaction' do
-        subject.expects(:send_to_room).with(room, 'some method')
+        subject.should_receive(:send_to_room).with(room, 'some method')
         subject.react(sender, room, '@robot plugin method')
       end
     end
@@ -262,8 +262,8 @@ describe "a class that inherits", Hipbot::Bot do
   describe "configurable options" do
     Hipbot::Configuration::OPTIONS.each do |option|
       it "should delegate #{option} to configuration" do
-        value = stub
-        subject.configuration.expects(option).returns(value)
+        value = double
+        subject.configuration.should_receive(option).and_return(value)
         subject.send(option)
       end
     end

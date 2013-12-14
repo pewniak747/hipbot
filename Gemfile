@@ -11,4 +11,3 @@ gem 'xmpp4r-hipchat', github: 'bartoszkopinski/xmpp4r-hipchat', branch: 'master'
 gem 'rspec'
 gem 'guard-rspec'
 gem 'coveralls', require: false
-gem 'mocha'

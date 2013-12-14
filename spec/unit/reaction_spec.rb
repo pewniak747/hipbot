@@ -1,7 +1,5 @@
 require 'spec_helper'
 
-require_relative '../../lib/hipbot/reaction'
-
 describe Hipbot::Reaction do
   subject { Hipbot::Reaction }
 
@@ -34,7 +32,7 @@ describe Hipbot::Reaction do
     end
 
     it '#delete' do
-      @plugin = stub(reactions: [reaction])
+      @plugin = double(reactions: [reaction])
       reaction.plugin = @plugin
       reaction.delete
       @plugin.reactions.should be_empty
@@ -64,7 +62,7 @@ describe Hipbot::Reaction do
     end
 
     it '#match_with' do
-      message = stub
+      message = double
       reaction.match_with(message).should == Hipbot::Match.new(reaction, message)
     end
 
@@ -86,14 +84,14 @@ describe Hipbot::Reaction do
 
     it '#rooms' do
       rooms = ['Room 1', 'Room 2']
-      Hipbot.bot = stub(rooms: { special_rooms: rooms })
+      Hipbot.bot = double(rooms: { special_rooms: rooms })
       options[:room] = [:special_rooms, 'Room 3']
       reaction.rooms.should == [*rooms, 'Room 3']
     end
 
     it '#users' do
       users = ['User 1', 'User 2']
-      Hipbot.bot = stub(teams: { special_users: users })
+      Hipbot.bot = double(teams: { special_users: users })
       options[:from] = [:special_users, 'User 3']
       reaction.users.should == [*users, 'User 3']
     end

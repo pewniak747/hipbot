@@ -1,12 +1,11 @@
 require 'spec_helper'
-require_relative '../../lib/hipbot/match.rb'
 
 describe Hipbot::Match do
   subject { described_class.new(reaction, message) }
 
-  let(:message) { stub(for?: true, body: 'test message') }
+  let(:message) { double(for?: true, body: 'test message', private?: false) }
   let(:reaction) do
-    stub(
+    double(
       global?: false,
       from_anywhere?: true,
       to_anything?: false,
@@ -17,7 +16,7 @@ describe Hipbot::Match do
   end
 
   before do
-    Hipbot.stubs(:user)
+    Hipbot.stub(:user)
   end
 
   describe "#matches?" do
@@ -26,8 +25,8 @@ describe Hipbot::Match do
     describe "specific regexp" do
       describe "matching the message body" do
         before do
-          message.stubs(body: 'test message')
-          reaction.stubs(regexps: [/\Atest/])
+          message.stub(body: 'test message')
+          reaction.stub(regexps: [/\Atest/])
         end
 
         its(:matches?) { should be_true }
@@ -35,8 +34,8 @@ describe Hipbot::Match do
 
       describe "not matching message body" do
         before do
-          message.stubs(body: 'test message')
-          reaction.stubs(regexps: [/\Arandom/])
+          message.stub(body: 'test message')
+          reaction.stub(regexps: [/\Arandom/])
         end
 
         its(:matches?) { should be_false }
@@ -46,8 +45,8 @@ describe Hipbot::Match do
     describe "multiple regexps" do
       describe "matching message body" do
         before do
-          message.stubs(body: 'test message')
-          reaction.stubs(regexps: [/\Awat/, /\Atest/])
+          message.stub(body: 'test message')
+          reaction.stub(regexps: [/\Awat/, /\Atest/])
         end
 
         its(:matches?) { should be_true }
@@ -55,8 +54,8 @@ describe Hipbot::Match do
 
       describe "not matching message body" do
         before do
-          message.stubs(body: 'test message')
-          reaction.stubs(regexps: [/\Awat/, /\Arandom/])
+          message.stub(body: 'test message')
+          reaction.stub(regexps: [/\Awat/, /\Arandom/])
         end
 
         its(:matches?) { should be_false }
@@ -66,7 +65,7 @@ describe Hipbot::Match do
     describe "specific condition" do
       describe "returning true" do
         before do
-          reaction.stubs(condition: proc { true })
+          reaction.stub(condition: proc { true })
         end
 
         its(:matches?) { should be_true }
@@ -74,7 +73,7 @@ describe Hipbot::Match do
 
       describe "returning false" do
         before do
-          reaction.stubs(condition: proc { false })
+          reaction.stub(condition: proc { false })
         end
 
         its(:matches?) { should be_false }
@@ -83,10 +82,10 @@ describe Hipbot::Match do
   end
 
   describe "#invoke" do
-    let(:response) { stub }
+    let(:response) { double }
 
     before do
-      Hipbot::Response.stubs(new: response)
+      Hipbot::Response.stub(new: response)
     end
 
     after do
@@ -95,54 +94,54 @@ describe Hipbot::Match do
 
     describe "a reaction with no regexps" do
       before do
-        reaction.stubs(to_anything?: true)
+        reaction.stub(to_anything?: true)
       end
 
       it "calls response with message body" do
-        response.expects(:invoke).with([message.body])
+        response.should_receive(:invoke).with([message.body])
       end
     end
 
     describe "a reaction with regexp with no variables" do
       before do
-        reaction.stubs(regexps: [/.*/])
+        reaction.stub(regexps: [/.*/])
       end
 
       it "calls response with message body" do
-        response.expects(:invoke).with([])
+        response.should_receive(:invoke).with([])
       end
     end
 
     describe "a reaction with regexp with one variable" do
       before do
-        message.stubs(body: 'I like trains.')
-        reaction.stubs(regexps: [/\Ai like (\w+)/i])
+        message.stub(body: 'I like trains.')
+        reaction.stub(regexps: [/\Ai like (\w+)/i])
       end
 
       it "calls response with variable parsed out of message body" do
-        response.expects(:invoke).with(['trains'])
+        response.should_receive(:invoke).with(['trains'])
       end
     end
 
     describe "a reaction with regexp with multiple variables" do
       before do
-        message.stubs(body: 'I like trains and cars.')
-        reaction.stubs(regexps: [/\Ai like (\w+) and (\w+)/i])
+        message.stub(body: 'I like trains and cars.')
+        reaction.stub(regexps: [/\Ai like (\w+) and (\w+)/i])
       end
 
       it "calls response with variables parsed out of message body" do
-        response.expects(:invoke).with(%w{trains cars})
+        response.should_receive(:invoke).with(%w{trains cars})
       end
     end
 
     describe "a reaction with multiple regexps with variables" do
       before do
-        message.stubs(body: 'I enjoy trains and cars.')
-        reaction.stubs(regexps: [/\AI enjoy (\w+) and (\w+)/, /\Ai like (\w+) and (\w+)/i])
+        message.stub(body: 'I enjoy trains and cars.')
+        reaction.stub(regexps: [/\AI enjoy (\w+) and (\w+)/, /\Ai like (\w+) and (\w+)/i])
       end
 
       it "calls response with variable parsed out of message body" do
-        response.expects(:invoke).with(%w{trains cars})
+        response.should_receive(:invoke).with(%w{trains cars})
       end
     end
   end

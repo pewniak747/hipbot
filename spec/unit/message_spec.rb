@@ -2,11 +2,15 @@ require 'spec_helper'
 
 describe Hipbot::Message do
   subject { Hipbot::Message }
-  let(:sender) { stub }
-  let(:room) { stub }
-  before(:all) {
+  let(:sender) { double }
+  let(:room) { double }
+  before(:all) do
     Hipbot::Bot.instance.setup
-  }
+  end
+
+  before do
+    Hipbot.configuration.user = double(mention: 'dave')
+  end
 
   it "should have a body" do
     message = subject.new('this is a message', room, sender)
@@ -35,25 +39,23 @@ describe Hipbot::Message do
   end
 
   it "should strip bot mention from message" do
-    Hipbot.configuration.user = stub(mention: 'dave')
     message = subject.new('@dave this is a message for @tom', room, sender)
     message.body.should == 'this is a message for @tom'
   end
 
   it "should strip bot mention from message with commma" do
-    Hipbot.configuration.user = stub(mention: 'dave')
     message = subject.new('@dave, this is a message for @tom', room, sender)
     message.body.should == 'this is a message for @tom'
   end
 
   it "should be for bot" do
-    user = stub(mention: 'robot')
+    user = double(mention: 'robot')
     message = subject.new('hello @robot!', room, sender)
     message.for?(user).should be_true
   end
 
   it "should not be for bot" do
-    user = stub(mention: 'robot')
+    user = double(mention: 'robot')
     message = subject.new('hello @tom!', room, sender)
     message.for?(user).should be_false
   end

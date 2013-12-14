@@ -4,10 +4,12 @@ require 'coveralls'
 Coveralls.wear!
 
 RSpec.configure do |config|
-  config.mock_with :mocha
+  config.mock_with :rspec
 
   config.before(:all) do
-    Hipbot::Bot.instance.configuration.logger = NullLogger.instance
+    Hipbot::User.send(:include, Hipbot::Storages::Hash)
+    Hipbot::Room.send(:include, Hipbot::Storages::Hash)
+    Hipbot.stub(logger: NullLogger.instance)
   end
 end
 

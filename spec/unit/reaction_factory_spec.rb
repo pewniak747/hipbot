@@ -1,13 +1,10 @@
 require 'spec_helper'
 
-require_relative '../../lib/hipbot/reaction'
-require_relative '../../lib/hipbot/reaction_factory'
-
 describe Hipbot::ReactionFactory do
-  subject { described_class.new(stub) }
+  subject { described_class.new(double) }
 
   let(:params) { [] }
-  let(:block) { stub }
+  let(:block) { double }
 
   let(:options_stack) { [subject.get_reaction_options(params)] }
   let(:reaction) { subject.build(options_stack, block) }
