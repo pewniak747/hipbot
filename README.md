@@ -448,7 +448,7 @@ end
 ```
 
 ### User managment
-This behavior is experimental and not officially supported by HipChat. Bot must be an admin in order to perform this actions.
+This behavior is experimental and not officially supported by HipChat. Bot must be an admin in order to perform these actions.
 ```ruby
 on /^kick (.*)/ do |user_name|
   user = Hipbot::User.find_by(name: user_name)
