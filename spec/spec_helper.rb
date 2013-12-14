@@ -9,12 +9,5 @@ RSpec.configure do |config|
   config.before(:all) do
     Hipbot::User.send(:include, Hipbot::Storages::Hash)
     Hipbot::Room.send(:include, Hipbot::Storages::Hash)
-    Hipbot.stub(logger: NullLogger.instance)
-  end
-end
-
-class NullLogger
-  def self.instance
-    Logger.new('/dev/null')
   end
 end
