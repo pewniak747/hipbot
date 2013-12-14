@@ -373,6 +373,22 @@ end
 on /^My name is (.*)$/, :hello
 ```
 
+### Presence reaction
+Use `on_presence` in the same way as `on` to make presence reactions:
+```ruby
+class MyBot < Hipbot::Bot
+  # ...
+  on_presence do |status|
+    case status
+    when 'unavailable'
+      reply("Bye bye, #{sender.name}!")
+    when ''
+      reply("Welcome, #{sender.name}!")
+    end
+  end
+end
+```
+
 ### Scopes
 Use `scope` blocks to extract common options:
 ```ruby
