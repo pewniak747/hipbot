@@ -4,12 +4,17 @@ describe Hipbot::Message do
   subject { Hipbot::Message }
   let(:sender) { double }
   let(:room) { double }
+
   before(:all) do
     Hipbot::Bot.instance.setup
   end
 
   before do
-    Hipbot.configuration.user = double(mention: 'dave')
+    Hipbot.configuration.user.stub(mention: 'dave')
+  end
+
+  after do
+    Hipbot.configuration.user.unstub(:mention)
   end
 
   it "should have a body" do

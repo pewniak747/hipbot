@@ -16,7 +16,11 @@ describe Hipbot::Match do
   end
 
   before do
-    Hipbot.stub(:user)
+    Hipbot.stub(user: double)
+  end
+
+  after do
+    Hipbot.unstub(:user)
   end
 
   describe "#matches?" do

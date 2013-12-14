@@ -1,6 +1,5 @@
 module Hipbot
   class Presence < Struct.new(:sender, :body, :room)
-    include Cache
 
     def initialize *args
       super

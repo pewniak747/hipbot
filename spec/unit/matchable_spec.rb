@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Hipbot::Matchable do
   include Hipbot::Matchable
 
+  before(:all) do
+    Hipbot::Bot.instance.setup
+  end
+
   let(:sender) { Hipbot::User.new(name: 'test user') }
   let(:room) { Hipbot::Room.new(name: 'test room') }
 
