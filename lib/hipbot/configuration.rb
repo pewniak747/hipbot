@@ -8,7 +8,10 @@ module Hipbot
 
     def initialize
       self.adapter       = Adapters::Hipchat
-      self.exception_handler = Proc.new{ |e| Hipbot.logger.error(e) }
+      self.exception_handler = Proc.new do |e|
+        Hipbot.logger.error(e.message)
+        e.backtrace.each { |line| Hipbot.logger.error(line) }
+      end
       self.helpers       = Module.new
       self.jid           = ''
       self.join          = :all
