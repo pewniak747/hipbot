@@ -1,7 +1,10 @@
 require_relative '../lib/hipbot'
 
-require 'coveralls'
-Coveralls.wear!
+begin
+  require 'coveralls'
+  Coveralls.wear!
+rescue LoadError
+end
 
 RSpec.configure do |config|
   config.mock_with :rspec
