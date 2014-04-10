@@ -653,3 +653,5 @@ end
 * ~~handle reconnecting after disconnect/failure~~
 * ~~add support for multiple regexps for one response~~
 * ~~add support for responses in particular room (`on //, room: ['public'] do ...`)~~
+
+Read [the story behind creating HipBot](https://netguru.co/blog/posts/hipbot).
