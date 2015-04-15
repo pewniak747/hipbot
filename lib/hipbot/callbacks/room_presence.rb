@@ -3,7 +3,7 @@ module Hipbot
     class RoomPresence < Presence
       attr_accessor :room_id, :user_name
 
-      def initialize room_id, user_name, presence
+      def initialize room_id, user_name, presence, role
         self.presence  = presence
         self.user_name = user_name
         self.room_id   = room_id

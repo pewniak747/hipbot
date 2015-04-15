@@ -1,10 +1,10 @@
 module Hipbot
   module Adapters
-    class Hipchat
+    class Slack
       attr_accessor :client
 
       def start!
-        self.client = Initializer.new.client
+        self.client = XMPP::Initializer.new.client
       end
 
       def restart!

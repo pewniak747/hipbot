@@ -77,12 +77,12 @@ module Hipbot
           end
         end
 
-        protected
+        # protected
 
-        def method_missing name, *args, &block
-          return all.public_send(name, *args, &block) if Array.instance_methods.include?(name)
-          super
-        end
+        # def method_missing name, *args, &block
+        #   return all.public_send(name, *args, &block) if Array.instance_methods.include?(name)
+        #   super
+        # end
       end
     end
   end

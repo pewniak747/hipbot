@@ -12,3 +12,5 @@ end
 platforms :mri do
   gem 'coveralls', require: false
 end
+
+gem 'pry'

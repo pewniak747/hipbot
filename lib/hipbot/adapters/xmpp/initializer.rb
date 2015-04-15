@@ -1,6 +1,6 @@
 module Hipbot
   module Adapters
-    class Hipchat
+    class XMPP
       class Initializer
         attr_accessor :client
 
@@ -21,7 +21,10 @@ module Hipbot
         protected
 
         def initialize_client
-          self.client = ::Jabber::MUC::HipchatClient.new(Hipbot.jid)
+          self.client = ::Jabber::MUC::HipchatClient.new(
+            Hipbot.jid,
+            Hipbot.conference_host,
+          )
           yield if client.connect(Hipbot.password)
         end
 
@@ -52,16 +55,26 @@ module Hipbot
         end
 
         def initialize_bot_user
-          Hipbot.configuration.user = User.find(Hipbot.jid)
+          Hipbot.configuration.user = User.find_or_create_by(id: Hipbot.jid)
           client.name = Hipbot.user.name
         end
 
         def initialize_callbacks
-          client.on_room_message{ |*args| Callbacks::RoomMessage.new(*args) }
-          client.on_private_message{ |*args| Callbacks::PrivateMessage.new(*args) }
-          client.on_invite{ |*args| Callbacks::Invite.new(*args) }
-          client.on_lobby_presence{ |*args| Callbacks::LobbyPresence.new(*args) }
-          client.on_room_presence{ |*args| Callbacks::RoomPresence.new(*args) }
+          client.on_room_message{ |*args|
+            Callbacks::RoomMessage.new(*args)
+          }
+          client.on_private_message{ |*args|
+            Callbacks::PrivateMessage.new(*args)
+          }
+          client.on_invite{ |*args|
+            Callbacks::Invite.new(*args)
+          }
+          client.on_lobby_presence{ |*args|
+            Callbacks::LobbyPresence.new(*args)
+          }
+          client.on_room_presence{ |*args|
+            Callbacks::RoomPresence.new(*args)
+          }
           client.activate_callbacks
         end
 

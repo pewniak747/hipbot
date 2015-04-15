@@ -15,5 +15,9 @@ module Hipbot
     def myself?
       self == Hipbot.user
     end
+
+    def guest?
+      attributes[:role] == 'visitor'
+    end
   end
 end

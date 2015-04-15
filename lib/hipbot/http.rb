@@ -1,13 +1,17 @@
+# encoding: utf-8
 module Hipbot
   module Http
-    class Request < Struct.new(:url, :query, :method)
+    class Request < Struct.new(:url, :params, :method)
       DEFAULT_HEADERS     = { 'accept-encoding' => 'gzip, compressed' }.freeze
       CONNECTION_SETTINGS = { connect_timeout: 5, inactivity_timeout: 10 }.freeze
       ERROR_CALLBACK      = ->(error){ Hipbot.logger.error(error) }
 
       def initialize *args
         super
-        Hipbot.logger.info("HTTP-REQUEST: #{url} #{query}")
+        self.params ||= {}
+        self.params = params.has_key?(:query) ? params : { query: params }
+        self.params = { head: DEFAULT_HEADERS }.merge(params)
+        Hipbot.logger.info("HTTP-REQUEST: #{url} #{params}")
       end
 
       def call &success_block
@@ -25,12 +29,12 @@ module Hipbot
         instance_exec(e, &Hipbot.exception_handler)
       end
 
-      def http
-        @http ||= connection.send(method, query: query.merge(head: DEFAULT_HEADERS))
+      def http options = {}
+        @http ||= connection.send(method, params.merge(options))
       end
 
       def connection
-        EM::HttpRequest.new(url, CONNECTION_SETTINGS)
+        @connection ||= EM::HttpRequest.new(url, CONNECTION_SETTINGS)
       end
     end
 

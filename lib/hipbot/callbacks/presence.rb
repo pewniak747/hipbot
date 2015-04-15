@@ -6,11 +6,11 @@ module Hipbot
       protected
 
       def online_presence?
-        presence.empty?
+        presence == :available
       end
 
       def offline_presence?
-        presence == 'unavailable'
+        presence == :unavailable
       end
     end
   end
