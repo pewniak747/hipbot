@@ -5,7 +5,7 @@ module Hipbot
 
     attr_accessor :body
 
-    MENTION_REGEXP = /@(\p{Word}++)/.freeze
+    MENTION_REGEXP = /@(\p{Word}++):?/.freeze
 
     def initialize *args
       super
