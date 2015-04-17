@@ -55,8 +55,13 @@ module Hipbot
     end
 
     attr_cache :regexps do
-      Array(options[:regexps]).map do |regexp|
-        Regexp.new(regexp.source, Regexp::IGNORECASE)
+      regexps = Array(options[:regexps])
+      if Hipbot.configuration.case_insensitive
+        regexps.map do |regexp|
+          Regexp.new(regexp.source, Regexp::IGNORECASE)
+        end
+      else
+        regexps
       end
     end
 

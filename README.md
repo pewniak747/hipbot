@@ -109,6 +109,9 @@ class MyBot < Hipbot::Bot
     # Auto join criteria (default: :all)
     # Accepted values: :all, :public, :private, :none, "room name"
     c.join     = :private
+
+    # Makes all reactions case insensitive (default: true)
+    c.case_insensitive = true
   end
 end
 ```

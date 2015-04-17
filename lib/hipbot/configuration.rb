@@ -1,7 +1,7 @@
 module Hipbot
   class Configuration
     OPTIONS = [
-      :adapter, :exception_handler, :helpers, :join,
+      :adapter, :case_insensitive, :exception_handler, :helpers, :join,
       :logger, :password, :plugins, :preloader, :rooms, :status, :storage, :teams, :user
     ]
     attr_accessor *OPTIONS
@@ -12,6 +12,7 @@ module Hipbot
       end
 
       self.adapter        = Adapters::Hipchat
+      self.case_insensitive  = true
       self.exception_handler = proc do |e|
         Hipbot.logger.error(e.message)
         e.backtrace.each { |line| Hipbot.logger.error(line) }
