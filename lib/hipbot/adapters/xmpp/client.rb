@@ -1,7 +1,7 @@
 module Hipbot
   module Adapters
-    class Hipchat
-      class Initializer
+    class XMPP
+      class Client
         attr_accessor :client
 
         KEEP_ALIVE_INTERVAL = 60
@@ -21,8 +21,8 @@ module Hipbot
         protected
 
         def initialize_client
-          self.client = ::Jabber::MUC::HipchatClient.new(Hipbot.jid)
-          yield if client.connect(Hipbot.password)
+          self.client = ::Jabber::MUC::HipchatClient.new(Hipbot.configuration.jid)
+          yield if client.connect(Hipbot.configuration.password)
         end
 
         def initialize_rooms
@@ -52,7 +52,7 @@ module Hipbot
         end
 
         def initialize_bot_user
-          Hipbot.configuration.user = User.find(Hipbot.jid)
+          Hipbot.configuration.user = User.find(Hipbot.configuration.jid)
           client.name = Hipbot.user.name
         end
 

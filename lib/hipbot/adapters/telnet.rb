@@ -1,6 +1,8 @@
 module Hipbot
   module Adapters
     class Telnet
+      include Hipbot::Adaptable
+
       attr_accessor :connection
 
       def start!

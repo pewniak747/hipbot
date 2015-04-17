@@ -1,25 +1,27 @@
 module Hipbot
   class Configuration
     OPTIONS = [
-      :adapter, :conference_host, :exception_handler, :helpers, :jid, :join,
+      :adapter, :exception_handler, :helpers, :join,
       :logger, :password, :plugins, :preloader, :rooms, :status, :storage, :teams, :user
     ]
     attr_accessor *OPTIONS
 
     def initialize
+      self.class.class_eval do
+        attr_accessor *Hipbot.adapters.flat_map(&:options).compact
+      end
+
       self.adapter        = Adapters::Hipchat
-      self.conference_host   = nil
-      self.exception_handler = Proc.new do |e|
+      self.exception_handler = proc do |e|
         Hipbot.logger.error(e.message)
         e.backtrace.each { |line| Hipbot.logger.error(line) }
       end
       self.helpers       = Module.new
-      self.jid           = ''
       self.join          = :all
       self.logger        = Logger.new($stdout)
       self.password      = ''
       self.plugins       = Hipbot.plugins
-      self.preloader     = Proc.new{}
+      self.preloader     = proc {}
       self.rooms         = {}
       self.status        = ''
       self.storage       = Storages::Hash

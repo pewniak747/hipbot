@@ -1,10 +1,14 @@
 module Hipbot
   class << self
-    attr_accessor :bot, :plugins
+    attr_accessor :bot, :plugins, :adapters
     delegate :name, to: :bot
 
     def plugins
       @plugins ||= []
+    end
+
+    def adapters
+      @adapters ||= []
     end
 
     def method_missing name, *params, &block
