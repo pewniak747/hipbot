@@ -112,6 +112,9 @@ class MyBot < Hipbot::Bot
 
     # Makes all reactions case insensitive (default: true)
     c.case_insensitive = true
+
+    # Auto-join on invite (default: true)
+    c.join_on_invite = true
   end
 end
 ```

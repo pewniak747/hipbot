@@ -1,7 +1,7 @@
 module Hipbot
   class Configuration
     OPTIONS = [
-      :adapter, :case_insensitive, :exception_handler, :helpers, :join,
+      :adapter, :case_insensitive, :exception_handler, :helpers, :join, :join_on_invite,
       :logger, :password, :plugins, :preloader, :rooms, :status, :storage, :teams, :user
     ]
     attr_accessor *OPTIONS
@@ -19,6 +19,7 @@ module Hipbot
       end
       self.helpers       = Module.new
       self.join          = :all
+      self.join_on_invite = true
       self.logger        = Logger.new($stdout)
       self.password      = ''
       self.plugins       = Hipbot.plugins
