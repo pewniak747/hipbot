@@ -8,27 +8,27 @@ describe Hipbot::Reaction do
     let(:reaction){ subject.new(@plugin, options, @block) }
 
     it '#in_any_room?' do
-      reaction.in_any_room?.should be_false
+      reaction.in_any_room?.should be_falsy
       options[:room] = true
-      reaction.in_any_room?.should be_true
+      reaction.in_any_room?.should be_truthy
     end
 
     it '#to_anything?' do
-      reaction.to_anything?.should be_true
+      reaction.to_anything?.should be_truthy
       reaction.options[:regexps] = nil
-      reaction.to_anything?.should be_true
+      reaction.to_anything?.should be_truthy
     end
 
     it '#from_anywhere?' do
-      reaction.from_anywhere?.should be_true
+      reaction.from_anywhere?.should be_truthy
       reaction.options[:room] = nil
-      reaction.from_anywhere?.should be_true
+      reaction.from_anywhere?.should be_truthy
     end
 
     it '#condition' do
-      reaction.condition.call.should be_true
+      reaction.condition.call.should be_truthy
       reaction.options[:if] = proc{ false }
-      reaction.condition.call.should be_false
+      reaction.condition.call.should be_falsy
     end
 
     it '#delete' do
@@ -45,15 +45,15 @@ describe Hipbot::Reaction do
     end
 
     it '#from_all?' do
-      reaction.from_all?.should be_true
+      reaction.from_all?.should be_truthy
       reaction.options[:room] = nil
-      reaction.from_all?.should be_true
+      reaction.from_all?.should be_truthy
     end
 
     it '#global?' do
-      reaction.global?.should be_false
+      reaction.global?.should be_falsy
       reaction.options = { global: true }
-      reaction.global?.should be_true
+      reaction.global?.should be_truthy
     end
 
     it '#plugin_name' do
@@ -67,9 +67,9 @@ describe Hipbot::Reaction do
     end
 
     it '#to_private_message?' do
-      reaction.to_private_message?.should be_false
+      reaction.to_private_message?.should be_falsy
       reaction.options[:room] = false
-      reaction.to_private_message?.should be_true
+      reaction.to_private_message?.should be_truthy
     end
 
     it '#regexps' do

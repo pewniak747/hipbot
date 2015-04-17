@@ -1,3 +1,5 @@
+require 'rspec/its'
+
 require_relative '../lib/hipbot'
 
 begin

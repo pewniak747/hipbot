@@ -56,13 +56,13 @@ describe Hipbot::Message do
   it "should be for bot" do
     user = double(mention: 'robot')
     message = subject.new('hello @robot!', room, sender)
-    message.for?(user).should be_true
+    message.for?(user).should be_truthy
   end
 
   it "should not be for bot" do
     user = double(mention: 'robot')
     message = subject.new('hello @tom!', room, sender)
-    message.for?(user).should be_false
+    message.for?(user).should be_falsy
   end
 
   it 'knows its recipients' do

@@ -24,7 +24,7 @@ describe Hipbot::Match do
   end
 
   describe "#matches?" do
-    its(:matches?) { should be_true }
+    its(:matches?) { should be_truthy }
 
     describe "specific regexp" do
       describe "matching the message body" do
@@ -33,7 +33,7 @@ describe Hipbot::Match do
           reaction.stub(regexps: [/\Atest/])
         end
 
-        its(:matches?) { should be_true }
+        its(:matches?) { should be_truthy }
       end
 
       describe "not matching message body" do
@@ -42,7 +42,7 @@ describe Hipbot::Match do
           reaction.stub(regexps: [/\Arandom/])
         end
 
-        its(:matches?) { should be_false }
+        its(:matches?) { should be_falsy }
       end
     end
 
@@ -53,7 +53,7 @@ describe Hipbot::Match do
           reaction.stub(regexps: [/\Awat/, /\Atest/])
         end
 
-        its(:matches?) { should be_true }
+        its(:matches?) { should be_truthy }
       end
 
       describe "not matching message body" do
@@ -62,7 +62,7 @@ describe Hipbot::Match do
           reaction.stub(regexps: [/\Awat/, /\Arandom/])
         end
 
-        its(:matches?) { should be_false }
+        its(:matches?) { should be_falsy }
       end
     end
 
@@ -72,7 +72,7 @@ describe Hipbot::Match do
           reaction.stub(condition: proc { true })
         end
 
-        its(:matches?) { should be_true }
+        its(:matches?) { should be_truthy }
       end
 
       describe "returning false" do
@@ -80,7 +80,7 @@ describe Hipbot::Match do
           reaction.stub(condition: proc { false })
         end
 
-        its(:matches?) { should be_false }
+        its(:matches?) { should be_falsy }
       end
     end
   end
