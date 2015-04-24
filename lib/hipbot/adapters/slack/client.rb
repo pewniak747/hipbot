@@ -4,24 +4,19 @@ module Hipbot
   module Adapters
     class Slack < XMPP
       class Client < XMPP::Client
-        protected
-
-        def initialize_bot_user
-          Hipbot.configuration.user = User.find(Hipbot.configuration.jid)
-          client.name = Hipbot.user.name.delete(" ").downcase
-          Hipbot.configuration.user.update(mention: client.name)
-        end
-
-        def initialize_rooms
+        def initialize
           ::Slack.configure do |config|
             config.token = Hipbot.configuration.slack_api_token
           end
+          super
+        end
 
+        protected
+
+        def initialize_rooms
           room_ids = ::Slack.client.channels_list["channels"].map do |channel|
-            room = Room.find_or_create_by(
-              name: channel["name"],
-              id: Jabber::JID.new(channel["name"], Hipbot.configuration.conference_host, "hipbot").to_s
-            )
+            room = Room.find_or_create_by(id: channel["name"])
+            room.update_attributes(name: channel["name"])
             room.id
           end
 

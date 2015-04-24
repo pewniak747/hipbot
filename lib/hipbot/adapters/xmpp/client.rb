@@ -43,7 +43,7 @@ module Hipbot
 
         def initialize_rooms
           room_ids = client.get_rooms.map do |room_data|
-            room = Room.find_or_create_by(id: room_data.jid)
+            room = Room.find_or_create_by(id: room_data.id)
             room.update_attributes(room_data.attributes)
             room.id
           end
@@ -52,7 +52,7 @@ module Hipbot
 
         def initialize_users
           user_ids = client.get_users.map do |user_data|
-            user = User.find_or_create_by(id: user_data.jid)
+            user = User.find_or_create_by(id: user_data.id)
             user.update_attributes(user_data.attributes)
 
             if user.attributes['email'].nil?
@@ -68,7 +68,7 @@ module Hipbot
         end
 
         def initialize_bot_user
-          Hipbot.configuration.user = User.find(Hipbot.configuration.jid)
+          Hipbot.configuration.user = User.find(Jabber::JID.new(Hipbot.configuration.jid).node)
           client.name = Hipbot.user.name
         end
 
