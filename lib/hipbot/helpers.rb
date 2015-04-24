@@ -1,3 +1,5 @@
+require 'hipbot/helpers/http'
+
 module Hipbot
   module Helpers
     [:get, :post, :put, :delete].each do |method|
