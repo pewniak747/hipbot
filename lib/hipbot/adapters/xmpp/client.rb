@@ -76,8 +76,9 @@ module Hipbot
 
         def initialize_callbacks
           client.on_room_message{ |*args| Callbacks::RoomMessage.new(*args) }
+          client.on_room_topic{ |*args| Callbacks::RoomTopic.new(*args) }
           client.on_private_message{ |*args| Callbacks::PrivateMessage.new(*args) }
-          client.on_invite{ |*args| Callbacks::Invite.new(*args) }
+          client.on_room_invite{ |*args| Callbacks::RoomInvite.new(*args) }
           client.on_lobby_presence{ |*args| Callbacks::LobbyPresence.new(*args) }
           client.on_room_presence{ |*args| Callbacks::RoomPresence.new(*args) }
           client.activate_callbacks
