@@ -2,6 +2,11 @@
 
 require 'daemons'
 
+Signal.trap('INT') do
+  puts("Quitting...")
+  abort
+end
+
 HIPBOT_FILE = 'bot.rb'
 
 if File.exists?(HIPBOT_FILE)
