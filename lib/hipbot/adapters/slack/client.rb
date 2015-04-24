@@ -24,11 +24,21 @@ module Hipbot
         end
 
         def initialize_users
-          user_ids = client.get_users.map do |user_data|
-            user = User.find_or_create_by(id: user_data.jid)
-            user.update_attributes(user_data.attributes)
+          user_ids = ::Slack.client.users_list["members"].map do |user_data|
+            user = User.find_or_create_by(id: user_data["name"])
+            profile_data = user_data["profile"]
+
+            user.update_attributes(
+                  name: user_data["real_name"],
+               mention: user_data["name"],
+                 email: profile_data["email"],
+                 title: profile_data["title"],
+                 photo: profile_data["image_192"],
+                 admin: profile_data["is_admin"],
+            )
             user.id
           end
+
           clean_other_objects(User, user_ids) if user_ids.any?
         end
       end
