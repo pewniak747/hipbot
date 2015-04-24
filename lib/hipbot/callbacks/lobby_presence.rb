@@ -5,7 +5,8 @@ module Hipbot
         self.presence = presence
 
         with_user(id: user_id) do |user|
-          user.update_attribute(:is_online, online_presence?)
+          Hipbot.logger.info("PRESENCE from #{user}: #{presence}")
+          user.update_attribute(:is_online, !offline_presence?)
         end
       end
     end
