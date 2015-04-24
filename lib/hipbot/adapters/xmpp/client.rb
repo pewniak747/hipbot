@@ -1,3 +1,5 @@
+require 'xmpp4r-hipchat'
+
 module Hipbot
   module Adapters
     class XMPP
