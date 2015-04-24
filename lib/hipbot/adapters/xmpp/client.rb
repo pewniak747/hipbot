@@ -64,7 +64,9 @@ module Hipbot
         end
 
         def clean_other_objects klass, object_ids
-          klass.all.select{ |r| !object_ids.include?(r.id) }.each(&:destroy)
+          klass.all.select{ |r| !object_ids.include?(r.id) }.tap{ |o|
+            Hipbot.logger.info("REMOVING #{o.count} objects from #{klass}")
+          }.each(&:destroy)
         end
 
         def initialize_bot_user
