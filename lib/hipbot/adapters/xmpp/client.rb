@@ -7,18 +7,31 @@ module Hipbot
         KEEP_ALIVE_INTERVAL = 60
 
         def initialize
-          Jabber.debug  = true
-          Jabber.logger = Hipbot.logger
+          initialize_logger
+
+          Hipbot.logger.info("INITIALIZE XMPP Client")
           initialize_client do
+            Hipbot.logger.info("INITIALIZE Rooms")
             initialize_rooms
+            Hipbot.logger.info("INITIALIZE Users")
             initialize_users
+            Hipbot.logger.info("INITIALIZE Bot user")
             initialize_bot_user
+            Hipbot.logger.info("INITIALIZE Callbacks")
             initialize_callbacks
+            Hipbot.logger.info("INITIALIZE Keep-alive")
             initialize_keep_alive
           end
         end
 
         protected
+
+        def initialize_logger
+          Jabber.logger = Hipbot.logger
+          if Hipbot.logger.level == Logger::DEBUG
+            Jabber.debug  = true
+          end
+        end
 
         def initialize_client
           self.client = ::Jabber::MUC::HipchatClient.new(Hipbot.configuration.jid)

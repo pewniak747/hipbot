@@ -17,27 +17,27 @@ module Hipbot
     end
 
     def join_room(room)
-      logger.info("JOINING #{room}")
+      logger.info("JOINING ##{room}")
       connection.join_room(room)
     end
 
     def leave_room(room)
-      logger.info("LEAVING #{room}")
+      logger.info("LEAVING ##{room}")
       connection.leave_room(room)
     end
 
     def invite_to_room(room, users)
-      logger.info("INVITING to #{room}: #{users}")
+      logger.info("INVITING to ##{room}: #{users}")
       connection.invite_to_room(room, users)
     end
 
     def kick_from_room(room, users)
-      logger.info("KICKING from #{room}: #{users}")
+      logger.info("KICKING from ##{room}: #{users}")
       connection.kick_from_room(room, users)
     end
 
     def send_to_room(room, message)
-      logger.info("REPLY in #{room}")
+      logger.info("REPLY in ##{room}")
       connection.send_to_room(room, message)
     end
 
@@ -47,7 +47,7 @@ module Hipbot
     end
 
     def set_topic(room, topic)
-      logger.info("TOPIC seting in #{room} to '#{topic}'")
+      logger.info("TOPIC seting in ##{room} to '#{topic}'")
       connection.set_topic(room, topic)
     end
 

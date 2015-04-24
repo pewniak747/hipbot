@@ -34,10 +34,6 @@ module Hipbot
       !!options[:global]
     end
 
-    def inspect
-      "#<Hipbot::Reaction #{options}>"
-    end
-
     def plugin_name
       plugin.name.demodulize
     end
@@ -53,6 +49,7 @@ module Hipbot
     attr_cache :readable_command do
       regexps.map(&:source).join(' or ').gsub(/\^|\\z|\$|\\/, '')
     end
+    delegate :to_s, to: :readable_command
 
     attr_cache :regexps do
       regexps = Array(options[:regexps])

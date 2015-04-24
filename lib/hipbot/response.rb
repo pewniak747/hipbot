@@ -7,7 +7,7 @@ module Hipbot
 
     def initialize *_
       super
-      Hipbot.logger.info("RESPONSE WITH #{reaction.inspect}")
+      Hipbot.logger.info("RESPONSE WITH #{reaction}")
     end
 
     def invoke arguments
