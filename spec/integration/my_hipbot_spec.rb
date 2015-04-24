@@ -16,7 +16,7 @@ describe MyHipbot do
     end
 
     it 'should set hipchat token' do
-      subject.jid.should == 'robbot@chat.hipchat.com'
+      subject.configuration.jid.should == 'robbot@chat.hipchat.com'
     end
   end
 
