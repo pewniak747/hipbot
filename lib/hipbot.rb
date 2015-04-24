@@ -7,7 +7,6 @@ require 'ostruct'
 require 'json'
 require 'eventmachine'
 require 'em-http-request'
-require 'xmpp4r-hipchat'
 
 require 'hipbot/utilities/cache'
 require 'hipbot/utilities/logger'
