@@ -1,9 +1,11 @@
+require 'hipbot/adapters/xmpp/client'
+
 module Hipbot
   module Adapters
     class XMPP
       include Hipbot::Adaptable
 
-      add_config_options :jid
+      add_config_options :jid, :conference_host
 
       attr_accessor :client
 

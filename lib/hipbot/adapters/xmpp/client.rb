@@ -34,7 +34,10 @@ module Hipbot
         end
 
         def initialize_client
-          self.client = ::Jabber::MUC::HipchatClient.new(Hipbot.configuration.jid)
+          self.client = ::Jabber::MUC::HipchatClient.new(
+            Hipbot.configuration.jid,
+            Hipbot.configuration.conference_host,
+          )
           yield if client.connect(Hipbot.configuration.password)
         end
 
