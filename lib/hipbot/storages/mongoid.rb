@@ -11,7 +11,7 @@ module Hipbot
 
         alias_method :to_s, :name
 
-        validate :name, presence: true
+        validates :name, presence: true
       end
     end
   end
