@@ -193,7 +193,7 @@ on /^where am I\?$/ do
     "Users online: #{room.users.count}\n" +
     "Privacy: #{room.privacy}\n" +
     "Hipchat ID: #{room.hipchat_id}\n" +
-    "Archived?: #{room.archived ? 'yes' : 'no'}\n" +
+    "Archived?: #{room.archived? ? 'yes' : 'no'}\n" +
     "Guest URL: #{room.guest_url}"
   )
 end
@@ -616,11 +616,11 @@ module Hipbot
 
     has_and_belongs_to_many :users, class_name: 'Hipbot::User', inverse_of: :rooms
 
-    field :archived,   type: Boolean
-    field :guest_url,  type: String
-    field :hipchat_id, type: String
-    field :privacy,    type: String
-    field :topic,      type: String
+    field :is_archived, type: Boolean
+    field :guest_url,   type: String
+    field :hipchat_id,  type: String
+    field :privacy,     type: String
+    field :topic,       type: String
   end
 end
 ```

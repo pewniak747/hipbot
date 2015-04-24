@@ -41,7 +41,7 @@ module Hipbot
     end
 
     def archived?
-      !!attributes[:archived]
+      !!attributes[:is_archived]
     end
   end
 end
