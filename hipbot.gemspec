@@ -15,7 +15,8 @@ Gem::Specification.new do |gem|
   gem.name          = "hipbot"
   gem.require_paths = ["lib"]
   gem.version       = Hipbot::VERSION
-  gem.add_runtime_dependency "xmpp4r-hipchat", ["= 0.0.4"]
+  
+  gem.add_runtime_dependency "xmpp4r-hipchat", ["= 0.1.0"]
   gem.add_runtime_dependency "daemons", ["~> 1.1"]
   gem.add_runtime_dependency "activesupport", [">= 3.0.0"]
   gem.add_runtime_dependency "eventmachine", ["~> 1.0"]
