@@ -9,6 +9,7 @@ rvm:
 matrix:
   allow_failures:
     - rvm: ruby-head
+    - rvm: rbx-3
 notifications:
   email:
     recipients:
