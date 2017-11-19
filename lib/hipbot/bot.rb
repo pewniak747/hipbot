@@ -53,7 +53,7 @@ module Hipbot
           instance.setup
           begin
             instance.start!
-          rescue Exception => e
+          rescue StandardError => e
             instance_exec(e, &instance.configuration.exception_handler)
           end
         end

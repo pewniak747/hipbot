@@ -14,7 +14,7 @@ module Hipbot
       handle_errors do
         instance_exec(*arguments, &reaction.block)
       end
-    rescue Exception => e
+    rescue StandardError => e
       instance_exec(e, &Hipbot.exception_handler)
     end
 
