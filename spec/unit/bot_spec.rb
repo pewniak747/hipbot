@@ -46,10 +46,11 @@ describe "a class that inherits", Hipbot::Bot do
       subject.react(sender, room, '@robot hello robot!')
     end
 
-    it "should choose first option when multiple options match" do
+    it "should choose all matching options" do
       described_class.on /hello there/ do reply('hello there') end
       described_class.on /hello (.*)/ do reply('hello') end
       subject.should_receive(:send_to_room).with(room, 'hello there')
+      subject.should_receive(:send_to_room).with(room, 'hello')
       subject.react(sender, room, '@robot hello there')
     end
 

@@ -22,15 +22,21 @@ module Hipbot
       plugins.map(&:class)
     end
 
-    def presence_reaction_sets
-      reactables.map(&:presence_reactions)
+    def reaction_sets
+      defined_reaction_sets + default_reaction_sets
     end
 
-    def reaction_sets
-      reactables.each_with_object([]) do |reactable, array|
-        array.unshift(reactable.reactions)
-        array.push(reactable.default_reactions)
-      end
+    def defined_reaction_sets
+      reactables.map(&:reactions)
+    end
+
+    def default_reaction_sets
+      # Each default reaction is alone in its own reaction set
+      reactables.flat_map(&:default_reactions).map { |r| [r] }
+    end
+
+    def presence_reaction_sets
+      reactables.map(&:presence_reactions)
     end
 
     def set_matches sets, message
