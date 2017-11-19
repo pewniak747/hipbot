@@ -11,9 +11,9 @@ Hipbot is a XMPP bot for HipChat, written in Ruby with EventMachine.
 ### Compatibility
 Hipbot is tested on:
 
-* Ruby 1.9.3, 2.0.0 and 2.1.0
-* JRuby 1.9 mode
-* Rubinus
+* Ruby 2.2, 2.3 and 2.4 series
+* JRuby (latest)
+* Rubinus (latest)
 
 ### Dependencies
 
