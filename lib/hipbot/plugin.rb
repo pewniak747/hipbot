@@ -1,3 +1,5 @@
+require "singleton"
+
 module Hipbot
   module Plugin
     extend ActiveSupport::Concern

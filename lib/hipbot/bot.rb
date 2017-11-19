@@ -1,3 +1,5 @@
+require "singleton"
+
 module Hipbot
   class << self
     attr_accessor :bot, :plugins, :adapters

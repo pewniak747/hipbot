@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Hipbot::Reaction do
   subject { Hipbot::Reaction }
 
+  before(:each) do
+    Hipbot::Bot.instance.setup
+  end
+
   context 'instance' do
     let(:options){ {} }
     let(:reaction){ subject.new(@plugin, options, @block) }

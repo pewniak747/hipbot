@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Hipbot::ReactionFactory do
   subject { described_class.new(double) }
 
+  before(:each) do
+    Hipbot::Bot.instance.setup
+  end
+
   let(:params) { [] }
   let(:block) { double }
 
